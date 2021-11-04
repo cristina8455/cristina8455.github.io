@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Welcome! on A minimal Hugo website</title>
+    <link>/</link>
+    <description>Recent content in Welcome! on A minimal Hugo website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title></title>
+      <link>/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/about/</guid>
+      <description>About I am a Postdoctoral Lecturer at Northwestern University in the Math Department. I received my PhD from University of Florida in 2021.
+Here you can find an updated version of my CV.
+Contact  Office: Locy 210-B Email: cristina.korb@northwestern.edu Phone: 847-467-2272  </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/research/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/research/</guid>
+      <description>Research Interests My research interests are in mathematical biology modeling, specifically developing vector borne diseases models and spatially explicit simulation models.
+Presentations  Graduate Student Biomath Seminar, University of Florida (Spring 2018, Fall 2018, Spring 2019) Teaching Center - New Teaching Assistants Orientation, University of Florida (August 2018):&amp;ldquo;How to get students to participate&amp;rdquo; Warren Wilson College (Fall 2014):&amp;ldquo;How to be an effective tutor&amp;rdquo; Western Carolina University (Spring 2013): &amp;ldquo;A Comparative study on the efficacy of frames and orthonormal basis used in signal transmission and recovery&amp;rdquo; Smoky Mountain Undergraduate Conference on the History of Mathematics Western Carolina University (Spring 2012 ) &amp;ldquo;History of International Mathematical Olympiads&amp;rdquo;  Papers  &amp;ldquo;Wolbachia establishment and invasion in Ae aegypti populations to suppress Zika transmission&amp;rdquo; (in preparation)  </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/teaching/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/teaching/</guid>
+      <description>Northwestern University (2021 - ) Fall 2021  Math 218-1 Single-Variable Calculus with Precalculus Math 220-1 Single-Variable Differential Calculus  University of Florida (2015 - 2021)  Spring 2021 MAC 2313 Analytic Geometry and Calculus 3 (Online TA) Fall 2020 MAS 4105 Linear Algebra (TA) Summer 2020 MAP2302 – Elementary Differential Equations (Online Instructor) Summer 2020 MAP4305/5304 – Intermediate Differential Equations (Grader) Spring 2020 MAD 4401 - Introduction to Numerical Analysis (Guest Lecturer) Spring 2020 MAC 2312 Analytic Geometry and Calculus 2(Flipped) (Instructor) Fall 2019 MAC 2233 Survey of Calculus 1 (Online TA) Fall 2019 MAC 2312 Analytic Geometry and Calculus 2 (Online TA) Summer 2019 MAC 2233 Survey of Calculus 1 (Online Instructor) Spring 2019 MAC 2313 Calculus 3 (TA) Fall 2018 MAC 1114 Trigonometry (Instructor) Summer 2018 MAC 2234 Survey of Calculus 2 (Online Instructor) Spring 2018 MAC 2312 Analytic Geometry and Calculus 2 (TA) Spring 2018 MAC 1105 Basic College Algebra (Online TA) Fall 2017 MAC 1140 Precalculus Algebra (Instructor) Fall 2017 MAC 1105 Basic College Algebra (Online TA) Summer 2017 MAC 1105 Basic College Algebra (Instructor) Summer 2017 MAC 2234 Survey of Calculus 2 (Online TA) Spring 2017 MAC 2311 Calculus 1 (TA) Fall 2016 MAC 1147 Precalculus Algebra and Trig (TA) Summer 2016 MAC 1114 Trigonometry (Instructor) Spring 2016 MAC 1105 Basic College Algebra (TA) Fall 2015 MAC 1105 Basic College Algebra (TA)  Santa Fe College (2016 - 2021)  MAC 1105 College Algebra (Spring 2016 - Fall 2020) MAC 1140 Precalculus Algebra (Online: Spring 2020, Summer 2020)  Warren Wilson College (2013 - 2015)  Statistics (Fall 2013, Spring 2014, Fall 2014, Spring 2015, Summer 2015) Precalculus Algebra (Fall 2014, Spring 2015)  Western Carolina University (2012 - 2015)  Math 170 Applied Statistics (Spring 2013, Spring 2015) Math 130 College Algebra (Fall 2014) Math 101 Mathematical concepts (Fall 2014, Spring 2015)  </description>
+    </item>
+    
+  </channel>
+</rss>
