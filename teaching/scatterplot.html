@@ -4,15 +4,25 @@
 
 
 <script>
-function getRandomData(numPoints, numOutliers) {
+// Function to set a fixed seed for random number generation
+function seededRandom(seed) {
+    var x = Math.sin(seed++) * 10000;
+    return x - Math.floor(x);
+}
+
+function getRandomInt(seed, min, max) {
+    return Math.floor(seededRandom(seed) * (max - min + 1)) + min;
+}
+
+function getRandomData(numPoints, numOutliers, seed) {
     let data = [];
     // Generate random points
     for (let i = 0; i < numPoints; i++) {
-        data.push({x: Math.random() * 10, y: 0});
+        data.push({x: getRandomInt(seed + i, 0, 20), y: 0});
     }
     // Generate outliers
     for (let i = 0; i < numOutliers; i++) {
-        data.push({x: Math.random() * 10 + 20, y: 0}); // Outliers far from the main cluster
+        data.push({x: getRandomInt(seed + numPoints + i, 0, 20) + 20, y: 0}); // Outliers far from the main cluster
     }
     return data;
 }
@@ -23,15 +33,18 @@ var myChart = new Chart(ctx, {
     data: {
         datasets: [{
             label: '1D Scatter Plot with Outliers',
-            data: getRandomData(20, 3),
-            backgroundColor: 'rgb(255, 99, 132)'
+            data: getRandomData(10, 2, 42), // Fixed seed value
+            backgroundColor: 'rgb(255, 99, 132)',
+            pointRadius: 5 // Change point size
         }]
     },
     options: {
         scales: {
             x: {
                 type: 'linear',
-                position: 'bottom'
+                position: 'bottom',
+                min: 0,
+                max: 40 // Adjusted to accommodate outliers
             },
             y: {
                 display: false
@@ -40,4 +53,6 @@ var myChart = new Chart(ctx, {
     }
 });
 </script>
+
+
 
