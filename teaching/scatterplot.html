@@ -1,0 +1,43 @@
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<canvas id="myChart" width="400" height="400"></canvas>
+
+
+<script>
+function getRandomData(numPoints, numOutliers) {
+    let data = [];
+    // Generate random points
+    for (let i = 0; i < numPoints; i++) {
+        data.push({x: Math.random() * 10, y: 0});
+    }
+    // Generate outliers
+    for (let i = 0; i < numOutliers; i++) {
+        data.push({x: Math.random() * 10 + 20, y: 0}); // Outliers far from the main cluster
+    }
+    return data;
+}
+
+var ctx = document.getElementById('myChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'scatter',
+    data: {
+        datasets: [{
+            label: '1D Scatter Plot with Outliers',
+            data: getRandomData(20, 3),
+            backgroundColor: 'rgb(255, 99, 132)'
+        }]
+    },
+    options: {
+        scales: {
+            x: {
+                type: 'linear',
+                position: 'bottom'
+            },
+            y: {
+                display: false
+            }
+        }
+    }
+});
+</script>
+
