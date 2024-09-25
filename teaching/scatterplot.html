@@ -44,7 +44,7 @@ function getRandomData(numPoints, numOutliers, seed) {
         data.push(outlier);
     }
 
-    // Stack points vertically with jitter effect
+    // Stack points horizontally with jitter effect
     let stackedData = {};
     data.forEach(point => {
         if (!stackedData[point]) {
@@ -54,8 +54,8 @@ function getRandomData(numPoints, numOutliers, seed) {
     });
 
     return Object.keys(stackedData).map((x, index) => ({
-        x: parseInt(x),
-        y: stackedData[x] - 1 + (Math.random() - 0.5) * 0.2 // Add jitter effect
+        x: parseInt(x) + (Math.random() - 0.5) * 0.2, // Add horizontal jitter effect
+        y: 0
     }));
 }
 
@@ -76,6 +76,13 @@ var myChart = new Chart(ctx, {
             },
             title: {
                 display: false // Remove title
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return `x: ${context.raw.x.toFixed(2)}`; // Display only x coordinate
+                    }
+                }
             }
         },
         scales: {
