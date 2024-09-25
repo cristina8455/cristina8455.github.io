@@ -44,7 +44,19 @@ function getRandomData(numPoints, numOutliers, seed) {
         data.push(outlier);
     }
 
-    return data.map(x => ({ x, y: 0 }));
+    // Stack points vertically if they have the same x value
+    let stackedData = {};
+    data.forEach(point => {
+        if (!stackedData[point]) {
+            stackedData[point] = 0;
+        }
+        stackedData[point]++;
+    });
+
+    return Object.keys(stackedData).map((x, index) => ({
+        x: parseInt(x),
+        y: stackedData[x] - 1
+    }));
 }
 
 var ctx = document.getElementById('myChart').getContext('2d');
@@ -52,13 +64,20 @@ var myChart = new Chart(ctx, {
     type: 'scatter',
     data: {
         datasets: [{
-            label: '1D Scatter Plot with Outliers',
             data: getRandomData(10, 2, 42), // Fixed seed value
             backgroundColor: 'rgb(255, 99, 132)',
             pointRadius: 5 // Change point size
         }]
     },
     options: {
+        plugins: {
+            legend: {
+                display: false // Remove dataset label
+            },
+            title: {
+                display: false // Remove title
+            }
+        },
         scales: {
             x: {
                 type: 'linear',
@@ -73,6 +92,7 @@ var myChart = new Chart(ctx, {
     }
 });
 </script>
+
 
 
 
