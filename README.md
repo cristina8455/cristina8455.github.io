@@ -6,7 +6,8 @@ Personal academic website built with Next.js, featuring course materials and res
 
 - Course materials and resources
 - Office hours information
-- Student resources
+- Student resources page with curated learning materials
+- About page with professional background
 - Archive of past courses
 - Mobile-responsive design
 - Dynamic course routing
@@ -36,6 +37,8 @@ Edit `src/data/office-hours.ts`:
 - Update current term: Edit `currentTerm` in `src/data/courses.ts`
 - Modify site header: Edit `src/components/layout/Header.tsx`
 - Change home page content: Edit `src/app/page.tsx`
+- Edit resources: Update `src/app/resources/page.tsx`
+- Update about/contact info: Edit `src/app/about/page.tsx`
 
 ## Development
 
@@ -55,6 +58,8 @@ Visit [http://localhost:3000](http://localhost:3000) to see the site.
 src/
 ├── app/             # App router pages
 │   ├── office-hours/  # Office hours page
+│   ├── resources/     # Resources page
+│   ├── about/         # About/contact page
 │   └── _not-found/   # Custom 404 page
 ├── components/      # Reusable components
 │   ├── layout/     # Layout components
@@ -98,10 +103,9 @@ Course content is managed through three main areas:
 - Announcements integration
 
 ### Additional Features
-- Resource library for students
-- Enhanced contact information
-- About/background section
+- Enhanced resource library organization
 - Improved student engagement features
+- Dark mode support
 
 ## Deployment
 

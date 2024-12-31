@@ -2,13 +2,13 @@
 'use client';
 
 import Link from 'next/link';
-import { BookOpen, Users, Calculator, Mail } from 'lucide-react';
+import { BookOpen, Users, Calculator, User } from 'lucide-react';
 
 const navigation = [
     { name: 'Courses', href: '/courses', icon: BookOpen },
     { name: 'Resources', href: '/resources', icon: Calculator },
     { name: 'Office Hours', href: '/office-hours', icon: Users },
-    { name: 'Contact', href: '/contact', icon: Mail }
+    { name: 'About', href: '/about', icon: User }  // Changed from Mail to User icon and Contact to About
 ] as const;
 
 export default function Header() {
