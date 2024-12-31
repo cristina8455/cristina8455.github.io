@@ -58,8 +58,8 @@ export default function Home() {
             icon={MapPin}
             title="Contact & Location"
             content={<>
-              <p>Office: Room X123</p>
-              <p>email@clcillinois.edu</p>
+              <p>Office: Room C162</p>
+              <p>csizemore@clcillinois.edu</p>
             </>}
             linkText="More Details"
             href="/contact"
