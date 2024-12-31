@@ -1,6 +1,5 @@
 // src/app/resources/page.tsx
 import { BookOpen, Calculator, GraduationCap, Link as LinkIcon, Library } from 'lucide-react';
-import Link from 'next/link';
 import type { LucideIcon } from 'lucide-react';
 
 type ResourceSection = {
