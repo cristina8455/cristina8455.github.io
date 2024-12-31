@@ -20,7 +20,7 @@ export const currentCourses: Course[] = [
         schedule: "TuTh 10:00AM - 12:20PM",
         location: "TBA",
         dates: "Jan 21, 2025 - May 8, 2025",
-        href: "/courses/2025-spring/mth122",
+        href: "mth122",
         examDate: "5/13/2025, Tuesday",
         examTime: "10:00AM - 11:50AM"
     },
@@ -31,7 +31,7 @@ export const currentCourses: Course[] = [
         schedule: "MoWe 1:00PM - 3:20PM",
         location: "C173 - Grayslake Campus",
         dates: "Jan 22, 2025 - May 7, 2025",
-        href: "/courses/2025-spring/mth144-005",
+        href: "mth144-005",
         examDate: "5/14/2025, Wednesday",
         examTime: "12:00PM - 1:50PM"
     },
@@ -42,7 +42,7 @@ export const currentCourses: Course[] = [
         schedule: "Online Asynchronous",
         location: "ONLINE",
         dates: "Jan 21, 2025 - May 16, 2025",
-        href: "/courses/2025-spring/mth144-202",
+        href: "mth144-202",
         isOnline: true
     }
 ];

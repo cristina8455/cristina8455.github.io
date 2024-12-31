@@ -4,6 +4,8 @@ import { ChevronRight, BookOpen, Archive, Clock } from 'lucide-react';
 import { currentCourses, currentTerm } from '@/data/courses';
 
 export default function CoursesPage() {
+    const termSlug = currentTerm.toLowerCase().replace(' ', '-');
+
     return (
         <div className="min-h-screen bg-gray-50">
             <main className="max-w-6xl mx-auto px-4 py-8">
@@ -27,7 +29,7 @@ export default function CoursesPage() {
                     {currentCourses.map((course) => (
                         <Link
                             key={course.code}
-                            href={course.href}
+                            href={`/courses/${termSlug}/${course.href}`}
                             className="block bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-all duration-200 hover:border-blue-200"
                         >
                             <div className="flex justify-between items-start">

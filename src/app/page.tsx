@@ -1,10 +1,13 @@
 // src/app/page.tsx
+import Image from 'next/image';
 import { Clock, ChevronRight, MapPin, BookOpen, Archive } from 'lucide-react';
 import Link from 'next/link';
 import type { LucideIcon } from 'lucide-react';
 import { currentCourses, currentTerm } from '@/data/courses';
 
 export default function Home() {
+  const termSlug = currentTerm.toLowerCase().replace(' ', '-');
+
   return (
     <div className="min-h-screen bg-gray-50">
       <main className="max-w-6xl mx-auto px-4 py-8">
@@ -13,10 +16,12 @@ export default function Home() {
             <h2 className="text-2xl font-bold mb-1">Mathematics & Statistics</h2>
             <p className="text-gray-600 text-sm">College of Lake County</p>
           </div>
-          <img
+          <Image
             src="/headshotCK.jpg"
             alt="Cristina Sizemore"
-            className="rounded-lg w-20 h-20 object-cover shadow-md hover:shadow-lg transition-shadow duration-200"
+            width={80}
+            height={80}
+            className="rounded-lg object-cover shadow-md hover:shadow-lg transition-shadow duration-200"
           />
         </div>
 
@@ -42,7 +47,7 @@ export default function Home() {
                 title={course.title}
                 code={course.code}
                 description={`${course.schedule}${course.location !== 'ONLINE' ? ` (${course.location})` : ''}`}
-                href={course.href}
+                href={`/courses/${termSlug}/${course.href}`}
               />
             ))}
           </div>
