@@ -11,6 +11,31 @@ Personal academic website built with Next.js, featuring course materials and res
 - Mobile-responsive design
 - Dynamic course routing
 - Centralized course data management
+- Custom 404 page
+
+## Quick Start Guide for Updates
+
+### Updating Office Hours
+Edit `src/data/office-hours.ts`:
+- Modify weekly schedule
+- Update room location
+- Change virtual meeting information
+
+### Adding/Editing Courses
+1. Update course information in `src/data/courses.ts`:
+   - Add new courses
+   - Modify course details (title, code, schedule)
+   - Change current term
+
+2. Add course content in `src/content/courses/[term-year]/[course]/`:
+   - Create new term folder if needed (e.g., `2025-spring`)
+   - Add course folder (e.g., `mth122`)
+   - Add content files (syllabus, assignments, etc.)
+
+### Common Tasks
+- Update current term: Edit `currentTerm` in `src/data/courses.ts`
+- Modify site header: Edit `src/components/layout/Header.tsx`
+- Change home page content: Edit `src/app/page.tsx`
 
 ## Development
 
@@ -29,12 +54,19 @@ Visit [http://localhost:3000](http://localhost:3000) to see the site.
 ```
 src/
 ├── app/             # App router pages
+│   ├── office-hours/  # Office hours page
+│   └── _not-found/   # Custom 404 page
 ├── components/      # Reusable components
 │   ├── layout/     # Layout components
 │   ├── courses/    # Course-related components
+│   ├── office-hours/ # Office hours components
 │   └── shared/     # Shared UI components
 ├── content/        # Markdown content for courses
-└── data/          # Data files for courses
+├── data/          # Data files and types
+│   └── courses.ts  # Centralized course data
+├── types/         # TypeScript type definitions
+└── pages/         # Special Next.js pages
+    └── _document.tsx  # Custom document component
 ```
 
 ## Content Management
@@ -51,6 +83,25 @@ Course content is managed through three main areas:
 2. Create term folder: `content/courses/[term-year]`
 3. Add course subfolders with markdown content
 4. No changes needed to app routing structure
+
+## Planned Enhancements
+
+### Calendar Integration
+- Office 365 calendar integration for office hours
+- Course-specific calendars for important dates
+- Exam schedules and review sessions
+- Support for schedule exceptions and changes
+
+### Canvas Integration
+- Seamless access to course materials
+- Grade information
+- Announcements integration
+
+### Additional Features
+- Resource library for students
+- Enhanced contact information
+- About/background section
+- Improved student engagement features
 
 ## Deployment
 
