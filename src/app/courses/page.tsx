@@ -7,17 +7,17 @@ export default function CoursesPage() {
     const termSlug = currentTerm.toLowerCase().replace(' ', '-');
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-background">
             <main className="max-w-6xl mx-auto px-4 py-8">
-                <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+                <div className="bg-card rounded-lg shadow-sm p-6 mb-6">
                     <div className="flex justify-between items-center">
                         <h1 className="text-2xl font-bold flex items-center">
-                            <Clock size={24} className="mr-3 text-blue-600" />
+                            <Clock size={24} className="mr-3 text-primary" />
                             {currentTerm} Courses
                         </h1>
                         <Link
                             href="/courses/archive"
-                            className="text-gray-600 hover:text-blue-600 flex items-center group"
+                            className="text-muted-foreground hover:text-primary flex items-center group transition-colors duration-200"
                         >
                             <Archive size={20} className="mr-2" />
                             Past Courses
@@ -30,20 +30,27 @@ export default function CoursesPage() {
                         <Link
                             key={course.code}
                             href={`/courses/${termSlug}/${course.href}`}
-                            className="block bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-all duration-200 hover:border-blue-200"
+                            className="group block bg-card rounded-lg border border-border p-6 
+                                     transition-all duration-200 
+                                     hover:shadow-md hover:border-primary/15
+                                     dark:hover:shadow-lg dark:hover:shadow-primary/5"
                         >
                             <div className="flex justify-between items-start">
                                 <div className="flex-grow">
                                     <div className="flex items-start justify-between mb-2">
                                         <div>
-                                            <h2 className="text-xl font-semibold text-gray-900">{course.title}</h2>
-                                            <p className="text-blue-600 font-medium">{course.code}</p>
+                                            <h2 className="text-xl font-semibold text-card-foreground">{course.title}</h2>
+                                            <p className="text-primary font-medium">{course.code}</p>
                                         </div>
-                                        <BookOpen size={20} className="text-blue-600 flex-shrink-0 ml-4" />
+                                        <BookOpen size={20} className="text-primary flex-shrink-0 ml-4 opacity-90" />
                                     </div>
-                                    <p className="text-gray-600 mt-2">{course.schedule} | {course.location}</p>
+                                    <p className="text-muted-foreground mt-2">{course.schedule} | {course.location}</p>
                                 </div>
-                                <ChevronRight size={20} className="text-blue-600 ml-4 group-hover:translate-x-1 transition-transform duration-200" />
+                                <ChevronRight
+                                    size={20}
+                                    className="text-primary/80 ml-4 transform transition-all duration-200
+                                             group-hover:translate-x-1 group-hover:text-primary"
+                                />
                             </div>
                         </Link>
                     ))}

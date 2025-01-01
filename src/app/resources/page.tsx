@@ -133,9 +133,9 @@ function ResourceCard({
     resources: ResourceSection['resources'];
 }) {
     return (
-        <div className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-sm transition-shadow duration-200">
-            <h3 className="font-medium mb-2">{title}</h3>
-            <p className="text-sm text-gray-600 mb-4">{description}</p>
+        <div className="bg-card rounded-lg border border-border p-4 hover:shadow-sm transition-shadow duration-200">
+            <h3 className="font-medium mb-2 text-card-foreground">{title}</h3>
+            <p className="text-sm text-muted-foreground mb-4">{description}</p>
             <div className="space-y-3">
                 {resources.map((resource, index) => (
                     <div key={index} className="text-sm">
@@ -144,15 +144,16 @@ function ResourceCard({
                                 href={resource.link}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-blue-600 hover:text-blue-700 font-medium flex items-center"
+                                className="text-primary hover:text-primary/80 font-medium flex items-center 
+                                         transition-colors duration-200 group"
                             >
                                 {resource.title}
-                                <LinkIcon size={14} className="ml-1" />
+                                <LinkIcon size={14} className="ml-1 opacity-70 group-hover:opacity-100 transition-opacity" />
                             </a>
                         ) : (
-                            <span className="font-medium">{resource.title}</span>
+                            <span className="font-medium text-card-foreground">{resource.title}</span>
                         )}
-                        <p className="text-gray-600 mt-1">{resource.description}</p>
+                        <p className="text-muted-foreground mt-1">{resource.description}</p>
                     </div>
                 ))}
             </div>
@@ -162,11 +163,11 @@ function ResourceCard({
 
 export default function Resources() {
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-background">
             <main className="max-w-6xl mx-auto px-4 py-8">
                 <div className="mb-6">
-                    <h2 className="text-2xl font-bold mb-2">Student Resources</h2>
-                    <p className="text-gray-600">
+                    <h2 className="text-2xl font-bold mb-2 text-card-foreground">Student Resources</h2>
+                    <p className="text-muted-foreground">
                         Helpful resources and materials to support your learning in mathematics and statistics.
                     </p>
                 </div>
@@ -175,8 +176,13 @@ export default function Resources() {
                     {resourceSections.map((section) => (
                         <div key={section.title} className="flex flex-col">
                             <div className="mb-3 flex items-center">
-                                <section.icon size={20} className="text-blue-600 mr-2" />
-                                <h3 className="text-lg font-semibold">{section.title}</h3>
+                                <section.icon
+                                    size={20}
+                                    className="text-primary opacity-90 mr-2"
+                                />
+                                <h3 className="text-lg font-semibold text-card-foreground">
+                                    {section.title}
+                                </h3>
                             </div>
                             <ResourceCard
                                 title={section.title}

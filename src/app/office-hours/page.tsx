@@ -7,11 +7,11 @@ import { VirtualInfo } from '@/components/office-hours/VirtualInfo';
 
 export default function OfficeHours() {
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-background">
             <main className="max-w-6xl mx-auto px-4 py-8">
-                <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+                <div className="bg-card rounded-lg shadow-sm p-6 mb-6">
                     <h2 className="text-2xl font-bold mb-4 flex items-center">
-                        <Clock size={24} className="mr-2 text-blue-600" />
+                        <Clock size={24} className="mr-2 text-primary" />
                         Office Hours
                     </h2>
 
@@ -27,12 +27,12 @@ export default function OfficeHours() {
                             <LocationInfo location={currentTermOfficeHours.defaultLocation} />
                             <VirtualInfo virtualInfo={currentTermOfficeHours.virtualMeetingInfo} />
 
-                            <div className="bg-blue-50 p-4 rounded-lg">
+                            <div className="bg-primary/10 dark:bg-primary/5 rounded-lg p-4">
                                 <div className="flex items-start">
-                                    <AlertCircle size={20} className="text-blue-600 mt-1 mr-2 flex-shrink-0" />
+                                    <AlertCircle size={20} className="text-primary mt-1 mr-2 flex-shrink-0" />
                                     <div>
-                                        <h4 className="font-medium mb-1">Additional Availability</h4>
-                                        <div className="text-sm text-gray-600 space-y-2">
+                                        <h4 className="font-medium mb-1 text-primary-foreground/90">Additional Availability</h4>
+                                        <div className="text-sm text-muted-foreground space-y-2">
                                             {currentTermOfficeHours.additionalNotes?.map((note, index) => (
                                                 <p key={index}>{note}</p>
                                             ))}
