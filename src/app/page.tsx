@@ -5,9 +5,13 @@ import Link from 'next/link';
 import type { LucideIcon } from 'lucide-react';
 import { currentCourses, currentTerm } from '@/data/courses';
 
-export default function Home() {
-  const termSlug = currentTerm.toLowerCase().replace(' ', '-');
+export const dynamic = 'force-static';
 
+export async function generateStaticParams() {
+  return [];
+}
+
+export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       <main className="max-w-6xl mx-auto px-4 py-8">
@@ -29,7 +33,7 @@ export default function Home() {
           <div className="flex justify-between items-center mb-3">
             <h3 className="text-lg font-semibold flex items-center text-card-foreground">
               <Clock size={18} className="mr-2 text-primary opacity-90" />
-              {currentTerm} Courses
+              {currentTerm.name} Courses
             </h3>
             <Link
               href="/courses/archive"
@@ -48,7 +52,7 @@ export default function Home() {
                 title={course.title}
                 code={course.code}
                 description={`${course.schedule}${course.location !== 'ONLINE' ? ` (${course.location})` : ''}`}
-                href={`/courses/${termSlug}/${course.href}`}
+                href={`/courses/${course.term.slug}/${course.href}`}
               />
             ))}
           </div>

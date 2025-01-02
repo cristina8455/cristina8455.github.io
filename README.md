@@ -8,10 +8,11 @@ Personal academic website built with Next.js, featuring course materials and res
 - Office hours information
 - Student resources page with curated learning materials
 - About page with professional background
-- Archive of past courses
+- Comprehensive course archive with institutional history
 - Mobile-responsive design
 - Dynamic course routing
 - Centralized course data management
+- Dark mode support with system preference detection
 - Custom 404 page
 
 ## Quick Start Guide for Updates
@@ -27,6 +28,7 @@ Edit `src/data/office-hours.ts`:
    - Add new courses
    - Modify course details (title, code, schedule)
    - Change current term
+   - Add historical courses to the archive
 
 2. Add course content in `src/content/courses/[term-year]/[course]/`:
    - Create new term folder if needed (e.g., `2025-spring`)
@@ -39,6 +41,8 @@ Edit `src/data/office-hours.ts`:
 - Change home page content: Edit `src/app/page.tsx`
 - Edit resources: Update `src/app/resources/page.tsx`
 - Update about/contact info: Edit `src/app/about/page.tsx`
+- Modify theme colors: Update `src/app/globals.css`
+- Add/edit historical courses: Update `historicalCourses` in `src/data/courses.ts`
 
 ## Development
 
@@ -48,6 +52,9 @@ npm install
 
 # Run development server
 npm run dev
+
+# Build static site
+npm run build
 ```
 
 Visit [http://localhost:3000](http://localhost:3000) to see the site.
@@ -60,15 +67,21 @@ src/
 │   ├── office-hours/  # Office hours page
 │   ├── resources/     # Resources page
 │   ├── about/         # About/contact page
+│   ├── courses/       # Course pages
+│   │   ├── archive/     # Course archive
+│   │   └── [term]/     # Dynamic course routes
 │   └── _not-found/   # Custom 404 page
 ├── components/      # Reusable components
 │   ├── layout/     # Layout components
 │   ├── courses/    # Course-related components
 │   ├── office-hours/ # Office hours components
+│   ├── theme/      # Theme components
+│   ├── ui/         # Base UI components
 │   └── shared/     # Shared UI components
 ├── content/        # Markdown content for courses
 ├── data/          # Data files and types
 │   └── courses.ts  # Centralized course data
+├── styles/        # Global styles
 ├── types/         # TypeScript type definitions
 └── pages/         # Special Next.js pages
     └── _document.tsx  # Custom document component
@@ -87,7 +100,41 @@ Course content is managed through three main areas:
 1. Update `src/data/courses.ts` with new course information
 2. Create term folder: `content/courses/[term-year]`
 3. Add course subfolders with markdown content
-4. No changes needed to app routing structure
+4. Previous term courses automatically move to archive
+
+## Course Archive
+
+The site includes a comprehensive course archive system:
+- Historical teaching record by institution
+- Accordion-based navigation by institution and term
+- Chronological organization with year ranges
+- Maintains detailed information for recent courses
+- Preserves teaching history across institutions
+
+### Managing Archive Content
+
+The archive distinguishes between two types of courses:
+1. Recent courses (full details, content, and materials)
+2. Historical courses (basic information and context)
+
+Update archive content in `src/data/courses.ts`:
+- Add historical courses to `historicalCourses` array
+- Recent courses automatically transition to archive when term ends
+
+## Theme System
+
+The site includes a comprehensive theme system with:
+- Automatic system preference detection
+- Manual theme toggle in header
+- Consistent color palette across components
+- Smooth transitions between themes
+- Semantic color variables for maintainability
+
+### Customizing Theme Colors
+
+Theme colors can be modified in two places:
+1. `src/app/globals.css` for CSS variables
+2. `tailwind.config.ts` for Tailwind configuration
 
 ## Planned Enhancements
 
@@ -105,7 +152,7 @@ Course content is managed through three main areas:
 ### Additional Features
 - Enhanced resource library organization
 - Improved student engagement features
-- Dark mode support
+- Archive filtering and search capabilities
 
 ## Deployment
 

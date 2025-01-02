@@ -1,4 +1,5 @@
-import { currentCourses, currentTerm } from '@/data/courses';
+// src/app/courses/[term]/[courseId]/page.tsx
+import { currentCourses } from '@/data/courses';
 import CourseContent from '@/components/courses/CourseContent';
 import fs from 'fs/promises';
 import path from 'path';
@@ -18,9 +19,8 @@ type Props = {
 };
 
 export async function generateStaticParams(): Promise<PageParams[]> {
-    const termSlug = currentTerm.toLowerCase().replace(' ', '-');
     return currentCourses.map((course) => ({
-        term: termSlug,
+        term: course.term.slug,
         courseId: course.href
     }));
 }
