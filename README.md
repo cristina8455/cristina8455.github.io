@@ -9,10 +9,10 @@ Personal academic website built with Next.js, featuring course materials and res
 - Student resources page with curated learning materials
 - About page with professional background
 - Comprehensive course archive with institutional history
-- Mobile-responsive design
+- Mobile-responsive design with compact navigation
 - Dynamic course routing
 - Centralized course data management
-- Dark mode support with system preference detection
+- Dark mode support with system preference detection and enhanced contrast
 - Custom 404 page
 
 ## Quick Start Guide for Updates
@@ -125,15 +125,17 @@ Update archive content in `src/data/courses.ts`:
 
 The site includes a comprehensive theme system with:
 - Automatic system preference detection
-- Manual theme toggle in header
+- Manual theme toggle accessible on all devices
 - Consistent color palette across components
 - Smooth transitions between themes
 - Semantic color variables for maintainability
+- Enhanced contrast for text and UI elements in dark mode
+- Proper dark mode support for dynamic course content
 
 ### Customizing Theme Colors
 
 Theme colors can be modified in two places:
-1. `src/app/globals.css` for CSS variables
+1. `src/app/globals.css` for CSS variables and dark mode configuration
 2. `tailwind.config.ts` for Tailwind configuration
 
 ## Planned Enhancements
