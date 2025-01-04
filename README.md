@@ -14,6 +14,9 @@ Personal academic website built with Next.js, featuring course materials and res
 - Centralized course data management
 - Dark mode support with system preference detection and enhanced contrast
 - Custom 404 page
+- Canvas integration with build-time content sync
+- LaTeX math support
+- Automated content transformation from Canvas
 
 ## Quick Start Guide for Updates
 
@@ -35,6 +38,24 @@ Edit `src/data/office-hours.ts`:
    - Add course folder (e.g., `mth122`)
    - Add content files (syllabus, assignments, etc.)
 
+### Syncing Canvas Content
+1. Configure Canvas integration in `.env.local`:
+   ```
+   CANVAS_BASE_URL=https://[institution].instructure.com
+   CANVAS_API_TOKEN=[your-token]
+   SYNC_COURSE_IDS=id1,id2
+   COURSE_MAPPINGS=[{"canvasId":"id","term":"term-slug","courseCode":"code"}]
+   ```
+
+2. Run sync process:
+   ```bash
+   # Sync Canvas content only
+   npm run sync-canvas
+
+   # Build site with fresh Canvas content
+   npm run build-with-sync
+   ```
+
 ### Common Tasks
 - Update current term: Edit `currentTerm` in `src/data/courses.ts`
 - Modify site header: Edit `src/components/layout/Header.tsx`
@@ -53,8 +74,14 @@ npm install
 # Run development server
 npm run dev
 
+# Sync Canvas content
+npm run sync-canvas
+
 # Build static site
 npm run build
+
+# Build with fresh Canvas content
+npm run build-with-sync
 ```
 
 Visit [http://localhost:3000](http://localhost:3000) to see the site.
@@ -81,6 +108,15 @@ src/
 ├── content/        # Markdown content for courses
 ├── data/          # Data files and types
 │   └── courses.ts  # Centralized course data
+├── sync/          # Canvas integration
+│   ├── types.ts     # Sync type definitions
+│   ├── canvas-sync.ts # Core sync logic
+│   ├── run-sync.ts   # Sync script
+│   ├── providers/    # Data providers
+│   │   ├── canvas.ts   # Canvas API
+│   │   └── website.ts  # Local content
+│   └── transform/    # Content transformation
+│       └── markdown.ts # HTML to Markdown
 ├── styles/        # Global styles
 ├── types/         # TypeScript type definitions
 └── pages/         # Special Next.js pages
@@ -89,11 +125,20 @@ src/
 
 ## Content Management
 
-Course content is managed through three main areas:
-
+Course content is managed through:
 1. Central course data in `src/data/courses.ts`
 2. Markdown content in `content/courses/[term]/[course]`
 3. Dynamic routing via `app/courses/[term]/[courseId]`
+4. Canvas sync for automatic content updates
+
+### Canvas Integration
+
+The site supports automatic content syncing from Canvas:
+- Build-time sync compatible with static hosting
+- Converts Canvas pages to markdown
+- Handles LaTeX equations and formatting
+- Maintains existing content structure
+- Foundation for future real-time updates
 
 ### Updating for New Terms
 
@@ -146,10 +191,11 @@ Theme colors can be modified in two places:
 - Exam schedules and review sessions
 - Support for schedule exceptions and changes
 
-### Canvas Integration
-- Seamless access to course materials
-- Grade information
-- Announcements integration
+### Canvas Integration Enhancements
+- Real-time content updates
+- Two-way sync capability
+- Automatic build triggers
+- Content version control
 
 ### Additional Features
 - Enhanced resource library organization

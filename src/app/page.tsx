@@ -67,7 +67,7 @@ export default function Home() {
               <p>csizemore@clcillinois.edu</p>
             </>}
             linkText="More Details"
-            href="/contact"
+            href="/about"
           />
 
           <QuickInfoCard
@@ -95,25 +95,37 @@ function CourseCard({
   href: string;
 }) {
   return (
-    <div className="bg-card rounded-lg border border-border p-4 
-                    hover:shadow-md transition-all duration-200 
-                    hover:border-primary/15 dark:hover:shadow-primary/5">
-      <div className="flex items-start justify-between mb-3">
-        <div>
-          <h4 className="font-medium mb-1 text-card-foreground">{title}</h4>
-          <p className="text-sm text-muted-foreground">{code} - {description}</p>
+    <Link
+      href={href}
+      aria-label={`View details for ${code} - ${title}`}
+    >
+      <div className="bg-card rounded-lg border border-border p-4 
+                      transition-all duration-200 
+                      hover:shadow-md hover:border-primary/15
+                      hover:translate-y-[-2px]
+                      dark:hover:shadow-lg dark:hover:shadow-primary/5
+                      group cursor-pointer">
+        <div className="flex items-start justify-between mb-3">
+          <div>
+            <h4 className="font-medium mb-1 text-card-foreground">{title}</h4>
+            <p className="text-sm text-muted-foreground">{code} - {description}</p>
+          </div>
+          <BookOpen size={16} className="text-primary opacity-80 flex-shrink-0 ml-2 
+                                       group-hover:opacity-100 transition-opacity duration-200" />
         </div>
-        <BookOpen size={16} className="text-primary opacity-80 flex-shrink-0 ml-2" />
+        <div
+          className="text-sm text-primary group-hover:text-primary/80 
+                     inline-flex items-center transition-colors duration-200"
+        >
+          View Details
+          <ChevronRight
+            size={14}
+            className="ml-1 transform group-hover:translate-x-1 
+                       transition-transform duration-200"
+          />
+        </div>
       </div>
-      <Link
-        href={href}
-        className="text-sm text-primary hover:text-primary/80 inline-flex items-center group
-                   transition-colors duration-200"
-      >
-        View Details
-        <ChevronRight size={14} className="ml-1 group-hover:translate-x-1 transition-transform duration-200" />
-      </Link>
-    </div>
+    </Link>
   );
 }
 
@@ -131,25 +143,37 @@ function QuickInfoCard({
   href: string;
 }) {
   return (
-    <div className="bg-card rounded-lg border border-border p-4 
-                    hover:shadow-sm transition-shadow duration-200">
-      <div className="flex items-start">
-        <Icon size={16} className="text-primary opacity-90 mt-1 mr-2 flex-shrink-0" />
-        <div className="min-w-0 flex-1">
-          <h3 className="font-medium mb-1 text-card-foreground">{title}</h3>
-          <div className="text-sm text-muted-foreground">
-            {content}
-            <Link
-              href={href}
-              className="text-primary hover:text-primary/80 inline-flex items-center 
-                       group mt-2 transition-colors duration-200"
-            >
-              {linkText}
-              <ChevronRight size={14} className="ml-1 group-hover:translate-x-1 transition-transform duration-200" />
-            </Link>
+    <Link
+      href={href}
+      aria-label={`${linkText} about ${title}`}
+    >
+      <div className="bg-card rounded-lg border border-border p-4 
+                      transition-all duration-200
+                      hover:shadow-md hover:border-primary/15 
+                      hover:translate-y-[-2px]
+                      dark:hover:shadow-lg dark:hover:shadow-primary/5
+                      group cursor-pointer">
+        <div className="flex items-start">
+          <Icon size={16} className="text-primary opacity-90 mt-1 mr-2 flex-shrink-0 
+                                   group-hover:opacity-100 transition-opacity duration-200" />
+          <div className="min-w-0 flex-1">
+            <h3 className="font-medium mb-1 text-card-foreground">{title}</h3>
+            <div className="text-sm text-muted-foreground">
+              {content}
+              <div className="text-primary group-hover:text-primary/80 
+                          inline-flex items-center group mt-2 
+                          transition-colors duration-200">
+                {linkText}
+                <ChevronRight
+                  size={14}
+                  className="ml-1 transform group-hover:translate-x-1 
+                            transition-transform duration-200"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

@@ -69,7 +69,22 @@ export default function CourseContent({ courseData }: CourseContentProps) {
                 </Card>
             </div>
 
-            <div className="prose dark:prose-invert max-w-none prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-ul:text-foreground">
+            <div className="prose dark:prose-invert max-w-none 
+                          prose-headings:text-foreground 
+                          prose-p:text-foreground 
+                          prose-strong:text-foreground 
+                          [&_ul]:list-disc
+                          [&_ul]:pl-6
+                          [&_ul]:my-4
+                          [&_li]:text-foreground
+                          [&_li]:ml-4
+                          prose-em:text-foreground/90
+                          prose-a:text-primary
+                          prose-a:no-underline
+                          hover:prose-a:text-primary/90
+                          prose-code:text-foreground
+                          prose-pre:bg-muted
+                          prose-pre:text-muted-foreground">
                 <div dangerouslySetInnerHTML={{ __html: courseData.content }} />
             </div>
         </div>
