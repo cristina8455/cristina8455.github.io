@@ -6,9 +6,7 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-  trailingSlash: true,  // This helps with static exports
-  // Add distDir configuration
-  distDir: '.next',
-  // Add assetPrefix configuration for static files
+  trailingSlash: true,
+  // Remove distDir config to use default 'out' directory
   assetPrefix: process.env.NODE_ENV === 'production' ? undefined : undefined,
 }
