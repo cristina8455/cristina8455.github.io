@@ -13,8 +13,12 @@ Personal academic website built with Next.js, featuring course materials and res
 - Dynamic course routing
 - Centralized course data management
 - Dark mode support with system preference detection and enhanced contrast
+- Canvas LMS integration:
+  - Direct embedding support for course pages
+  - Theme-aware embedded layout
+  - Seamless navigation in Canvas context
 - Custom 404 page
-- Canvas integration with build-time content sync
+- Canvas content sync with build-time processing
 - LaTeX math support
 - Automated content transformation from Canvas
 
@@ -38,7 +42,9 @@ Edit `src/data/office-hours.ts`:
    - Add course folder (e.g., `mth122`)
    - Add content files (syllabus, assignments, etc.)
 
-### Syncing Canvas Content
+### Canvas Integration
+
+#### Content Syncing
 1. Configure Canvas integration in `.env.local`:
    ```
    CANVAS_BASE_URL=https://[institution].instructure.com
@@ -55,6 +61,13 @@ Edit `src/data/office-hours.ts`:
    # Build site with fresh Canvas content
    npm run build-with-sync
    ```
+
+#### Embedding Pages in Canvas
+Course pages can be embedded directly in Canvas using iframes:
+1. Pages auto-detect Canvas embedding
+2. Provide simplified navigation in Canvas context
+3. Maintain theme support and dark mode
+4. Support all course content types
 
 ### Common Tasks
 - Update current term: Edit `currentTerm` in `src/data/courses.ts`
@@ -97,14 +110,19 @@ src/
 │   ├── courses/       # Course pages
 │   │   ├── archive/     # Course archive
 │   │   └── [term]/     # Dynamic course routes
-│   └── _not-found/   # Custom 404 page
+│   └── not-found.tsx   # Custom 404 page
 ├── components/      # Reusable components
-│   ├── layout/     # Layout components
-│   ├── courses/    # Course-related components
+│   ├── layout/       # Layout components
+│   │   ├── Header.tsx  # Main navigation
+│   │   ├── RootLayout.tsx # Layout switcher
+│   │   └── CanvasLayout.tsx # Canvas-embedded layout
+│   ├── courses/      # Course-related components
 │   ├── office-hours/ # Office hours components
-│   ├── theme/      # Theme components
-│   ├── ui/         # Base UI components
-│   └── shared/     # Shared UI components
+│   ├── theme/        # Theme components
+│   ├── ui/           # Base UI components
+│   └── shared/       # Shared UI components
+├── utils/          # Utility functions
+│   └── canvas.ts   # Canvas detection utilities
 ├── content/        # Markdown content for courses
 ├── data/          # Data files and types
 │   └── courses.ts  # Centralized course data
@@ -118,9 +136,7 @@ src/
 │   └── transform/    # Content transformation
 │       └── markdown.ts # HTML to Markdown
 ├── styles/        # Global styles
-├── types/         # TypeScript type definitions
-└── pages/         # Special Next.js pages
-    └── _document.tsx  # Custom document component
+└── types/         # TypeScript type definitions
 ```
 
 ## Content Management
@@ -133,12 +149,18 @@ Course content is managed through:
 
 ### Canvas Integration
 
-The site supports automatic content syncing from Canvas:
-- Build-time sync compatible with static hosting
-- Converts Canvas pages to markdown
-- Handles LaTeX equations and formatting
-- Maintains existing content structure
-- Foundation for future real-time updates
+The site supports:
+1. Content syncing from Canvas:
+   - Build-time sync compatible with static hosting
+   - Converts Canvas pages to markdown
+   - Handles LaTeX equations and formatting
+   - Maintains existing content structure
+
+2. Direct embedding in Canvas:
+   - Automatic iframe detection
+   - Simplified navigation
+   - Theme-aware layout
+   - Dark mode support
 
 ### Updating for New Terms
 
@@ -176,6 +198,7 @@ The site includes a comprehensive theme system with:
 - Semantic color variables for maintainability
 - Enhanced contrast for text and UI elements in dark mode
 - Proper dark mode support for dynamic course content
+- Theme support in Canvas-embedded context
 
 ### Customizing Theme Colors
 
@@ -196,6 +219,8 @@ Theme colors can be modified in two places:
 - Two-way sync capability
 - Automatic build triggers
 - Content version control
+- Enhanced embedded layouts
+- Canvas-specific styling options
 
 ### Additional Features
 - Enhanced resource library organization

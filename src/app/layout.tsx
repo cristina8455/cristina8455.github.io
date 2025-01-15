@@ -2,7 +2,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { ThemeProvider } from '@/components/theme/theme-provider'
-import Header from '@/components/layout/Header'
+import RootLayout from '@/components/layout/RootLayout'
 import './globals.css'
 import 'katex/dist/katex.min.css'
 
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   description: 'Mathematics and Statistics Professor at College of Lake County',
 }
 
-export default function RootLayout({
+export default function Layout({
   children,
 }: {
   children: React.ReactNode
@@ -22,8 +22,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} min-h-screen bg-background`}>
         <ThemeProvider>
-          <Header />
-          {children}
+          <RootLayout>{children}</RootLayout>
         </ThemeProvider>
       </body>
     </html>

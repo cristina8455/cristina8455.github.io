@@ -14,7 +14,7 @@ type PageParams = {
 };
 
 type Props = {
-    params: Promise<PageParams>;
+    params: Promise<PageParams>;  // Changed back to Promise
 };
 
 async function getCourseSyncedPages(term: string, courseId: string): Promise<string[]> {
@@ -24,8 +24,7 @@ async function getCourseSyncedPages(term: string, courseId: string): Promise<str
         return files
             .filter(file => file.endsWith('.md'))
             .map(file => file.replace(/\.md$/, ''));
-    } catch {  // Remove unused error parameter
-        // If directory doesn't exist or can't be read, return empty array
+    } catch {
         return [];
     }
 }
@@ -34,15 +33,19 @@ export async function generateStaticParams(): Promise<PageParams[]> {
     const params: PageParams[] = [];
 
     // Add base course pages (index.md)
-    params.push(...currentCourses.map((course) => ({
+    const baseParams = currentCourses.map((course) => ({
         term: course.term.slug,
         courseId: course.href,
         slug: undefined
-    })));
+    }));
+
+    console.log('Generating static paths for base courses:', baseParams);
+    params.push(...baseParams);
 
     // Add synced pages for each course
     for (const course of currentCourses) {
         const syncedPages = await getCourseSyncedPages(course.term.slug, course.href);
+        console.log(`Synced pages for ${course.href}:`, syncedPages);
 
         for (const page of syncedPages) {
             params.push({
@@ -53,6 +56,7 @@ export async function generateStaticParams(): Promise<PageParams[]> {
         }
     }
 
+    console.log('Final params:', params);
     return params;
 }
 
@@ -60,24 +64,18 @@ async function getPageContent(term: string, courseId: string, slug?: string[]): 
     let contentPath;
 
     if (!slug || slug.length === 0) {
-        // No slug means we're looking for index.md
         contentPath = path.join(process.cwd(), 'src/content/courses', term, courseId, 'index.md');
     } else {
-        // With slug, we're looking for a page in the pages directory
-        // Remove 'pages' from slug if it's the first element
         const cleanSlug = slug[0] === 'pages' ? slug.slice(1) : slug;
         contentPath = path.join(process.cwd(), 'src/content/courses', term, courseId, 'pages', `${cleanSlug.join('/')}.md`);
     }
 
     try {
         const content = await fs.readFile(contentPath, 'utf8');
-
-        // Parse front matter
         const frontMatterRegex = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/;
         const match = content.match(frontMatterRegex);
 
         if (match) {
-            // Just use the content part, not the front matter
             const [, , bodyContent] = match;
             return await processMarkdown(bodyContent.trim());
         }
