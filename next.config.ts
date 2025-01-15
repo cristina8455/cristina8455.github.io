@@ -7,7 +7,8 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   trailingSlash: true,
-  // Remove distDir config - let Next.js use default 'out'
+  // GitHub Pages serves from username.github.io
   basePath: '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '' : '',
+  // No need for assetPrefix with Github Pages when deploying to root
+  assetPrefix: ''
 }
