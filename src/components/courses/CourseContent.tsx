@@ -17,9 +17,10 @@ interface CourseContentProps {
 export default function CourseContent({ courseData }: CourseContentProps) {
     return (
         <div className="max-w-4xl mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold mb-6 text-foreground">{courseData.title}</h1>
+            <h1 className="text-3xl font-bold mb-8 text-foreground">{courseData.title}</h1>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            {/* Info Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
                 <Card>
                     <CardContent className="pt-6">
                         <div className="flex items-start space-x-3">
@@ -69,24 +70,25 @@ export default function CourseContent({ courseData }: CourseContentProps) {
                 </Card>
             </div>
 
-            <div className="prose dark:prose-invert max-w-none 
-                          prose-headings:text-foreground 
-                          prose-p:text-foreground 
-                          prose-strong:text-foreground 
-                          [&_ul]:list-disc
-                          [&_ul]:pl-6
-                          [&_ul]:my-4
-                          [&_li]:text-foreground
-                          [&_li]:ml-4
-                          prose-em:text-foreground/90
-                          prose-a:text-primary
-                          prose-a:no-underline
-                          hover:prose-a:text-primary/90
-                          prose-code:text-foreground
-                          prose-pre:bg-muted
-                          prose-pre:text-muted-foreground">
-                <div dangerouslySetInnerHTML={{ __html: courseData.content }} />
-            </div>
+            {/* Course Content */}
+            <Card className="mb-8">
+                <CardContent className="p-6 sm:p-8">
+                    <div className="prose dark:prose-invert max-w-none
+                                prose-headings:font-semibold 
+                                prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
+                                prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
+                                prose-p:text-foreground/90 prose-p:leading-relaxed
+                                prose-ul:my-6 prose-ul:list-disc prose-ul:pl-6
+                                prose-li:text-foreground/90 prose-li:my-2
+                                prose-strong:text-foreground prose-strong:font-semibold
+                                prose-a:text-primary hover:prose-a:opacity-80
+                                prose-code:text-foreground/90 prose-code:bg-muted/50 prose-code:px-1 prose-code:rounded
+                                prose-pre:bg-muted prose-pre:text-muted-foreground
+                                [&>*:first-child]:mt-0">
+                        <div dangerouslySetInnerHTML={{ __html: courseData.content }} />
+                    </div>
+                </CardContent>
+            </Card>
         </div>
     );
 }

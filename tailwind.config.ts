@@ -33,6 +33,67 @@ export default {
           foreground: "hsl(var(--accent-foreground))",
         },
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            maxWidth: 'none',
+            color: 'hsl(var(--foreground))',
+            h2: {
+              color: 'hsl(var(--foreground))',
+              fontWeight: '700',
+              fontSize: '1.75rem',
+              marginTop: '2rem',
+              marginBottom: '1rem',
+            },
+            h3: {
+              color: 'hsl(var(--foreground))',
+              fontWeight: '600',
+              fontSize: '1.25rem',
+              marginTop: '1.5rem',
+              marginBottom: '0.75rem',
+            },
+            h4: {
+              color: 'hsl(var(--foreground))',
+              fontWeight: '500',
+              fontSize: '1.1rem',
+              marginTop: '1.25rem',
+              marginBottom: '0.5rem',
+            },
+            p: {
+              color: 'hsl(var(--foreground))',
+              marginTop: '1rem',
+              marginBottom: '1rem',
+            },
+            ul: {
+              marginTop: '1rem',
+              marginBottom: '1rem',
+            },
+            li: {
+              color: 'hsl(var(--foreground))',
+              marginTop: '0.5rem',
+              marginBottom: '0.5rem',
+            },
+            'ul > li': {
+              paddingLeft: '1.5rem',
+            },
+            'ul > li::before': {
+              backgroundColor: 'hsl(var(--foreground))',
+              opacity: 0.5,
+            },
+            strong: {
+              color: 'hsl(var(--foreground))',
+              fontWeight: '600',
+            },
+            a: {
+              color: 'hsl(var(--primary))',
+              textDecoration: 'none',
+              '&:hover': {
+                opacity: 0.8,
+              },
+            },
+          },
+        },
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
@@ -54,5 +115,5 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/typography")],
 } satisfies Config;
