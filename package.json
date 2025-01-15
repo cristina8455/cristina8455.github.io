@@ -4,12 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "next build && next export",
     "start": "next start",
     "lint": "next lint",
     "sync-canvas": "tsx src/sync/run-sync.ts",
-    "build-with-sync": "npm run sync-canvas && next build"
+    "build-with-sync": "npm run sync-canvas && next build && next export"
   },
+,
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.2",
     "@radix-ui/react-dialog": "^1.1.4",
