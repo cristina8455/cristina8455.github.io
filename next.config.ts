@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   trailingSlash: true,
-  distDir: '.next',
-  assetPrefix: process.env.NODE_ENV === 'production' ? undefined : undefined,
+  // Remove distDir config - let Next.js use default 'out'
+  basePath: '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? '' : '',
 }
