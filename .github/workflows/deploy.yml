@@ -38,16 +38,22 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Debug directory structure
+        run: |
+          echo "Root directory:"
+          ls -la
+          echo "\nContents of .next:"
+          ls -la .next || echo "No .next directory"
+          echo "\nContents of out:"
+          ls -la out || echo "No out directory"
+
       - name: Configure Pages
         uses: actions/configure-pages@v3
-
-      - name: List output directory
-        run: ls -la out
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
-          path: out
+          path: .next/static
 
       - name: Deploy to GitHub Pages
         id: deployment
