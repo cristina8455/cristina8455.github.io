@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Clock, MapPin, Calendar, BookOpen } from 'lucide-react';
+import QuickLinks from './QuickLinks';
 
 interface CourseContentProps {
     courseData: {
@@ -19,7 +20,7 @@ export default function CourseContent({ courseData }: CourseContentProps) {
         <div className="max-w-4xl mx-auto px-4 py-8">
             <h1 className="text-3xl font-bold mb-8 text-foreground">{courseData.title}</h1>
 
-            {/* Info Cards */}
+            {/* Course Information Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
                 <Card>
                     <CardContent className="pt-6">
@@ -69,6 +70,9 @@ export default function CourseContent({ courseData }: CourseContentProps) {
                     </CardContent>
                 </Card>
             </div>
+
+            {/* Quick Links */}
+            <QuickLinks />
 
             {/* Course Content */}
             <Card className="mb-8">

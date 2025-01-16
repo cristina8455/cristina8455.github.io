@@ -1,32 +1,18 @@
-## Course Description
-This course emphasizes the transition from beginning algebra to college algebra and precalculus. Topics include graphs of functions; transformations and functions; linear functions; quadratic and polynomial functions; rational functions; exponential and logarithmic functions; sequences and series.
+We meet on Tuesdays/Thursdays from 10-12:20pm in C256 Graylake campus.
 
-## Required Materials
-- Textbook: TBA
-- Scientific calculator (any model is acceptable)
-- Reliable internet access for Canvas and online resources
+I am so excited to work with you this semester and join you in achieving your academic and personal goals. **Success is not a solo endeavor!** My hopes for this class are that you embark on it with an open mind and are ready to collaborate with your peers and build lasting connections.
 
-## Course Outline
-1. Functions and Their Graphs
-   - Graphs of equations
-   - Functions: definitions and properties
-   - Finding domain and range
-   - Function operations and composition
+## Contact & Student Hours
 
-2. Polynomial and Rational Functions
-   - Linear functions and models
-   - Complex numbers
-   - Quadratic functions and applications
-   - Polynomial functions: zeros and graphs
-   - Rational functions and asymptotes
+**Cristina Sizemore** (she/her)  
+Office: C162  
+Email: [csizemore@clcillinois.edu](mailto:csizemore@clcillinois.edu)  
+*Always use your student email for correspondence*
 
-[Continue with remaining weeks...]
+### Student Hours
+Monday: [TBA]  
+Tuesday: [TBA]  
+Wednesday: [TBA]  
+Thursday: [TBA]
 
-## Policies
-1. **Attendance**: Regular attendance is expected. Please notify me in advance if you need to miss class.
-
-2. **Late Work**: Assignments may be submitted up to one week late with a 10% penalty.
-
-3. **Academic Integrity**: All work must be your own. Plagiarism or cheating will result in a zero for the assignment and possible further disciplinary action.
-
-4. **Communication**: Email is the best way to reach me. I typically respond within 24 hours on weekdays.
+Other hours available by appointment
