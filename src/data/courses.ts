@@ -124,7 +124,7 @@ export const currentCourses: DetailedCourse[] = [
         term: currentTerm,
         crn: "6315",
         schedule: "TuTh 10:00AM - 12:20PM",
-        location: "TBA",
+        location: "C256 - Grayslake Campus",
         dates: "Jan 21, 2025 - May 8, 2025",
         href: "mth122",
         examDate: "5/13/2025, Tuesday",
