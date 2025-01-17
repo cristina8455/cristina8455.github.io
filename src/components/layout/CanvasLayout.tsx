@@ -6,12 +6,17 @@ import { ThemeToggle } from '@/components/theme/theme-toggle';
 
 interface CanvasLayoutProps {
     children: React.ReactNode;
-    courseSlug?: string;
 }
 
-export default function CanvasLayout({ children, courseSlug }: CanvasLayoutProps) {
-    // Construct the course home URL - now points to specific course
-    const courseHomeUrl = courseSlug ? `/courses/${courseSlug}` : '/courses';
+export default function CanvasLayout({ children }: CanvasLayoutProps) {
+    // Extract course slug from current URL
+    const getCourseSlug = () => {
+        if (typeof window === 'undefined') return '';
+        const match = window.location.pathname.match(/\/courses\/([^/]+\/[^/]+)/);
+        return match ? match[1] : '';
+    };
+
+    const courseHomeUrl = `/courses/${getCourseSlug()}`;
 
     return (
         <div className="min-h-screen bg-background">
