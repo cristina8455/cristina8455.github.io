@@ -4,6 +4,7 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Clock, MapPin, Calendar, BookOpen } from 'lucide-react';
 import QuickLinks from './QuickLinks';
+import { CompactOfficeHours } from '@/components/office-hours/CompactOfficeHours';
 import { useIsInCanvas } from '@/utils/canvas';
 
 interface CourseContentProps {
@@ -29,7 +30,7 @@ export default function CourseContent({ courseData, courseSlug }: CourseContentP
                 <h1 className="text-3xl font-bold mb-8 text-foreground">{courseData.title}</h1>
             )}
 
-            {/* Always show info cards */}
+            {/* Info Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
                 <Card>
                     <CardContent className="pt-6">
@@ -82,6 +83,16 @@ export default function CourseContent({ courseData, courseSlug }: CourseContentP
 
             {/* Quick Links */}
             <QuickLinks courseSlug={courseSlug} />
+
+            {/* Office Hours - only shown in Canvas */}
+            {isInCanvas && (
+                <Card className="mb-8">
+                    <CardContent className="p-6 sm:p-8">
+                        <h2 className="text-2xl font-semibold mb-6">Contact & Student Hours</h2>
+                        <CompactOfficeHours showFullLocationDetails={true} />
+                    </CardContent>
+                </Card>
+            )}
 
             {/* Course Content */}
             <Card className="mb-8">
