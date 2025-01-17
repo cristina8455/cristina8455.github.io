@@ -7,13 +7,14 @@ import CanvasLayout from './CanvasLayout';
 
 interface RootLayoutProps {
     children: React.ReactNode;
+    courseSlug?: string;  // Add this prop
 }
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default function RootLayout({ children, courseSlug }: RootLayoutProps) {
     const inCanvas = useIsInCanvas();
 
     if (inCanvas) {
-        return <CanvasLayout>{children}</CanvasLayout>;
+        return <CanvasLayout courseSlug={courseSlug}>{children}</CanvasLayout>;
     }
 
     return (
