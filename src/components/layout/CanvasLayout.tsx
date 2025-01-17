@@ -9,14 +9,27 @@ interface CanvasLayoutProps {
 }
 
 export default function CanvasLayout({ children }: CanvasLayoutProps) {
-    // Extract course slug from current URL
+    // Extract course slug from current URL or get from storage
     const getCourseSlug = () => {
         if (typeof window === 'undefined') return '';
+
+        // Try to get from URL first
         const match = window.location.pathname.match(/\/courses\/([^/]+\/[^/]+)/);
-        return match ? match[1] : '';
+        if (match) {
+            // If found in URL, store it for later use
+            localStorage.setItem('currentCourseSlug', match[1]);
+            return match[1];
+        }
+
+        // If not in URL, try to get from storage
+        return localStorage.getItem('currentCourseSlug') || '';
     };
 
-    const courseHomeUrl = `/courses/${getCourseSlug()}`;
+    // Get slug on initial load
+    const courseSlug = getCourseSlug();
+
+    // Construct home URL, defaulting to /courses only if we have no context
+    const courseHomeUrl = courseSlug ? `/courses/${courseSlug}` : '/courses';
 
     return (
         <div className="min-h-screen bg-background">
