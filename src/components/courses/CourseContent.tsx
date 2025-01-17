@@ -16,9 +16,10 @@ interface CourseContentProps {
         crn: string;
         content: string;
     };
+    courseSlug: string;
 }
 
-export default function CourseContent({ courseData }: CourseContentProps) {
+export default function CourseContent({ courseData, courseSlug }: CourseContentProps) {
     const isInCanvas = useIsInCanvas();
 
     return (
@@ -80,7 +81,7 @@ export default function CourseContent({ courseData }: CourseContentProps) {
             )}
 
             {/* Quick Links */}
-            <QuickLinks />
+            <QuickLinks courseSlug={courseSlug} />
 
             {/* Course Content */}
             <Card className="mb-8">

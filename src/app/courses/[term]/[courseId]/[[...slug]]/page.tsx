@@ -99,7 +99,12 @@ export default async function CoursePage({ params }: Props) {
 
     try {
         const htmlContent = await getPageContent(term, courseId, slug);
-        return <CourseContent courseData={{ ...course, content: htmlContent }} />;
+        return (
+            <CourseContent
+                courseData={{ ...course, content: htmlContent }}
+                courseSlug={`${term}/${courseId}`}
+            />
+        );
     } catch (error) {
         console.error('Error loading course content:', error);
         return <div>Error loading course content</div>;
