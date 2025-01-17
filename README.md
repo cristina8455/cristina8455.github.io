@@ -15,8 +15,11 @@ Personal academic website built with Next.js, featuring course materials and res
 - Dark mode support with system preference detection and enhanced contrast
 - Canvas LMS integration:
   - Direct embedding support for course pages
-  - Theme-aware embedded layout
-  - Seamless navigation in Canvas context
+  - Theme-aware embedded layout with persistent course context
+  - Seamless navigation between course and shared pages
+  - Automatic context preservation in Canvas
+  - Responsive layout optimized for Canvas embedding
+  - Shared resources across courses with proper navigation
 - Custom 404 page
 - Canvas content sync with build-time processing
 - LaTeX math support
@@ -68,6 +71,7 @@ Course pages can be embedded directly in Canvas using iframes:
 2. Provide simplified navigation in Canvas context
 3. Maintain theme support and dark mode
 4. Support all course content types
+5. Preserve course context across shared pages
 
 ### Common Tasks
 - Update current term: Edit `currentTerm` in `src/data/courses.ts`
@@ -158,9 +162,11 @@ The site supports:
 
 2. Direct embedding in Canvas:
    - Automatic iframe detection
-   - Simplified navigation
-   - Theme-aware layout
-   - Dark mode support
+   - Context-aware navigation with course state preservation
+   - Shared pages support (resources, etc.) with proper navigation
+   - Theme-aware layout with custom styling for Canvas
+   - Dark mode support with smooth transitions
+   - Optimized responsive layout for embedded view
 
 ### Updating for New Terms
 
