@@ -41,7 +41,7 @@ export default function About() {
                                     study.
                                 </p>
                                 <p>
-                                    With a background in statistical methodology, I bring real-world applications
+                                    With a background in mathematical modeling, I bring real-world applications
                                     into the classroom to help students understand how mathematical concepts apply
                                     in various fields and careers.
                                 </p>
