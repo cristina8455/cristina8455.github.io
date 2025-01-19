@@ -9,7 +9,7 @@ export const currentTermOfficeHours: TermOfficeHours = {
             times: [
                 {
                     start: '10:00 AM',
-                    end: '11:30 AM',
+                    end: '12:00 PM',
                     type: 'in-person',
                 }
             ]
@@ -18,17 +18,17 @@ export const currentTermOfficeHours: TermOfficeHours = {
             day: 'Wednesday',
             times: [
                 {
-                    start: '10:00 AM',
+                    start: '10:30 AM',
                     end: '11:30 AM',
                     type: 'in-person',
                 }
             ]
         },
         {
-            day: 'Friday',
+            day: 'Thursday',
             times: [
                 {
-                    start: '1:00 PM',
+                    start: '12:30 PM',
                     end: '2:30 PM',
                     type: 'virtual',
                 }
