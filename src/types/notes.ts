@@ -4,7 +4,7 @@ export interface Assignment {
     id: string;
     title: string;
     type: 'homework' | 'quiz' | 'exam';
-    dueDate?: Date;
+    dueDate: Date;
     dueTime?: string;
     link?: string;
     description?: string;

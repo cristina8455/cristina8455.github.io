@@ -19,6 +19,15 @@ function formatDateKey(date: Date): string {
     return `${year}-${month}-${day}`;
 }
 
+// Helper function to format the due date
+function formatDueDate(date: Date): string {
+    return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+    });
+}
+
 export default function DailyGrid({ days, courseContent }: DailyGridProps) {
     return (
         <div>
@@ -99,10 +108,21 @@ export default function DailyGrid({ days, courseContent }: DailyGridProps) {
                                                             )} />
                                                             <div>
                                                                 <h4 className="font-medium">
-                                                                    {assignment.title}
+                                                                    {assignment.link ? (
+                                                                        <a
+                                                                            href={assignment.link}
+                                                                            target="_blank"
+                                                                            rel="noopener noreferrer"
+                                                                            className="text-primary hover:underline"
+                                                                        >
+                                                                            {assignment.title}
+                                                                        </a>
+                                                                    ) : (
+                                                                        assignment.title
+                                                                    )}
                                                                 </h4>
                                                                 <p className="text-xs text-muted-foreground">
-                                                                    Due: {assignment.dueTime}
+                                                                    Due: {formatDueDate(assignment.dueDate)}
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -198,10 +218,21 @@ export default function DailyGrid({ days, courseContent }: DailyGridProps) {
                                                             )} />
                                                             <div>
                                                                 <h4 className="font-medium">
-                                                                    {assignment.title}
+                                                                    {assignment.link ? (
+                                                                        <a
+                                                                            href={assignment.link}
+                                                                            target="_blank"
+                                                                            rel="noopener noreferrer"
+                                                                            className="text-primary hover:underline"
+                                                                        >
+                                                                            {assignment.title}
+                                                                        </a>
+                                                                    ) : (
+                                                                        assignment.title
+                                                                    )}
                                                                 </h4>
                                                                 <p className="text-xs text-muted-foreground">
-                                                                    Due: {assignment.dueTime}
+                                                                    Due: {formatDueDate(assignment.dueDate)}
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -297,10 +328,21 @@ export default function DailyGrid({ days, courseContent }: DailyGridProps) {
                                                             )} />
                                                             <div>
                                                                 <h4 className="font-medium">
-                                                                    {assignment.title}
+                                                                    {assignment.link ? (
+                                                                        <a
+                                                                            href={assignment.link}
+                                                                            target="_blank"
+                                                                            rel="noopener noreferrer"
+                                                                            className="text-primary hover:underline"
+                                                                        >
+                                                                            {assignment.title}
+                                                                        </a>
+                                                                    ) : (
+                                                                        assignment.title
+                                                                    )}
                                                                 </h4>
                                                                 <p className="text-xs text-muted-foreground">
-                                                                    Due: {assignment.dueTime}
+                                                                    Due: {formatDueDate(assignment.dueDate)}
                                                                 </p>
                                                             </div>
                                                         </div>
