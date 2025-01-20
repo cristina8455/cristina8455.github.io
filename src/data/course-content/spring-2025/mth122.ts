@@ -9,20 +9,16 @@ const courseContent: Record<string, DayContent> = {
     '2025-01-21': {
         notes: [
             {
-                title: 'Course Introduction',
-                blank: {
-                    url: '/notes/mth122/intro-blank.pdf',
-                    label: 'Course Overview'
-                }
+                title: 'Course Introductions',
             },
             {
-                title: 'Section 2.1: Organizing Data',
+                title: 'Section 8.1: Sequences and Series',
                 blank: {
-                    url: '/notes/mth122/2.1-blank.pdf',
+                    url: '/notes/mth122/8.1-blank.pdf',
                     label: 'Blank Notes'
                 },
                 completed: {
-                    url: '/notes/mth122/2.1-completed.pdf',
+                    url: '/notes/mth122/8.1-completed.pdf',
                     label: 'Completed Notes'
                 }
             }
@@ -41,13 +37,13 @@ const courseContent: Record<string, DayContent> = {
     '2025-01-23': {
         notes: [
             {
-                title: 'Section 2.2: Visualizing Data',
+                title: 'Section 8.2: Arithmetic Sequences and Series',
                 blank: {
-                    url: '/notes/mth122/2.2-blank.pdf',
+                    url: '/notes/mth122/8.2-blank.pdf',
                     label: 'Blank Notes'
                 },
                 completed: {
-                    url: '/notes/mth122/2.2-completed.pdf',
+                    url: '/notes/mth122/8.2-completed.pdf',
                     label: 'Completed Notes'
                 }
             }
@@ -68,13 +64,13 @@ const courseContent: Record<string, DayContent> = {
     '2025-01-28': {
         notes: [
             {
-                title: 'Section 2.3: Measures of Center',
+                title: 'Section 8.3: Geometric Sequences',
                 blank: {
-                    url: '/notes/mth122/2.3-blank.pdf',
+                    url: '/notes/mth122/8.3-blank.pdf',
                     label: 'Blank Notes'
                 },
                 completed: {
-                    url: '/notes/mth122/2.3-completed.pdf',
+                    url: '/notes/mth122/8.3-completed.pdf',
                     label: 'Completed Notes'
                 }
             }
