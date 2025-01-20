@@ -25,12 +25,12 @@ const courseContent: Record<string, DayContent> = {
         ],
         assignments: [
             {
-                id: 'syllabus-quiz',
-                title: 'Syllabus Quiz',
+                id: 'Aleks HW 1',
+                title: 'HW 1',
                 type: 'quiz',
-                dueDate: new Date('2025-01-24'),
+                dueDate: new Date('2025-01-28'),
                 dueTime: '11:59 PM',
-                link: 'https://canvas.college.edu/courses/12345'
+                link: 'https://clcillinois.instructure.com/courses/49127/external_tools/9470'
             }
         ]
     },
