@@ -12,6 +12,8 @@ Personal academic website built with Next.js, featuring course materials and res
 - Mobile-responsive design with compact navigation
 - Dynamic course routing
 - Centralized course data management
+- Course syllabi with custom styling and markdown support
+- Course calendar integration with Canvas
 - Dark mode support with system preference detection and enhanced contrast
 - Canvas LMS integration:
   - Direct embedding support for course pages
@@ -44,6 +46,31 @@ Edit `src/data/office-hours.ts`:
    - Create new term folder if needed (e.g., `2025-spring`)
    - Add course folder (e.g., `mth122`)
    - Add content files (syllabus, assignments, etc.)
+
+### Managing Course Syllabi
+1. Add new syllabus in `src/content/syllabi/`:
+   - Create markdown file named after course ID (e.g., `mth122.md`, `mth144-005.md`)
+   - Use existing syllabus files as templates
+   - File name must match course ID from `courses.ts`
+
+2. Update syllabus page configuration:
+   - Add new course to `generateStaticParams` in `src/app/courses/[term]/[courseId]/syllabus/page.tsx`
+   - Ensure course ID matches between syllabus file, URL, and courses data
+
+3. Customize syllabus styling:
+   - Modify markdown components in syllabus page component
+   - Update table, list, and typography styles as needed
+
+### Managing Course Calendar
+1. Update calendar events in `src/data/calendar.ts`:
+   - Add new events with title, date, and course ID
+   - Specify event type (exam, homework, etc.)
+   - Link events to specific courses
+
+2. Configure calendar display:
+   - Modify calendar view options in calendar component
+   - Update event styling based on event type
+   - Customize calendar filters and navigation
 
 ### Canvas Integration
 
@@ -81,6 +108,8 @@ Course pages can be embedded directly in Canvas using iframes:
 - Update about/contact info: Edit `src/app/about/page.tsx`
 - Modify theme colors: Update `src/app/globals.css`
 - Add/edit historical courses: Update `historicalCourses` in `src/data/courses.ts`
+- Update course calendar: Edit `src/data/calendar.ts`
+- Add new syllabus: Create file in `src/content/syllabi/` and update `generateStaticParams`
 
 ## Development
 
@@ -117,30 +146,22 @@ src/
 │   └── not-found.tsx   # Custom 404 page
 ├── components/      # Reusable components
 │   ├── layout/       # Layout components
-│   │   ├── Header.tsx  # Main navigation
-│   │   ├── RootLayout.tsx # Layout switcher
-│   │   └── CanvasLayout.tsx # Canvas-embedded layout
 │   ├── courses/      # Course-related components
+│   ├── calendar/     # Calendar components
 │   ├── office-hours/ # Office hours components
 │   ├── theme/        # Theme components
 │   ├── ui/           # Base UI components
 │   └── shared/       # Shared UI components
-├── utils/          # Utility functions
-│   └── canvas.ts   # Canvas detection utilities
-├── content/        # Markdown content for courses
+├── content/        # Markdown content
+│   ├── courses/      # Course content
+│   └── syllabi/      # Course syllabi
 ├── data/          # Data files and types
-│   └── courses.ts  # Centralized course data
-├── sync/          # Canvas integration
-│   ├── types.ts     # Sync type definitions
-│   ├── canvas-sync.ts # Core sync logic
-│   ├── run-sync.ts   # Sync script
-│   ├── providers/    # Data providers
-│   │   ├── canvas.ts   # Canvas API
-│   │   └── website.ts  # Local content
-│   └── transform/    # Content transformation
-│       └── markdown.ts # HTML to Markdown
+│   ├── courses.ts    # Course data
+│   ├── calendar.ts   # Calendar events
+│   └── office-hours.ts # Office hours data
+├── utils/          # Utility functions
 ├── styles/        # Global styles
-└── types/         # TypeScript type definitions
+└── types/         # TypeScript definitions
 ```
 
 ## Content Management
@@ -236,3 +257,10 @@ Theme colors can be modified in two places:
 ## Deployment
 
 The site is automatically deployed to GitHub Pages when changes are pushed to the main branch.
+
+## Acknowledgments
+
+- Next.js team for the amazing framework
+- Tailwind CSS for the utility-first CSS framework
+- Vercel for hosting and deployment
+- Canvas LMS for integration capabilities

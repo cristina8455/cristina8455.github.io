@@ -1,0 +1,24 @@
+/* Add to your existing CSS */
+.prose h1 {
+    @apply text-3xl font-bold mb-8 text-blue-900;
+}
+
+.prose h2 {
+    @apply text-2xl font-semibold mt-8 mb-4 text-blue-800;
+}
+
+.prose h3 {
+    @apply text-xl font-medium mt-6 mb-3 text-blue-700;
+}
+
+.prose a {
+    @apply text-blue-600 hover:text-blue-800 underline;
+}
+
+.prose ul {
+    @apply list-disc pl-6 mb-4;
+}
+
+.prose p {
+    @apply mb-4 leading-relaxed;
+}

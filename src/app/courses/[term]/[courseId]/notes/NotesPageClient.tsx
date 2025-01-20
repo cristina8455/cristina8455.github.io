@@ -20,14 +20,14 @@ interface NotesPageClientProps {
 function generateDaysForWeek(startDate: Date): { date: Date }[] {
     const days = [];
     const currentDate = new Date(startDate);
-    
-    for (let i = 0; i < 5; i++) { // Monday to Friday
+
+    for (let i = 0; i < 4; i++) { // Changed from 5 to 4 days
         days.push({
             date: new Date(currentDate)
         });
         currentDate.setDate(currentDate.getDate() + 1);
     }
-    
+
     return days;
 }
 
@@ -35,34 +35,35 @@ function generateDaysForWeek(startDate: Date): { date: Date }[] {
 function generateWeeks(startDate: Date, numWeeks: number) {
     const weeks = [];
     const currentDate = new Date(startDate);
-    
+
     for (let i = 0; i < numWeeks; i++) {
         const weekStartDate = new Date(currentDate);
         const weekEndDate = new Date(currentDate);
-        weekEndDate.setDate(weekEndDate.getDate() + 4); // Friday
-        
+        weekEndDate.setDate(weekEndDate.getDate() + 3); // Changed from 4 to 3 for Mon-Thu
+
         weeks.push({
             startDate: weekStartDate,
             endDate: weekEndDate,
             days: generateDaysForWeek(weekStartDate)
         });
-        
-        currentDate.setDate(currentDate.getDate() + 7); // Next week
+
+        // Move to next week
+        currentDate.setDate(currentDate.getDate() + 7);
     }
-    
+
     return weeks;
 }
 
-export function NotesPageClient({ 
-    term, 
+export function NotesPageClient({
+    term,
     courseId,
     courseName,
-    courseCode 
+    courseCode
 }: NotesPageClientProps) {
     const [courseContent, setCourseContent] = useState<Record<string, DayContent>>({});
     const [allExpanded, setAllExpanded] = useState(false);
     const weeks = generateWeeks(new Date('2025-01-21'), 16);
-    
+
     const currentWeek = weeks.findIndex(week => {
         const today = new Date();
         return today >= week.startDate && today <= week.endDate;
@@ -136,7 +137,7 @@ export function NotesPageClient({
                         defaultExpanded={allExpanded || index === currentWeek}
                         forceExpanded={allExpanded}
                     >
-                        <DailyGrid 
+                        <DailyGrid
                             days={week.days}
                             courseContent={courseContent}
                         />
