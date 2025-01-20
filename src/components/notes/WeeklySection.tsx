@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface WeeklySectionProps {
