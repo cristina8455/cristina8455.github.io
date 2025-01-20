@@ -69,15 +69,26 @@ export function NotesPageClient({
 }: NotesPageClientProps) {
     const [courseContent, setCourseContent] = useState<Record<string, DayContent>>({});
     const [allExpanded, setAllExpanded] = useState(false);
+    const [currentWeek, setCurrentWeek] = useState<number>(0);
 
-    // Use the term start date instead of hardcoding
+    // Generate weeks
     const weeks = generateWeeks(new Date(termStartDate), 16);
 
-    const currentWeek = weeks.findIndex(week => {
+    // Calculate current week
+    useEffect(() => {
         const today = new Date();
-        return today >= week.startDate && today <= week.endDate;
-    });
+        const currentWeekIndex = weeks.findIndex(week => {
+            const weekStart = new Date(week.startDate);
+            const weekEnd = new Date(week.endDate);
+            return today >= weekStart && today <= weekEnd;
+        });
 
+        // If current date is found in a week, set that week
+        // Otherwise, default to first week
+        setCurrentWeek(currentWeekIndex >= 0 ? currentWeekIndex : 0);
+    }, [weeks]);
+
+    // Fetch course content
     useEffect(() => {
         async function loadContent() {
             if (!term || !courseId) {

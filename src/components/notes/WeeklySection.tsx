@@ -9,67 +9,74 @@ interface WeeklySectionProps {
     weekNumber: number;
     startDate: Date;
     endDate: Date;
-    children: React.ReactNode;
-    isCurrentWeek?: boolean;
+    isCurrentWeek: boolean;
     defaultExpanded?: boolean;
     forceExpanded?: boolean;
+    children: React.ReactNode;
 }
 
 export function WeeklySection({
     weekNumber,
     startDate,
     endDate,
-    children,
-    isCurrentWeek = false,
+    isCurrentWeek,
     defaultExpanded = false,
-    forceExpanded = false
+    forceExpanded = false,
+    children
 }: WeeklySectionProps) {
     const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
     useEffect(() => {
-        if (forceExpanded !== undefined) {
-            setIsExpanded(forceExpanded);
-        }
-    }, [forceExpanded]);
+        setIsExpanded(forceExpanded || defaultExpanded);
+    }, [forceExpanded, defaultExpanded]);
 
-    const formattedDateRange = `${startDate.toLocaleDateString('en-US', {
-        month: 'long',
-        day: 'numeric'
-    })} - ${endDate.toLocaleDateString('en-US', {
-        month: 'long',
-        day: 'numeric'
-    })}`;
+    const formatDateRange = (start: Date, end: Date) => {
+        return `${start.toLocaleDateString('en-US', {
+            month: 'long',
+            day: 'numeric'
+        })} - ${end.toLocaleDateString('en-US', {
+            month: 'long',
+            day: 'numeric'
+        })}`;
+    };
 
     return (
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-            <Button
-                variant="ghost"
-                className={cn(
-                    "w-full justify-between rounded-lg px-4 py-2 text-left font-medium",
-                    !isExpanded && "hover:bg-accent hover:text-accent-foreground",
-                    isExpanded && "bg-accent/50"
-                )}
+        <div className={cn(
+            "rounded-lg border shadow-sm",
+            isCurrentWeek && "border-primary/50 bg-primary/5"
+        )}>
+            <button
                 onClick={() => setIsExpanded(!isExpanded)}
+                className={cn(
+                    "flex w-full items-center justify-between px-4 py-3 rounded-t-lg transition-colors",
+                    isCurrentWeek ? "bg-primary/10 hover:bg-primary/20" : "hover:bg-muted",
+                    isExpanded && "border-b"
+                )}
             >
-                <span className="flex items-center gap-2">
-                    Week {weekNumber}
-                    <span className="text-sm font-normal text-muted-foreground">
-                        ({formattedDateRange})
+                <div className="flex items-center gap-2">
+                    <h3 className={cn(
+                        "font-semibold",
+                        isCurrentWeek && "text-primary"
+                    )}>
+                        Week {weekNumber}
+                    </h3>
+                    <span className="text-sm text-muted-foreground">
+                        ({formatDateRange(startDate, endDate)})
                     </span>
                     {isCurrentWeek && (
-                        <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">
+                        <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">
                             Current Week
                         </span>
                     )}
-                </span>
+                </div>
                 {isExpanded ? (
-                    <ChevronUp className="h-4 w-4" />
+                    <ChevronUp className="h-5 w-5 text-muted-foreground" />
                 ) : (
-                    <ChevronDown className="h-4 w-4" />
+                    <ChevronDown className="h-5 w-5 text-muted-foreground" />
                 )}
-            </Button>
+            </button>
             {isExpanded && (
-                <div className="p-4 pt-2">
+                <div className="p-4">
                     {children}
                 </div>
             )}
