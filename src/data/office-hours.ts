@@ -8,8 +8,8 @@ export const currentTermOfficeHours: TermOfficeHours = {
             day: 'Monday',
             times: [
                 {
-                    start: '10:00 AM',
-                    end: '12:00 PM',
+                    start: '12:00 PM',
+                    end: '1:00 PM',
                     type: 'in-person',
                 }
             ]
@@ -18,8 +18,8 @@ export const currentTermOfficeHours: TermOfficeHours = {
             day: 'Wednesday',
             times: [
                 {
-                    start: '10:30 AM',
-                    end: '11:30 AM',
+                    start: '10:00 AM',
+                    end: '12:00 PM',
                     type: 'in-person',
                 }
             ]
