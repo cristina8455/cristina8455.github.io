@@ -85,13 +85,20 @@ const courseContent: Record<string, DayContent> = {
             }
         ],
         assignments: [
-
+            {
+                id: '8.3-hw',
+                title: 'Aleks HW 3',
+                type: 'homework',
+                dueDate: new Date('2025-01-30'),
+                dueTime: '11:59 PM',
+                link: 'https://www.webassign.net'
+            }
         ]
     },
     '2025-01-30': {
         notes: [
             {
-                title: '',
+                title: 'Section 2.4: Measures of Variation',
                 blank: {
                     url: '/notes/mth122/2.4-blank.pdf',
                     label: 'Blank Notes'
@@ -103,11 +110,45 @@ const courseContent: Record<string, DayContent> = {
             }
         ],
         assignments: [
-
+            {
+                id: 'quiz1',
+                title: 'Quiz 1: Sections 2.1-2.3',
+                type: 'quiz',
+                dueDate: new Date('2025-01-31'),
+                dueTime: '11:59 PM',
+                link: 'https://canvas.college.edu/courses/12345/quizzes'
+            }
         ]
     },
 
-
+    // Week 3 - Exam Week
+    '2025-02-04': {
+        notes: [
+            {
+                title: 'Exam 1 Review',
+                blank: {
+                    url: '/notes/mth122/exam1-review-blank.pdf',
+                    label: 'Review Sheet'
+                },
+                completed: {
+                    url: '/notes/mth122/exam1-review-completed.pdf',
+                    label: 'Completed Review'
+                }
+            }
+        ]
+    },
+    '2025-02-06': {
+        assignments: [
+            {
+                id: 'exam1',
+                title: 'Exam 1: Descriptive Statistics',
+                type: 'exam',
+                dueDate: new Date('2025-02-06'),
+                dueTime: '3:20 PM',
+                description: 'Covers Sections 2.1-2.4. Bring a calculator and pencil.',
+            }
+        ]
+    }
 };
 
 export function getCourseContent(): Record<string, DayContent> {
