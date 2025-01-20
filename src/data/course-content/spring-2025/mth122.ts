@@ -25,9 +25,18 @@ const courseContent: Record<string, DayContent> = {
         ],
         assignments: [
             {
-                id: 'Aleks HW 1',
-                title: 'HW 1',
+                id: 'Quiz 0',
+                title: 'Quiz 0 Intros',
                 type: 'quiz',
+                dueDate: new Date('2025-01-28'),
+                dueTime: '11:59 PM',
+                link: 'https://forms.office.com/r/ube0VdD1sT'
+                
+            }
+            {
+                id: '8.1-hw',
+                title: 'Aleks Homework 1',
+                type: 'homework',
                 dueDate: new Date('2025-01-28'),
                 dueTime: '11:59 PM',
                 link: 'https://clcillinois.instructure.com/courses/49127/external_tools/9470'
@@ -50,12 +59,12 @@ const courseContent: Record<string, DayContent> = {
         ],
         assignments: [
             {
-                id: '2.1-hw',
-                title: 'Section 2.1 Homework',
+                id: '8.2-hw',
+                title: 'Aleks HW 2',
                 type: 'homework',
-                dueDate: new Date('2025-01-24'),
+                dueDate: new Date('2025-01-30'),
                 dueTime: '11:59 PM',
-                link: 'https://www.webassign.net'
+                link: 'https://clcillinois.instructure.com/courses/49127/external_tools/9470'
             }
         ]
     },
@@ -77,8 +86,8 @@ const courseContent: Record<string, DayContent> = {
         ],
         assignments: [
             {
-                id: '2.2-hw',
-                title: 'Section 2.2 Homework',
+                id: '8.3-hw',
+                title: 'Aleks HW 3',
                 type: 'homework',
                 dueDate: new Date('2025-01-30'),
                 dueTime: '11:59 PM',
