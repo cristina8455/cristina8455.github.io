@@ -20,7 +20,7 @@ export async function generateStaticParams() {
 export default async function NotesPage({ params }: PageProps) {
     // Await the params first
     const resolvedParams = await params;
-    
+
     const course = currentCourses.find(
         c => c.term.slug === resolvedParams.term && c.href === resolvedParams.courseId
     );
@@ -31,11 +31,12 @@ export default async function NotesPage({ params }: PageProps) {
     }
 
     return (
-        <NotesPageClient 
+        <NotesPageClient
             term={course.term.slug}
             courseId={course.href}
             courseName={course.title}
             courseCode={course.code}
+            termStartDate={course.term.startDate}
         />
     );
 } 

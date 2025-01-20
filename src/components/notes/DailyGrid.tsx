@@ -12,7 +12,11 @@ interface DailyGridProps {
 }
 
 function formatDateKey(date: Date): string {
-    return date.toISOString().split('T')[0];
+    // Format as YYYY-MM-DD
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
 }
 
 export default function DailyGrid({ days, courseContent }: DailyGridProps) {
@@ -22,6 +26,7 @@ export default function DailyGrid({ days, courseContent }: DailyGridProps) {
             <div className="hidden lg:grid lg:grid-cols-4 gap-4">
                 {days.map((day, index) => {
                     const dateKey = formatDateKey(day.date);
+                    console.log('Date Key:', dateKey, 'Content:', courseContent[dateKey]); // Add this for debugging
                     const content = courseContent[dateKey];
                     const hasExam = content?.assignments?.some(a => a.type === 'exam');
 

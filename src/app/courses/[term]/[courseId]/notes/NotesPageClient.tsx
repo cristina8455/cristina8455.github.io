@@ -14,6 +14,7 @@ interface NotesPageClientProps {
     courseId: string;
     courseName: string;
     courseCode: string;
+    termStartDate: string;
 }
 
 // Helper to generate days for a week
@@ -21,7 +22,7 @@ function generateDaysForWeek(startDate: Date): { date: Date }[] {
     const days = [];
     const currentDate = new Date(startDate);
 
-    for (let i = 0; i < 4; i++) { // Changed from 5 to 4 days
+    for (let i = 0; i < 4; i++) {
         days.push({
             date: new Date(currentDate)
         });
@@ -36,10 +37,15 @@ function generateWeeks(startDate: Date, numWeeks: number) {
     const weeks = [];
     const currentDate = new Date(startDate);
 
+    // Ensure we start on a Monday
+    while (currentDate.getDay() !== 1) { // 1 is Monday
+        currentDate.setDate(currentDate.getDate() - 1);
+    }
+
     for (let i = 0; i < numWeeks; i++) {
         const weekStartDate = new Date(currentDate);
         const weekEndDate = new Date(currentDate);
-        weekEndDate.setDate(weekEndDate.getDate() + 3); // Changed from 4 to 3 for Mon-Thu
+        weekEndDate.setDate(weekEndDate.getDate() + 3); // Mon-Thu
 
         weeks.push({
             startDate: weekStartDate,
@@ -58,11 +64,14 @@ export function NotesPageClient({
     term,
     courseId,
     courseName,
-    courseCode
+    courseCode,
+    termStartDate
 }: NotesPageClientProps) {
     const [courseContent, setCourseContent] = useState<Record<string, DayContent>>({});
     const [allExpanded, setAllExpanded] = useState(false);
-    const weeks = generateWeeks(new Date('2025-01-21'), 16);
+
+    // Use the term start date instead of hardcoding
+    const weeks = generateWeeks(new Date(termStartDate), 16);
 
     const currentWeek = weeks.findIndex(week => {
         const today = new Date();
