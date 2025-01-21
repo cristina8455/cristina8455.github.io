@@ -18,7 +18,7 @@ const courseContent: Record<string, DayContent> = {
                     label: 'Blank Notes'
                 },
                 completed: {
-                    url: '/notes/mth122/8.1-completed.pdf',
+                    //url: '/notes/mth122/8.1-completed.pdf',
                     label: 'Completed Notes'
                 }
             }
@@ -52,7 +52,7 @@ const courseContent: Record<string, DayContent> = {
                     label: 'Blank Notes'
                 },
                 completed: {
-                    url: '/notes/mth122/8.2-completed.pdf',
+                    //url: '/notes/mth122/8.2-completed.pdf',
                     label: 'Completed Notes'
                 }
             }
@@ -79,7 +79,7 @@ const courseContent: Record<string, DayContent> = {
                     label: 'Blank Notes'
                 },
                 completed: {
-                    url: '/notes/mth122/8.3-completed.pdf',
+                    //url: '/notes/mth122/8.3-completed.pdf',
                     label: 'Completed Notes'
                 }
             }
@@ -97,7 +97,7 @@ const courseContent: Record<string, DayContent> = {
                     label: 'Blank Notes'
                 },
                 completed: {
-                    url: '/notes/mth122/2.4-completed.pdf',
+                    //url: '/notes/mth122/2.4-completed.pdf',
                     label: 'Completed Notes'
                 }
             }
