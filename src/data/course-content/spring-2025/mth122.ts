@@ -16,11 +16,11 @@ const courseContent: Record<string, DayContent> = {
                 blank: {
                     url: '/notes/mth122/8.1-blank.pdf',
                     label: 'Blank Notes'
-                },
-                completed: {
+                }//,
+                //completed: {
                     //url: '/notes/mth122/8.1-completed.pdf',
-                    label: 'Completed Notes'
-                }
+                //    label: 'Completed Notes'
+               // }
             }
         ],
         assignments: [
@@ -50,11 +50,11 @@ const courseContent: Record<string, DayContent> = {
                 blank: {
                     url: '/notes/mth122/8.2-blank.pdf',
                     label: 'Blank Notes'
-                },
-                completed: {
+                }//,
+                //completed: {
                     //url: '/notes/mth122/8.2-completed.pdf',
-                    label: 'Completed Notes'
-                }
+                //    label: 'Completed Notes'
+               // }
             }
         ],
         assignments: [
@@ -77,11 +77,11 @@ const courseContent: Record<string, DayContent> = {
                 blank: {
                     url: '/notes/mth122/8.3-blank.pdf',
                     label: 'Blank Notes'
-                },
+                }//,
                 completed: {
                     //url: '/notes/mth122/8.3-completed.pdf',
-                    label: 'Completed Notes'
-                }
+                //    label: 'Completed Notes'
+               // }
             }
         ],
         assignments: [
@@ -96,10 +96,10 @@ const courseContent: Record<string, DayContent> = {
                     url: '/notes/mth122/2.4-blank.pdf',
                     label: 'Blank Notes'
                 },
-                completed: {
+                //completed: {
                     //url: '/notes/mth122/2.4-completed.pdf',
-                    label: 'Completed Notes'
-                }
+                 //   label: 'Completed Notes'
+                //}
             }
         ],
         assignments: [
