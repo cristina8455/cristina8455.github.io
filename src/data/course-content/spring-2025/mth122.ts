@@ -78,7 +78,7 @@ const courseContent: Record<string, DayContent> = {
                     url: '/notes/mth122/8.3-blank.pdf',
                     label: 'Blank Notes'
                 }//,
-                completed: {
+                //completed: {
                     //url: '/notes/mth122/8.3-completed.pdf',
                 //    label: 'Completed Notes'
                // }
