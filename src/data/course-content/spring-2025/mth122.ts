@@ -16,11 +16,11 @@ const courseContent: Record<string, DayContent> = {
                 blank: {
                     url: '/notes/mth122/8.1-blank.pdf',
                     label: 'Blank Notes'
-                }//,
-                //completed: {
-                    //url: '/notes/mth122/8.1-completed.pdf',
-                //    label: 'Completed Notes'
-               // }
+                },
+                completed: {
+                    url: '/notes/mth122/8.1-completed.pdf',
+                    label: 'Completed Notes'
+                }
             }
         ],
         assignments: [
