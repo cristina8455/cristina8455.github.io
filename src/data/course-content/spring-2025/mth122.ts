@@ -42,7 +42,7 @@ const courseContent: Record<string, DayContent> = {
                 //blank: {
                   //  url: '/notes/mth122/8.2-blank.pdf',
                     //label: 'Blank Notes'
-                }//,
+               // }//,
                 //completed: {
                     //url: '/notes/mth122/8.2-completed.pdf',
                 //    label: 'Completed Notes'
