@@ -38,10 +38,10 @@ const courseContent: Record<string, DayContent> = {
     '2025-01-23': {
         notes: [
             {
-                title: 'Section 8.2: Arithmetic Sequences and Series',
-                blank: {
-                    url: '/notes/mth122/8.2-blank.pdf',
-                    label: 'Blank Notes'
+                title: 'Section 8.1: Sequences and Series - continued',
+                //blank: {
+                  //  url: '/notes/mth122/8.2-blank.pdf',
+                    //label: 'Blank Notes'
                 }//,
                 //completed: {
                     //url: '/notes/mth122/8.2-completed.pdf',
