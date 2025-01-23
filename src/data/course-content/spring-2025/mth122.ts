@@ -39,14 +39,14 @@ const courseContent: Record<string, DayContent> = {
         notes: [
             {
                 title: 'Section 8.1: Sequences and Series - continued',
-                //blank: {
-                  //  url: '/notes/mth122/8.2-blank.pdf',
-                    //label: 'Blank Notes'
-               // }//,
-                //completed: {
-                    //url: '/notes/mth122/8.2-completed.pdf',
-                //    label: 'Completed Notes'
-               // }
+                blank: {
+                    url: '/notes/mth122/Day1ActivityMth122Key.pdf',
+                    label: 'Activity Key'
+                },
+                completed: {
+                    url: '/notes/mth122/Day2Mth122.pdf',
+                    label: 'Completed Notes'
+                }
             }
         ],
         assignments: [
@@ -65,7 +65,7 @@ const courseContent: Record<string, DayContent> = {
     '2025-01-28': {
         notes: [
             {
-                title: 'Section 8.3: Geometric Sequences',
+                title: 'Section 8.2: Arithmetic and Geometric Sequences',
                 blank: {
                     url: '/notes/mth122/8.3-blank.pdf',
                     label: 'Blank Notes'
