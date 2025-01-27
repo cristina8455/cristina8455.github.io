@@ -2,15 +2,15 @@ import { DayContent } from '@/types/notes';
 import { generateCourseWeeks } from '@/utils/dateUtils';
 import { currentTerm } from '@/data/courses';
 
-export const COURSE_WEEKS = generateCourseWeeks(currentTerm.startDate, currentTerm.endDate);
+// Define course-specific dates
+const courseStartDate = '2025-02-05'; // Late start date
+const courseEndDate = currentTerm.endDate; // Keep same end date as term
+
+export const COURSE_WEEKS = generateCourseWeeks(courseStartDate, courseEndDate);
 
 export const courseContent: Record<string, DayContent> = {
-    // Week 1
-    '2025-01-20': {
-        isHoliday: true,
-        holidayName: 'MLK Day - No Classes'
-    },
-    '2025-01-21': {
+    // Week 1 (Starting Feb 5)
+    '2025-02-05': {
         notes: [
             {
                 title: 'Course Introduction',
@@ -24,10 +24,6 @@ export const courseContent: Record<string, DayContent> = {
                 blank: {
                     url: '/notes/mth144-202/1.1-blank.pdf',
                     label: 'Blank Notes'
-                },
-                completed: {
-                    url: '/notes/mth144-202/1.1-completed.pdf',
-                    label: 'Completed Notes'
                 }
             }
         ],
@@ -36,13 +32,17 @@ export const courseContent: Record<string, DayContent> = {
                 id: 'syllabus-quiz',
                 title: 'Syllabus Quiz',
                 type: 'quiz',
-                dueDate: new Date('2025-01-24'),
+                dueDate: new Date('2025-02-07'),
                 dueTime: '11:59 PM',
                 link: 'https://canvas.college.edu/courses/12345'
             }
         ]
     },
-    '2025-01-23': {
+    '2025-02-06': {
+        isHoliday: true,
+        holidayName: 'MLK Day - No Classes'
+    },
+    '2025-02-07': {
         notes: [
             {
                 title: 'Section 1.2: Linear Functions',
@@ -61,7 +61,7 @@ export const courseContent: Record<string, DayContent> = {
                 id: '1.1-hw',
                 title: 'Section 1.1 Homework',
                 type: 'homework',
-                dueDate: new Date('2025-01-24'),
+                dueDate: new Date('2025-02-14'),
                 dueTime: '11:59 PM',
                 link: 'https://www.webassign.net'
             }
@@ -69,7 +69,7 @@ export const courseContent: Record<string, DayContent> = {
     },
 
     // Week 2
-    '2025-01-27': {
+    '2025-02-12': {
         notes: [
             {
                 title: 'Section 1.3: Quadratic Functions',
@@ -88,13 +88,13 @@ export const courseContent: Record<string, DayContent> = {
                 id: '1.2-hw',
                 title: 'Section 1.2 Homework',
                 type: 'homework',
-                dueDate: new Date('2025-01-29'),
+                dueDate: new Date('2025-02-14'),
                 dueTime: '11:59 PM',
                 link: 'https://www.webassign.net'
             }
         ]
     },
-    '2025-01-31': {
+    '2025-02-16': {
         notes: [
             {
                 title: 'Section 1.4: Other Common Functions',
@@ -113,7 +113,7 @@ export const courseContent: Record<string, DayContent> = {
                 id: 'quiz1',
                 title: 'Quiz 1: Sections 1.1-1.3',
                 type: 'quiz',
-                dueDate: new Date('2025-01-31'),
+                dueDate: new Date('2025-02-16'),
                 dueTime: '11:59 PM',
                 link: 'https://canvas.college.edu/courses/12345/quizzes'
             }
@@ -121,7 +121,7 @@ export const courseContent: Record<string, DayContent> = {
     },
 
     // Week 3 - Exam Week
-    '2025-02-03': {
+    '2025-02-19': {
         notes: [
             {
                 title: 'Exam 1 Review',
@@ -140,19 +140,19 @@ export const courseContent: Record<string, DayContent> = {
                 id: '1.4-hw',
                 title: 'Section 1.4 Homework',
                 type: 'homework',
-                dueDate: new Date('2025-02-03'),
+                dueDate: new Date('2025-02-19'),
                 dueTime: '11:59 PM',
                 link: 'https://www.webassign.net'
             }
         ]
     },
-    '2025-02-05': {
+    '2025-02-21': {
         assignments: [
             {
                 id: 'exam1',
                 title: 'Exam 1: Chapter 1',
                 type: 'exam',
-                dueDate: new Date('2025-02-05'),
+                dueDate: new Date('2025-02-21'),
                 dueTime: '11:59 PM',
                 description: 'Covers Sections 1.1-1.4. Available on Canvas from 8:00 AM to 11:59 PM.',
                 link: 'https://canvas.college.edu/courses/12345/quizzes'
@@ -161,7 +161,7 @@ export const courseContent: Record<string, DayContent> = {
     },
 
     // Week 4
-    '2025-02-10': {
+    '2025-02-26': {
         notes: [
             {
                 title: 'Section 2.1: Polynomial Functions',

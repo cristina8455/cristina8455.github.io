@@ -40,7 +40,6 @@ export default async function NotesPage({ params }: PageProps) {
             courseId={course.href}
             courseName={course.title}
             courseCode={course.code}
-            termStartDate={course.term.startDate}
             courseWeeks={courseConfig.weeks}
         />
     );

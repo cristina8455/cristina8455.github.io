@@ -14,7 +14,6 @@ interface NotesPageClientProps {
     courseId: string;
     courseName: string;
     courseCode: string;
-    termStartDate: string;
     courseWeeks: WeekRange[];
 }
 
@@ -38,59 +37,69 @@ function generateDaysForWeek(startDate: Date): { date: Date }[] {
     return days;
 }
 
-// Helper to generate weeks for the term
-function generateWeeks(startDate: Date, numWeeks: number) {
-    const weeks = [];
-    const currentDate = new Date(startDate);
-
-    for (let i = 0; i < numWeeks; i++) {
-        const weekStartDate = new Date(currentDate);
-        const weekEndDate = new Date(currentDate);
-        weekEndDate.setDate(weekEndDate.getDate() + 3); // Mon-Thu
-
-        weeks.push({
-            startDate: weekStartDate,
-            endDate: weekEndDate,
-            days: generateDaysForWeek(weekStartDate)
-        });
-
-        // Move to next week
-        currentDate.setDate(currentDate.getDate() + 7);
-    }
-
-    return weeks;
-}
-
 export function NotesPageClient({
     term,
     courseId,
     courseName,
     courseCode,
-    termStartDate,
     courseWeeks
 }: NotesPageClientProps) {
     const [courseContent, setCourseContent] = useState<Record<string, DayContent>>({});
     const [allExpanded, setAllExpanded] = useState(false);
-    const [currentWeek, setCurrentWeek] = useState(0);
+    const [currentWeek, setCurrentWeek] = useState(() => {
+        // Initialize current week based on today's date
+        const today = new Date();
+        const todayStr = today.toISOString().split('T')[0];
+
+        // Check if we're before the course starts
+        if (todayStr < courseWeeks[0]?.start) {
+            return -1; // No current week if course hasn't started
+        }
+
+        // Check if we're after the course ends
+        if (todayStr > courseWeeks[courseWeeks.length - 1]?.end) {
+            return -1; // No current week if course has ended
+        }
+
+        const weekIndex = courseWeeks?.findIndex(week =>
+            todayStr >= week.start && todayStr <= week.end
+        );
+        return weekIndex >= 0 ? weekIndex : -1; // Return -1 if not in any week
+    });
+
+    // Use courseWeeks dates for generating the grid
+    const weeks = courseWeeks.map(week => {
+        const weekStartDate = new Date(week.start);
+        const weekEndDate = new Date(week.end);
+
+        return {
+            startDate: weekStartDate,
+            endDate: weekEndDate,
+            days: generateDaysForWeek(weekStartDate)
+        };
+    });
 
     // Update current week based on date
     useEffect(() => {
         function updateCurrentWeek() {
             const today = new Date();
             const todayStr = today.toISOString().split('T')[0];
+
+            // Check course bounds
+            if (todayStr < courseWeeks[0]?.start ||
+                todayStr > courseWeeks[courseWeeks.length - 1]?.end) {
+                setCurrentWeek(-1);
+                return;
+            }
+
             const weekIndex = courseWeeks?.findIndex(week =>
                 todayStr >= week.start && todayStr <= week.end
             );
-            setCurrentWeek(weekIndex >= 0 ? weekIndex : 0);
+            setCurrentWeek(weekIndex >= 0 ? weekIndex : -1);
         }
 
-        // Update immediately
-        updateCurrentWeek();
-
-        // Then update every hour
+        updateCurrentWeek(); // Run immediately
         const interval = setInterval(updateCurrentWeek, 1000 * 60 * 60);
-
-        // Cleanup interval on unmount
         return () => clearInterval(interval);
     }, [courseWeeks]);
 
@@ -114,9 +123,6 @@ export function NotesPageClient({
         console.error('Course weeks not loaded');
         return null;
     }
-
-    // Generate weeks
-    const weeks = generateWeeks(new Date(termStartDate), courseWeeks.length);
 
     return (
         <div className="max-w-4xl mx-auto space-y-6">
@@ -165,8 +171,8 @@ export function NotesPageClient({
                     <WeeklySection
                         key={index}
                         weekNumber={index + 1}
-                        startDate={new Date(courseWeeks[index]?.start)}
-                        endDate={new Date(courseWeeks[index]?.end)}
+                        startDate={week.startDate}
+                        endDate={week.endDate}
                         isCurrentWeek={currentWeek === index}
                         forceExpanded={allExpanded}
                     >
