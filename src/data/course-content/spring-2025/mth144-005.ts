@@ -14,7 +14,7 @@ const courseContent: Record<string, DayContent> = {
 
         ]
     },
-    '2025-01-23': {
+    '2025-01-22': {
         notes: [
 
         ],
