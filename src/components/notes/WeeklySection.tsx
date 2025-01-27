@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface WeeklySectionProps {
@@ -9,7 +9,6 @@ interface WeeklySectionProps {
     startDate: Date;
     endDate: Date;
     isCurrentWeek: boolean;
-    defaultExpanded?: boolean;
     forceExpanded?: boolean;
     children: React.ReactNode;
 }
@@ -19,66 +18,66 @@ export function WeeklySection({
     startDate,
     endDate,
     isCurrentWeek,
-    defaultExpanded = false,
     forceExpanded = false,
     children
 }: WeeklySectionProps) {
-    const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+    // Initialize state with isCurrentWeek OR forceExpanded
+    const [isExpanded, setIsExpanded] = useState(isCurrentWeek || forceExpanded);
 
+    // Only update when forceExpanded changes, not on initial render
     useEffect(() => {
-        setIsExpanded(forceExpanded || defaultExpanded);
-    }, [forceExpanded, defaultExpanded]);
+        // Skip the initial render to prevent override of isCurrentWeek
+        const handleForceExpanded = () => {
+            setIsExpanded(forceExpanded);
+        };
 
-    const formatDateRange = (start: Date, end: Date) => {
-        return `${start.toLocaleDateString('en-US', {
-            month: 'long',
-            day: 'numeric'
-        })} - ${end.toLocaleDateString('en-US', {
-            month: 'long',
-            day: 'numeric'
-        })}`;
-    };
+        // Only add the event listener if forceExpanded is true
+        if (forceExpanded) {
+            handleForceExpanded();
+        }
+    }, [forceExpanded]);
+
+    const formattedStartDate = startDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric'
+    });
+    const formattedEndDate = endDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric'
+    });
+
+    // Get the end of the week (Sunday)
+    const weekEndDisplay = new Date(endDate);
+    weekEndDisplay.setDate(weekEndDisplay.getDate() + 3); // Add 3 days to Thursday to get to Sunday
 
     return (
-        <div className={cn(
-            "rounded-lg border shadow-sm",
-            isCurrentWeek && "border-primary/50 bg-primary/5"
-        )}>
-            <button
-                onClick={() => setIsExpanded(!isExpanded)}
+        <div className="rounded-lg border bg-card text-card-foreground">
+            <div
                 className={cn(
-                    "flex w-full items-center justify-between px-4 py-3 rounded-t-lg transition-colors",
-                    isCurrentWeek ? "bg-primary/10 hover:bg-primary/20" : "hover:bg-muted",
-                    isExpanded && "border-b"
+                    "flex items-center justify-between p-4 cursor-pointer",
+                    isCurrentWeek && "bg-blue-50 dark:bg-blue-950/10"
                 )}
+                onClick={() => setIsExpanded(!isExpanded)}
             >
-                <div className="flex items-center gap-2">
-                    <h3 className={cn(
-                        "font-semibold",
-                        isCurrentWeek && "text-primary"
-                    )}>
-                        Week {weekNumber}
-                    </h3>
-                    <span className="text-sm text-muted-foreground">
-                        ({formatDateRange(startDate, endDate)})
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                    Week {weekNumber}
+                    <span className="text-sm font-normal text-muted-foreground">
+                        ({formattedStartDate} - {formattedEndDate})
                     </span>
                     {isCurrentWeek && (
-                        <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">
+                        <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded">
                             Current Week
                         </span>
                     )}
-                </div>
-                {isExpanded ? (
-                    <ChevronUp className="h-5 w-5 text-muted-foreground" />
-                ) : (
-                    <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                )}
-            </button>
-            {isExpanded && (
-                <div className="p-4">
-                    {children}
-                </div>
-            )}
+                </h3>
+                <ChevronDown
+                    className={cn(
+                        "h-5 w-5 text-muted-foreground/50 transition-transform",
+                        isExpanded && "transform rotate-180"
+                    )}
+                />
+            </div>
+            {isExpanded && <div className="p-4 pt-0">{children}</div>}
         </div>
     );
 } 

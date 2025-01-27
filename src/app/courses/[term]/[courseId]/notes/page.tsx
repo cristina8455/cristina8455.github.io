@@ -1,5 +1,6 @@
 import { NotesPageClient } from './NotesPageClient';
 import { currentCourses } from '@/data/courses';
+import { getCourseConfig } from '@/lib/course-content';
 
 export const dynamic = 'force-static';
 
@@ -30,6 +31,9 @@ export default async function NotesPage({ params }: PageProps) {
         return <div>Course not found</div>;
     }
 
+    // Get course-specific config (including weeks)
+    const courseConfig = await getCourseConfig(resolvedParams.term, resolvedParams.courseId);
+
     return (
         <NotesPageClient
             term={course.term.slug}
@@ -37,6 +41,7 @@ export default async function NotesPage({ params }: PageProps) {
             courseName={course.title}
             courseCode={course.code}
             termStartDate={course.term.startDate}
+            courseWeeks={courseConfig.weeks}
         />
     );
 } 

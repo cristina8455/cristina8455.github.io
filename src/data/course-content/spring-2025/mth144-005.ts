@@ -1,6 +1,10 @@
 import { DayContent } from '@/types/notes';
+import { generateCourseWeeks } from '@/utils/dateUtils';
+import { currentTerm } from '@/data/courses';
 
-const courseContent: Record<string, DayContent> = {
+export const COURSE_WEEKS = generateCourseWeeks(currentTerm.startDate, currentTerm.endDate);
+
+export const courseContent: Record<string, DayContent> = {
     // Week 1
     '2025-01-20': {
         isHoliday: true,
@@ -12,7 +16,7 @@ const courseContent: Record<string, DayContent> = {
                 title: 'Course Pretest',
                 blank: {
                     url: '/notes/mth144-005/PretestPrecalcBlank.pdf',
-                    label: 'BlankPretest'
+                    label: 'Blank Pretest'
                 }
             },
             {
@@ -35,7 +39,6 @@ const courseContent: Record<string, DayContent> = {
                 dueDate: new Date('2025-01-29'),
                 dueTime: '11:59 PM',
                 link: 'https://webassign.net/'
-
             }
         ]
     },

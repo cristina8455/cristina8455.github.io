@@ -51,4 +51,9 @@ export interface CourseCalendar {
     termStart: Date;
     termEnd: Date;
     weeks: CalendarWeek[];
+}
+
+export interface WeekRange {
+    start: string;  // YYYY-MM-DD
+    end: string;    // YYYY-MM-DD
 } 

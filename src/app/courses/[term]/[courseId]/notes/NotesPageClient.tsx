@@ -7,7 +7,7 @@ import { WeeklySection } from '@/components/notes/WeeklySection';
 import DailyGrid from '@/components/notes/DailyGrid';
 import { Card } from '@/components/ui/card';
 import { getCourseContent } from '@/lib/course-content';
-import type { DayContent } from '@/types/notes';
+import type { DayContent, WeekRange } from '@/types/notes';
 
 interface NotesPageClientProps {
     term: string;
@@ -15,6 +15,7 @@ interface NotesPageClientProps {
     courseName: string;
     courseCode: string;
     termStartDate: string;
+    courseWeeks: WeekRange[];
 }
 
 // Helper to generate days for a week
@@ -22,7 +23,12 @@ function generateDaysForWeek(startDate: Date): { date: Date }[] {
     const days = [];
     const currentDate = new Date(startDate);
 
-    for (let i = 0; i < 4; i++) {
+    // Ensure we start on Monday
+    if (currentDate.getDay() === 0) { // If it's Sunday
+        currentDate.setDate(currentDate.getDate() + 1); // Move to Monday
+    }
+
+    for (let i = 0; i < 4; i++) { // Generate Mon-Thu
         days.push({
             date: new Date(currentDate)
         });
@@ -36,11 +42,6 @@ function generateDaysForWeek(startDate: Date): { date: Date }[] {
 function generateWeeks(startDate: Date, numWeeks: number) {
     const weeks = [];
     const currentDate = new Date(startDate);
-
-    // Ensure we start on a Monday
-    while (currentDate.getDay() !== 1) { // 1 is Monday
-        currentDate.setDate(currentDate.getDate() - 1);
-    }
 
     for (let i = 0; i < numWeeks; i++) {
         const weekStartDate = new Date(currentDate);
@@ -65,44 +66,57 @@ export function NotesPageClient({
     courseId,
     courseName,
     courseCode,
-    termStartDate
+    termStartDate,
+    courseWeeks
 }: NotesPageClientProps) {
     const [courseContent, setCourseContent] = useState<Record<string, DayContent>>({});
     const [allExpanded, setAllExpanded] = useState(false);
-    const [currentWeek, setCurrentWeek] = useState<number>(0);
+    const [currentWeek, setCurrentWeek] = useState(0);
 
-    // Generate weeks
-    const weeks = generateWeeks(new Date(termStartDate), 16);
-
-    // Calculate current week
+    // Update current week based on date
     useEffect(() => {
-        const today = new Date();
-        const currentWeekIndex = weeks.findIndex(week => {
-            const weekStart = new Date(week.startDate);
-            const weekEnd = new Date(week.endDate);
-            return today >= weekStart && today <= weekEnd;
-        });
+        function updateCurrentWeek() {
+            const today = new Date();
+            const todayStr = today.toISOString().split('T')[0];
+            const weekIndex = courseWeeks?.findIndex(week =>
+                todayStr >= week.start && todayStr <= week.end
+            );
+            setCurrentWeek(weekIndex >= 0 ? weekIndex : 0);
+        }
 
-        // If current date is found in a week, set that week
-        // Otherwise, default to first week
-        setCurrentWeek(currentWeekIndex >= 0 ? currentWeekIndex : 0);
-    }, [weeks]);
+        // Update immediately
+        updateCurrentWeek();
+
+        // Then update every hour
+        const interval = setInterval(updateCurrentWeek, 1000 * 60 * 60);
+
+        // Cleanup interval on unmount
+        return () => clearInterval(interval);
+    }, [courseWeeks]);
 
     // Fetch course content
     useEffect(() => {
         async function loadContent() {
-            if (!term || !courseId) {
-                console.error('Missing required props:', { term, courseId });
-                return;
+            if (!term || !courseId) return;
+            try {
+                const content = await getCourseContent(term, courseId);
+                setCourseContent(content || {});
+            } catch (error) {
+                console.error('Error loading course content:', error);
+                setCourseContent({});
             }
-
-            console.log('Loading content for:', term, courseId);
-            const content = await getCourseContent(term, courseId);
-            console.log('Loaded content:', content);
-            setCourseContent(content);
         }
         loadContent();
     }, [term, courseId]);
+
+    // Add null check for courseWeeks after hooks
+    if (!courseWeeks) {
+        console.error('Course weeks not loaded');
+        return null;
+    }
+
+    // Generate weeks
+    const weeks = generateWeeks(new Date(termStartDate), courseWeeks.length);
 
     return (
         <div className="max-w-4xl mx-auto space-y-6">
@@ -151,15 +165,16 @@ export function NotesPageClient({
                     <WeeklySection
                         key={index}
                         weekNumber={index + 1}
-                        startDate={week.startDate}
-                        endDate={week.endDate}
-                        isCurrentWeek={index === currentWeek}
-                        defaultExpanded={allExpanded || index === currentWeek}
+                        startDate={new Date(courseWeeks[index]?.start)}
+                        endDate={new Date(courseWeeks[index]?.end)}
+                        isCurrentWeek={currentWeek === index}
                         forceExpanded={allExpanded}
                     >
                         <DailyGrid
                             days={week.days}
                             courseContent={courseContent}
+                            courseWeeks={courseWeeks}
+                            currentWeek={currentWeek + 1}
                         />
                     </WeeklySection>
                 ))}

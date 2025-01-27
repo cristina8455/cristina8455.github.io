@@ -9,8 +9,8 @@ export type Institution = {
 export type Term = {
     name: string;       // e.g., "Spring 2025"
     slug: string;       // e.g., "spring-2025"
-    startDate: string;  // Used for sorting
-    endDate: string;    // Used for sorting
+    startDate: string;  // Used for sorting and as semester start (e.g., "2025-01-20")
+    endDate: string;    // Used for sorting and as semester end (e.g., "2025-05-16")
 };
 
 // Base interface for all course types
@@ -110,7 +110,7 @@ const createTerm = (name: string): Term => {
 export const currentTerm: Term = {
     name: "Spring 2025",
     slug: "spring-2025",
-    startDate: "2025-01-21",
+    startDate: "2025-01-20",
     endDate: "2025-05-16"
 };
 

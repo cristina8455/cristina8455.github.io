@@ -1,6 +1,6 @@
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { DayContent } from '@/types/notes';
+import { DayContent, WeekRange } from '@/types/notes';
 
 interface DailyGridProps {
     days: {
@@ -9,6 +9,8 @@ interface DailyGridProps {
         holidayName?: string;
     }[];
     courseContent: Record<string, DayContent>;
+    courseWeeks: WeekRange[];
+    currentWeek: number;
 }
 
 function formatDateKey(date: Date): string {
@@ -28,20 +30,56 @@ function formatDueDate(date: Date): string {
     });
 }
 
-export default function DailyGrid({ days, courseContent }: DailyGridProps) {
+export default function DailyGrid({ days, courseContent = {}, courseWeeks, currentWeek }: DailyGridProps) {
+    console.log('DailyGrid render:', {
+        days: days.map(d => d.date.toISOString().split('T')[0]),
+        courseContent,
+        currentWeek,
+        courseWeeks
+    });
+
+    const isCurrentWeek = (date: Date) => {
+        if (!currentWeek || !courseWeeks[currentWeek - 1]) {
+            console.log('Invalid current week or course weeks:', { currentWeek, courseWeeks });
+            return false;
+        }
+
+        const dateStr = date.toISOString().split('T')[0];
+        const weekRange = courseWeeks[currentWeek - 1];
+
+        console.log('Checking if date is in current week:', {
+            dateStr,
+            weekRange,
+            currentWeek
+        });
+
+        const isInWeek = dateStr >= weekRange.start && dateStr <= weekRange.end;
+        console.log('Is in current week:', isInWeek);
+
+        return isInWeek;
+    };
+
+    // Add null check for days
+    if (!days) {
+        console.error('Days array is undefined');
+        return null;
+    }
+
     return (
         <div>
             {/* Desktop View (4 columns) - Hidden on smaller screens */}
             <div className="hidden lg:grid lg:grid-cols-4 gap-4">
                 {days.map((day, index) => {
                     const dateKey = formatDateKey(day.date);
-                    console.log('Date Key:', dateKey, 'Content:', courseContent[dateKey]); // Add this for debugging
-                    const content = courseContent[dateKey];
+                    // Provide empty default if courseContent[dateKey] is undefined
+                    const content = courseContent?.[dateKey] || null;
                     const hasExam = content?.assignments?.some(a => a.type === 'exam');
+                    const isThisWeek = isCurrentWeek(day.date);
 
                     return (
                         <Card key={index} className={cn(
                             "flex flex-col border-2",
+                            isThisWeek && "ring-2 ring-blue-400 dark:ring-blue-600",
                             content?.isHoliday && "bg-purple-50 border-purple-200 dark:bg-purple-950/10 dark:border-purple-900",
                             hasExam && "bg-red-50 border-red-200 dark:bg-red-950/10 dark:border-red-900",
                             (!content?.isHoliday && !hasExam) && "border-border"
@@ -148,10 +186,12 @@ export default function DailyGrid({ days, courseContent }: DailyGridProps) {
                     const dateKey = formatDateKey(day.date);
                     const content = courseContent[dateKey];
                     const hasExam = content?.assignments?.some(a => a.type === 'exam');
+                    const isThisWeek = isCurrentWeek(day.date);
 
                     return (
                         <Card key={index} className={cn(
                             "border-2",
+                            isThisWeek && "ring-2 ring-blue-400 dark:ring-blue-600",
                             content?.isHoliday && "bg-purple-50 border-purple-200 dark:bg-purple-950/10 dark:border-purple-900",
                             hasExam && "bg-red-50 border-red-200 dark:bg-red-950/10 dark:border-red-900",
                             (!content?.isHoliday && !hasExam) && "border-border"
@@ -258,10 +298,12 @@ export default function DailyGrid({ days, courseContent }: DailyGridProps) {
                     const dateKey = formatDateKey(day.date);
                     const content = courseContent[dateKey];
                     const hasExam = content?.assignments?.some(a => a.type === 'exam');
+                    const isThisWeek = isCurrentWeek(day.date);
 
                     return (
                         <Card key={index} className={cn(
                             "border-2",
+                            isThisWeek && "ring-2 ring-blue-400 dark:ring-blue-600",
                             content?.isHoliday && "bg-purple-50 border-purple-200 dark:bg-purple-950/10 dark:border-purple-900",
                             hasExam && "bg-red-50 border-red-200 dark:bg-red-950/10 dark:border-red-900",
                             (!content?.isHoliday && !hasExam) && "border-border"

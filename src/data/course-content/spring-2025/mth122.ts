@@ -1,6 +1,10 @@
 import { DayContent } from '@/types/notes';
+import { generateCourseWeeks } from '@/utils/dateUtils';
+import { currentTerm } from '@/data/courses';
 
-const courseContent: Record<string, DayContent> = {
+export const COURSE_WEEKS = generateCourseWeeks(currentTerm.startDate, currentTerm.endDate);
+
+export const courseContent: Record<string, DayContent> = {
     // Week 1
     '2025-01-20': {
         isHoliday: true,
@@ -69,11 +73,11 @@ const courseContent: Record<string, DayContent> = {
                 blank: {
                     url: '/notes/mth122/8.3-blank.pdf',
                     label: 'Blank Notes'
-                }//,
+                },
                 //completed: {
-                    //url: '/notes/mth122/8.3-completed.pdf',
+                //url: '/notes/mth122/8.3-completed.pdf',
                 //    label: 'Completed Notes'
-               // }
+                // }
             }
         ],
         assignments: [
@@ -82,17 +86,17 @@ const courseContent: Record<string, DayContent> = {
     },
     '2025-01-30': {
         notes: [
-            {
-                title: '',
-                blank: {
-                    url: '/notes/mth122/2.4-blank.pdf',
-                    label: 'Blank Notes'
-                },
-                //completed: {
-                    //url: '/notes/mth122/2.4-completed.pdf',
-                 //   label: 'Completed Notes'
-                //}
-            }
+            //{
+            //   title: '',
+            //    blank: {
+            //        url: '/notes/mth122/2.4-blank.pdf',
+            //        label: 'Blank Notes'
+            //    },
+            //completed: {
+            //url: '/notes/mth122/2.4-completed.pdf',
+            //   label: 'Completed Notes'
+            //}
+            //}
         ],
         assignments: [
 
@@ -102,6 +106,7 @@ const courseContent: Record<string, DayContent> = {
 
 };
 
-export function getCourseContent(): Record<string, DayContent> {
-    return courseContent;
-} 
+// This function can be removed since we're exporting courseContent directly
+// export function getCourseContent(): Record<string, DayContent> {
+//     return courseContent;
+// } 

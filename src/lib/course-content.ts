@@ -1,13 +1,30 @@
-import { DayContent } from '@/types/notes';
+import type { DayContent, WeekRange } from '@/types/notes';
 
-export async function getCourseContent(term: string, courseId: string): Promise<Record<string, DayContent>> {
+export async function getCourseConfig(term: string, courseId: string) {
     try {
-        console.log(`Attempting to load content for ${term}/${courseId}`);
-        
-        const contentModule = await import(`@/data/course-content/${term}/${courseId}`);
-        return contentModule.getCourseContent();
+        // Log the path we're trying to import
+        console.log('Importing from:', `@/data/course-content/${term}/${courseId}`);
+
+        const courseModule = await import(`@/data/course-content/${term}/${courseId}`);
+
+        // Log what we got from the import
+        console.log('Loaded course module:', {
+            weeks: courseModule.COURSE_WEEKS,
+            content: courseModule.courseContent
+        });
+
+        return {
+            weeks: courseModule.COURSE_WEEKS as WeekRange[],
+            content: courseModule.courseContent as Record<string, DayContent>
+        };
     } catch (error) {
-        console.error(`Error loading content for ${term}/${courseId}:`, error);
-        return {};
+        console.error('Error loading course config:', error);
+        throw error;
     }
+}
+
+export async function getCourseContent(term: string, courseId: string) {
+    const config = await getCourseConfig(term, courseId);
+    console.log('getCourseContent returning:', config.content);
+    return config.content;
 } 
