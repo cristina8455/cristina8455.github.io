@@ -52,19 +52,25 @@ export const courseContent: Record<string, DayContent> = {
                     url: '/notes/mth144-005/Day2NotesPrecalcBlank.pdf',
                     label: 'Blank Notes'
                 },
-                 completed: {
-                     url: '/notes/mth144-005/Day2PrecalcCompletedNotes.pdf',
-                     label: 'Completed Notes'
-                 }
+                completed: {
+                    url: '/notes/mth144-005/Day2PrecalcCompletedNotes.pdf',
+                    label: 'Completed Notes'
+                }
             },
-                 Practice: {
-                     url: '/notes/mth144-005/PrecalcDomainFunctions.pdf',
-                     label: 'Domains Practice'
-                 },
-                 Practice: {
-                     url: '/notes/mth144-005/PrecalcPiecewiseFunctions.pdf',
-                     label: 'Piecewise Practice'
-                 }
+            {
+                title: 'Domains Practice',
+                blank: {
+                    url: '/notes/mth144-005/PrecalcDomainFunctions.pdf',
+                    label: 'Domains Practice'
+                }
+            },
+            {
+                title: 'Piecewise Practice',
+                blank: {
+                    url: '/notes/mth144-005/PrecalcPiecewiseFunctions.pdf',
+                    label: 'Piecewise Practice'
+                }
+            }
         ],
         assignments: [
             {
