@@ -69,15 +69,15 @@ export const courseContent: Record<string, DayContent> = {
     '2025-01-28': {
         notes: [
             {
-                title: 'Section 8.2: Arithmetic and Geometric Sequences',
+                title: 'Section 8.2: Arithmetic Sequences',
                 blank: {
-                    url: '/notes/mth122/8.3-blank.pdf',
+                    url: '/notes/mth122/Day3NotesMth122Blank.pdf',
                     label: 'Blank Notes'
                 },
-                //completed: {
-                //url: '/notes/mth122/8.3-completed.pdf',
-                //    label: 'Completed Notes'
-                // }
+                completed: {
+                url: '/notes/mth122/Day3NotesMth122.pdf',
+                    label: 'Completed Notes'
+                 }
             }
         ],
         assignments: [
