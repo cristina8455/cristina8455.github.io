@@ -51,15 +51,30 @@ export const courseContent: Record<string, DayContent> = {
                 blank: {
                     url: '/notes/mth144-005/Day2NotesPrecalcBlank.pdf',
                     label: 'Blank Notes'
-                }//,
-                // completed: {
-                //     url: '/notes/mth144-005/Day2NotesPrecalcCompleted.pdf',
-                //     label: 'Completed Notes'
-                // }
-            }
+                },
+                 completed: {
+                     url: '/notes/mth144-005/Day2PrecalcCompletedNotes.pdf',
+                     label: 'Completed Notes'
+                 }
+            },
+                 Practice: {
+                     url: '/notes/mth144-005/PrecalcDomainFunctions.pdf',
+                     label: 'Domains Practice'
+                 },
+                 Practice: {
+                     url: '/notes/mth144-005/PrecalcPiecewiseFunctions.pdf',
+                     label: 'Piecewise Practice'
+                 }
         ],
         assignments: [
-
+            {
+                id: 'HW2',
+                title: 'Homework 2 - WebAssign',
+                type: 'homework',
+                dueDate: new Date('2025-02-3'),
+                dueTime: '11:59 PM',
+                link: 'https://webassign.net/'
+            }
         ]
     },
     '2025-01-31': {
