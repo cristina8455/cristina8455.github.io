@@ -83,9 +83,19 @@ export const courseContent: Record<string, DayContent> = {
             }
         ]
     },
-    '2025-01-31': {
+    '2025-01-29': {
         notes: [
-
+         {
+                title: 'Day 3 Notes',
+                blank: {
+                    url: '/notes/mth144-005/Day3PrecalcNotesBlank.pdf',
+                    label: 'Blank Notes'
+                }//,
+                //completed: {
+                  //  url: '/notes/mth144-005/Day2PrecalcCompletedNotes.pdf',
+                   // label: 'Completed Notes'
+               // }
+            }
         ],
         assignments: [
 
