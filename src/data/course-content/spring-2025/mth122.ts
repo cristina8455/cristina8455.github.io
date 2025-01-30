@@ -93,17 +93,17 @@ export const courseContent: Record<string, DayContent> = {
     },
     '2025-01-30': {
         notes: [
-            //{
-            //   title: '',
-            //    blank: {
-            //        url: '/notes/mth122/2.4-blank.pdf',
-            //        label: 'Blank Notes'
-            //    },
-            //completed: {
-            //url: '/notes/mth122/2.4-completed.pdf',
-            //   label: 'Completed Notes'
-            //}
-            //}
+            {
+               title: 'Section 8.3 Geometric Sequences and 2.1 Coordinate Plane',
+                blank: {
+                    url: '/notes/mth122/Da4CABlank.pdf',
+                    label: 'Blank Notes'
+                },
+            completed: {
+            url: '/notes/mth122/Da4CACompleted.pdf',
+               label: 'Completed Notes'
+            }
+            }
         ],
         assignments: [
 
