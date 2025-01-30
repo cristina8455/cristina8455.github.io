@@ -66,343 +66,134 @@ export default function DailyGrid({ days, courseContent = {}, courseWeeks, curre
     }
 
     return (
-        <div>
-            {/* Desktop View (4 columns) - Hidden on smaller screens */}
-            <div className="hidden lg:grid lg:grid-cols-4 gap-4">
-                {days.map((day, index) => {
-                    const dateKey = formatDateKey(day.date);
-                    // Provide empty default if courseContent[dateKey] is undefined
-                    const content = courseContent?.[dateKey] || null;
-                    const hasExam = content?.assignments?.some(a => a.type === 'exam');
-                    const isThisWeek = isCurrentWeek(day.date);
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {days.map((day, index) => {
+                const dateKey = formatDateKey(day.date);
+                const content = courseContent?.[dateKey] || null;
+                const hasExam = content?.assignments?.some(a => a.type === 'exam');
+                const isThisWeek = isCurrentWeek(day.date);
 
-                    return (
-                        <Card key={index} className={cn(
-                            "flex flex-col border-2",
-                            isThisWeek && "ring-2 ring-blue-400 dark:ring-blue-600",
-                            content?.isHoliday && "bg-purple-50 border-purple-200 dark:bg-purple-950/10 dark:border-purple-900",
-                            hasExam && "bg-red-50 border-red-200 dark:bg-red-950/10 dark:border-red-900",
-                            (!content?.isHoliday && !hasExam) && "border-border"
+                return (
+                    <Card key={index} className={cn(
+                        "flex flex-col border-2",
+                        isThisWeek && "ring-2 ring-blue-400 dark:ring-blue-600",
+                        content?.isHoliday && "bg-purple-50 border-purple-200 dark:bg-purple-950/10 dark:border-purple-900",
+                        hasExam && "bg-red-50 border-red-200 dark:bg-red-950/10 dark:border-red-900",
+                        (!content?.isHoliday && !hasExam) && "border-border"
+                    )}>
+                        <div className={cn(
+                            "p-3 border-b",
+                            content?.isHoliday && "bg-purple-100/50 dark:bg-purple-950/20",
+                            hasExam && "bg-red-100/50 dark:bg-red-950/20",
+                            (!content?.isHoliday && !hasExam) && "bg-muted/50"
                         )}>
-                            <div className={cn(
-                                "p-3 border-b",
-                                content?.isHoliday && "bg-purple-100/50 dark:bg-purple-950/20",
-                                hasExam && "bg-red-100/50 dark:bg-red-950/20",
-                                (!content?.isHoliday && !hasExam) && "bg-muted/50"
-                            )}>
-                                <div className="font-medium">
-                                    {day.date.toLocaleDateString('en-US', { weekday: 'long' })}
-                                </div>
-                                <div className="text-sm text-muted-foreground">
-                                    {day.date.toLocaleDateString('en-US', {
-                                        month: 'short',
-                                        day: 'numeric'
-                                    })}
-                                </div>
+                            <div className="font-medium">
+                                {day.date.toLocaleDateString('en-US', { weekday: 'long' })}
                             </div>
-                            <div className="p-3 flex-1 space-y-3 text-sm">
-                                {content?.isHoliday ? (
-                                    <p className="italic text-muted-foreground">
-                                        {content.holidayName || 'No Classes'}
-                                    </p>
-                                ) : content ? (
-                                    <>
-                                        {content.notes && content.notes.length > 0 && (
-                                            <div className="space-y-2">
-                                                {content.notes.map((note, idx) => (
-                                                    <div key={idx} className="space-y-1">
+                            <div className="text-sm text-muted-foreground">
+                                {day.date.toLocaleDateString('en-US', {
+                                    month: 'short',
+                                    day: 'numeric'
+                                })}
+                            </div>
+                        </div>
+                        <div className="p-3 flex-1 space-y-3 text-sm">
+                            {content?.isHoliday ? (
+                                <p className="italic text-muted-foreground">
+                                    {content.holidayName || 'No Classes'}
+                                </p>
+                            ) : content ? (
+                                <>
+                                    {/* Notes Section */}
+                                    {content.notes && content.notes.length > 0 && (
+                                        <div className="space-y-2">
+                                            {content.notes.map((note, idx) => (
+                                                <div key={idx} className="space-y-1">
+                                                    <h4 className="font-medium text-primary">
+                                                        {note.title}
+                                                    </h4>
+                                                    <div className="flex gap-2 text-xs">
+                                                        {note.blank && (
+                                                            <a href={note.blank.url}
+                                                                className="text-blue-500 hover:underline">
+                                                                {note.blank.label || 'Blank Notes'}
+                                                            </a>
+                                                        )}
+                                                        {note.completed && (
+                                                            <a href={note.completed.url}
+                                                                className="text-blue-500 hover:underline">
+                                                                {note.completed.label || 'Completed Notes'}
+                                                            </a>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    {/* Resources Section */}
+                                    {content.resources && content.resources.length > 0 && (
+                                        <div className="space-y-2">
+                                            <div className="flex flex-wrap gap-2">
+                                                {content.resources.map((resource, idx) => (
+                                                    <div key={idx} className="min-w-[120px]">
                                                         <h4 className="font-medium text-primary">
-                                                            {note.title}
+                                                            {resource.title}
                                                         </h4>
-                                                        <div className="flex gap-2 text-xs">
-                                                            {note.blank && (
-                                                                <a href={note.blank.url}
-                                                                    className="text-blue-500 hover:underline">
-                                                                    {note.blank.label || 'Blank Notes'}
-                                                                </a>
-                                                            )}
-                                                            {note.completed && (
-                                                                <a href={note.completed.url}
-                                                                    className="text-blue-500 hover:underline">
-                                                                    {note.completed.label || 'Completed Notes'}
-                                                                </a>
-                                                            )}
+                                                        <div className="text-xs">
+                                                            <a href={resource.url}
+                                                                className="text-blue-500 hover:underline">
+                                                                {resource.label || 'View Resource'}
+                                                            </a>
                                                         </div>
                                                     </div>
                                                 ))}
                                             </div>
-                                        )}
+                                        </div>
+                                    )}
 
-                                        {content.assignments && content.assignments.length > 0 && (
-                                            <div className="space-y-2 pt-2 border-t border-border/50">
-                                                {content.assignments.map((assignment, idx) => (
-                                                    <div key={idx} className="space-y-1">
-                                                        <div className="flex items-start gap-2">
-                                                            <span className={cn(
-                                                                "mt-0.5 w-2 h-2 rounded-full",
-                                                                assignment.type === 'homework' && "bg-blue-500",
-                                                                assignment.type === 'quiz' && "bg-green-500",
-                                                                assignment.type === 'exam' && "bg-red-500"
-                                                            )} />
-                                                            <div>
-                                                                <h4 className="font-medium">
-                                                                    {assignment.link ? (
-                                                                        <a
-                                                                            href={assignment.link}
-                                                                            target="_blank"
-                                                                            rel="noopener noreferrer"
-                                                                            className="text-primary hover:underline"
-                                                                        >
-                                                                            {assignment.title}
-                                                                        </a>
-                                                                    ) : (
-                                                                        assignment.title
-                                                                    )}
-                                                                </h4>
-                                                                <p className="text-xs text-muted-foreground">
-                                                                    Due: {formatDueDate(assignment.dueDate)}
-                                                                </p>
-                                                            </div>
+                                    {/* Assignments Section */}
+                                    {content.assignments && content.assignments.length > 0 && (
+                                        <div className="space-y-2 pt-2 border-t border-border/50">
+                                            {content.assignments.map((assignment, idx) => (
+                                                <div key={idx} className="space-y-1">
+                                                    <div className="flex items-start gap-2">
+                                                        <span className={cn(
+                                                            "mt-0.5 w-2 h-2 rounded-full",
+                                                            assignment.type === 'homework' && "bg-blue-500",
+                                                            assignment.type === 'quiz' && "bg-green-500",
+                                                            assignment.type === 'exam' && "bg-red-500"
+                                                        )} />
+                                                        <div>
+                                                            <h4 className="font-medium">
+                                                                {assignment.link ? (
+                                                                    <a
+                                                                        href={assignment.link}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        className="text-primary hover:underline"
+                                                                    >
+                                                                        {assignment.title}
+                                                                    </a>
+                                                                ) : (
+                                                                    assignment.title
+                                                                )}
+                                                            </h4>
+                                                            <p className="text-xs text-muted-foreground">
+                                                                Due: {formatDueDate(assignment.dueDate)}
+                                                            </p>
                                                         </div>
                                                     </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </>
-                                ) : (
-                                    <p className="text-xs text-muted-foreground">
-                                        No content for this date
-                                    </p>
-                                )}
-                            </div>
-                        </Card>
-                    );
-                })}
-            </div>
-
-            {/* Tablet View (2x2 grid) - Hidden on mobile and desktop */}
-            <div className="hidden sm:grid sm:grid-cols-2 lg:hidden gap-4">
-                {days.map((day, index) => {
-                    const dateKey = formatDateKey(day.date);
-                    const content = courseContent[dateKey];
-                    const hasExam = content?.assignments?.some(a => a.type === 'exam');
-                    const isThisWeek = isCurrentWeek(day.date);
-
-                    return (
-                        <Card key={index} className={cn(
-                            "border-2",
-                            isThisWeek && "ring-2 ring-blue-400 dark:ring-blue-600",
-                            content?.isHoliday && "bg-purple-50 border-purple-200 dark:bg-purple-950/10 dark:border-purple-900",
-                            hasExam && "bg-red-50 border-red-200 dark:bg-red-950/10 dark:border-red-900",
-                            (!content?.isHoliday && !hasExam) && "border-border"
-                        )}>
-                            <div className={cn(
-                                "p-3 border-b",
-                                content?.isHoliday && "bg-purple-100/50 dark:bg-purple-950/20",
-                                hasExam && "bg-red-100/50 dark:bg-red-950/20",
-                                (!content?.isHoliday && !hasExam) && "bg-muted/50"
-                            )}>
-                                <div className="font-medium">
-                                    {day.date.toLocaleDateString('en-US', { weekday: 'long' })}
-                                </div>
-                                <div className="text-sm text-muted-foreground">
-                                    {day.date.toLocaleDateString('en-US', {
-                                        month: 'short',
-                                        day: 'numeric'
-                                    })}
-                                </div>
-                            </div>
-                            <div className="p-3 flex-1 space-y-3 text-sm">
-                                {content?.isHoliday ? (
-                                    <p className="italic text-muted-foreground">
-                                        {content.holidayName || 'No Classes'}
-                                    </p>
-                                ) : content ? (
-                                    <>
-                                        {content.notes && content.notes.length > 0 && (
-                                            <div className="space-y-2">
-                                                {content.notes.map((note, idx) => (
-                                                    <div key={idx} className="space-y-1">
-                                                        <h4 className="font-medium text-primary">
-                                                            {note.title}
-                                                        </h4>
-                                                        <div className="flex gap-2 text-xs">
-                                                            {note.blank && (
-                                                                <a href={note.blank.url}
-                                                                    className="text-blue-500 hover:underline">
-                                                                    {note.blank.label || 'Blank Notes'}
-                                                                </a>
-                                                            )}
-                                                            {note.completed && (
-                                                                <a href={note.completed.url}
-                                                                    className="text-blue-500 hover:underline">
-                                                                    {note.completed.label || 'Completed Notes'}
-                                                                </a>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-
-                                        {content.assignments && content.assignments.length > 0 && (
-                                            <div className="space-y-2 pt-2 border-t border-border/50">
-                                                {content.assignments.map((assignment, idx) => (
-                                                    <div key={idx} className="space-y-1">
-                                                        <div className="flex items-start gap-2">
-                                                            <span className={cn(
-                                                                "mt-0.5 w-2 h-2 rounded-full",
-                                                                assignment.type === 'homework' && "bg-blue-500",
-                                                                assignment.type === 'quiz' && "bg-green-500",
-                                                                assignment.type === 'exam' && "bg-red-500"
-                                                            )} />
-                                                            <div>
-                                                                <h4 className="font-medium">
-                                                                    {assignment.link ? (
-                                                                        <a
-                                                                            href={assignment.link}
-                                                                            target="_blank"
-                                                                            rel="noopener noreferrer"
-                                                                            className="text-primary hover:underline"
-                                                                        >
-                                                                            {assignment.title}
-                                                                        </a>
-                                                                    ) : (
-                                                                        assignment.title
-                                                                    )}
-                                                                </h4>
-                                                                <p className="text-xs text-muted-foreground">
-                                                                    Due: {formatDueDate(assignment.dueDate)}
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </>
-                                ) : (
-                                    <p className="text-xs text-muted-foreground">
-                                        No content for this date
-                                    </p>
-                                )}
-                            </div>
-                        </Card>
-                    );
-                })}
-            </div>
-
-            {/* Mobile View (single column) - Hidden on larger screens */}
-            <div className="sm:hidden space-y-4">
-                {days.map((day, index) => {
-                    const dateKey = formatDateKey(day.date);
-                    const content = courseContent[dateKey];
-                    const hasExam = content?.assignments?.some(a => a.type === 'exam');
-                    const isThisWeek = isCurrentWeek(day.date);
-
-                    return (
-                        <Card key={index} className={cn(
-                            "border-2",
-                            isThisWeek && "ring-2 ring-blue-400 dark:ring-blue-600",
-                            content?.isHoliday && "bg-purple-50 border-purple-200 dark:bg-purple-950/10 dark:border-purple-900",
-                            hasExam && "bg-red-50 border-red-200 dark:bg-red-950/10 dark:border-red-900",
-                            (!content?.isHoliday && !hasExam) && "border-border"
-                        )}>
-                            <div className={cn(
-                                "p-3 border-b",
-                                content?.isHoliday && "bg-purple-100/50 dark:bg-purple-950/20",
-                                hasExam && "bg-red-100/50 dark:bg-red-950/20",
-                                (!content?.isHoliday && !hasExam) && "bg-muted/50"
-                            )}>
-                                <div className="font-medium">
-                                    {day.date.toLocaleDateString('en-US', { weekday: 'long' })}
-                                </div>
-                                <div className="text-sm text-muted-foreground">
-                                    {day.date.toLocaleDateString('en-US', {
-                                        month: 'short',
-                                        day: 'numeric'
-                                    })}
-                                </div>
-                            </div>
-                            <div className="p-3 flex-1 space-y-3 text-sm">
-                                {content?.isHoliday ? (
-                                    <p className="italic text-muted-foreground">
-                                        {content.holidayName || 'No Classes'}
-                                    </p>
-                                ) : content ? (
-                                    <>
-                                        {content.notes && content.notes.length > 0 && (
-                                            <div className="space-y-2">
-                                                {content.notes.map((note, idx) => (
-                                                    <div key={idx} className="space-y-1">
-                                                        <h4 className="font-medium text-primary">
-                                                            {note.title}
-                                                        </h4>
-                                                        <div className="flex gap-2 text-xs">
-                                                            {note.blank && (
-                                                                <a href={note.blank.url}
-                                                                    className="text-blue-500 hover:underline">
-                                                                    {note.blank.label || 'Blank Notes'}
-                                                                </a>
-                                                            )}
-                                                            {note.completed && (
-                                                                <a href={note.completed.url}
-                                                                    className="text-blue-500 hover:underline">
-                                                                    {note.completed.label || 'Completed Notes'}
-                                                                </a>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-
-                                        {content.assignments && content.assignments.length > 0 && (
-                                            <div className="space-y-2 pt-2 border-t border-border/50">
-                                                {content.assignments.map((assignment, idx) => (
-                                                    <div key={idx} className="space-y-1">
-                                                        <div className="flex items-start gap-2">
-                                                            <span className={cn(
-                                                                "mt-0.5 w-2 h-2 rounded-full",
-                                                                assignment.type === 'homework' && "bg-blue-500",
-                                                                assignment.type === 'quiz' && "bg-green-500",
-                                                                assignment.type === 'exam' && "bg-red-500"
-                                                            )} />
-                                                            <div>
-                                                                <h4 className="font-medium">
-                                                                    {assignment.link ? (
-                                                                        <a
-                                                                            href={assignment.link}
-                                                                            target="_blank"
-                                                                            rel="noopener noreferrer"
-                                                                            className="text-primary hover:underline"
-                                                                        >
-                                                                            {assignment.title}
-                                                                        </a>
-                                                                    ) : (
-                                                                        assignment.title
-                                                                    )}
-                                                                </h4>
-                                                                <p className="text-xs text-muted-foreground">
-                                                                    Due: {formatDueDate(assignment.dueDate)}
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </>
-                                ) : (
-                                    <p className="text-xs text-muted-foreground">
-                                        No content for this date
-                                    </p>
-                                )}
-                            </div>
-                        </Card>
-                    );
-                })}
-            </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </>
+                            ) : null}
+                        </div>
+                    </Card>
+                );
+            })}
         </div>
     );
 } 

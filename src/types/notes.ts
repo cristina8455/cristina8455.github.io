@@ -3,7 +3,7 @@ export type AssignmentType = 'homework' | 'quiz' | 'exam' | 'note' | 'resource' 
 export interface Assignment {
     id: string;
     title: string;
-    type: 'homework' | 'quiz' | 'exam';
+    type: AssignmentType;
     dueDate: Date;
     dueTime?: string;
     link?: string;
@@ -23,11 +23,18 @@ export type NoteType = {
     description?: string;
 };
 
+export interface Resource {
+    title: string;
+    url: string;
+    label?: string;
+}
+
 export interface DayContent {
-    notes?: NoteType[];
-    assignments?: Assignment[];
     isHoliday?: boolean;
     holidayName?: string;
+    notes?: NoteType[];
+    resources?: Resource[];
+    assignments?: Assignment[];
 }
 
 export interface WeekData {
