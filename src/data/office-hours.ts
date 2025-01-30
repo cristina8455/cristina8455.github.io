@@ -42,13 +42,13 @@ export const currentTermOfficeHours: TermOfficeHours = {
     },
     virtualMeetingInfo: {
         platform: 'Zoom',
-        // link: 'https://zoom.us/j/your-meeting-id',  // To be added
+        link: 'https://clcillinois.zoom.us/j/93962968272?pwd=kea7Ih0Q46dl7xpnAqEmT6kAfjQqhb.1',  // To be added
         // meetingId: 'your-meeting-id',              // To be added
         // password: 'if-required',                   // Optional
     },
     additionalNotes: [
         'Additional appointments available by email request.',
-        'Virtual office hours use Zoom - link will be provided in Canvas.',
+        'Virtual office hours use Zoom at the link above.',
     ]
 };
 
