@@ -90,11 +90,11 @@ export const courseContent: Record<string, DayContent> = {
                 blank: {
                     url: '/notes/mth144-005/Day3PrecalcNotesBlank.pdf',
                     label: 'Blank Notes'
-                }//,
-                //completed: {
-                  //  url: '/notes/mth144-005/Day2PrecalcCompletedNotes.pdf',
-                   // label: 'Completed Notes'
-               // }
+                },
+                completed: {
+                    url: '/notes/mth144-005/Day3PrecalcCompleted.pdf',
+                    label: 'Completed Notes'
+                }
             }
         ],
         assignments: [
