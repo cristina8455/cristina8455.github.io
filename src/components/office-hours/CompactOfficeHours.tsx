@@ -1,8 +1,9 @@
 // src/components/office-hours/CompactOfficeHours.tsx
 import React from 'react';
-import { MapPin, Video, Clock } from 'lucide-react';
+import { MapPin, Video, Clock, ExternalLink } from 'lucide-react';
 import { currentTermOfficeHours } from '@/data/office-hours';
 import type { OfficeHoursTimeSlot } from '@/types/office-hours';
+import { Button } from '@/components/ui/button';
 
 interface CompactOfficeHoursProps {
     showFullLocationDetails?: boolean;
@@ -76,9 +77,22 @@ export function CompactOfficeHours({ showFullLocationDetails = false }: CompactO
                             <Video size={16} className="text-primary" />
                             Virtual Hours
                         </h4>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-muted-foreground mb-2">
                             Join via {virtualMeetingInfo.platform} during scheduled virtual hours
                         </p>
+                        {virtualMeetingInfo.link && (
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                asChild
+                                className="gap-2"
+                            >
+                                <a href={virtualMeetingInfo.link} target="_blank" rel="noopener noreferrer">
+                                    Join Zoom Meeting
+                                    <ExternalLink size={14} />
+                                </a>
+                            </Button>
+                        )}
                     </div>
                 )}
             </div>
