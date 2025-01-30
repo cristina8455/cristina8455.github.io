@@ -106,7 +106,14 @@ export const courseContent: Record<string, DayContent> = {
             }
         ],
         assignments: [
-
+                {
+                id: '8.3-hw',
+                title: 'Aleks Homework 3',
+                type: 'homework',
+                dueDate: new Date('2025-02-6'),
+                dueTime: '11:59 PM',
+                link: 'https://clcillinois.instructure.com/courses/49127/external_tools/9470'
+            }
         ]
     },
 
