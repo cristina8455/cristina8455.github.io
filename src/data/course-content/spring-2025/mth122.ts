@@ -75,13 +75,13 @@ export const courseContent: Record<string, DayContent> = {
                     label: 'Blank Notes'
                 },
                 completed: {
-                url: '/notes/mth122/Day3NotesMth122.pdf',
+                    url: '/notes/mth122/Day3NotesMth122.pdf',
                     label: 'Completed Notes'
-                 }
+                }
             }
         ],
         assignments: [
-                {
+            {
                 id: '8.2-hw',
                 title: 'Aleks Homework 2',
                 type: 'homework',
@@ -94,23 +94,26 @@ export const courseContent: Record<string, DayContent> = {
     '2025-01-30': {
         notes: [
             {
-               title: 'Section 8.3 Geometric Sequences and 2.1 Coordinate Plane',
+                title: 'Section 8.3 Geometric Sequences and 2.1 Coordinate Plane',
                 blank: {
                     url: '/notes/mth122/Da4CABlank.pdf',
                     label: 'Blank Notes'
                 },
-            completed: {
-            url: '/notes/mth122/Da4CACompleted.pdf',
-               label: 'Completed Notes'
+                completed: {
+                    url: '/notes/mth122/Da4CACompleted.pdf',
+                    label: 'Completed Notes'
+                }
             },
-            Quiz 1 Key: {
-            url: '/notes/mth122/Group_Quiz_1_Mth_122Key.pdf',
-               label: 'Quiz1 Key'
-            }
+            {
+                title: 'Quiz 1 Key',
+                blank: {
+                    url: '/notes/mth122/Group_Quiz_1_Mth_122Key.pdf',
+                    label: 'Quiz 1 Key'
+                }
             }
         ],
         assignments: [
-                {
+            {
                 id: '8.3-hw',
                 title: 'Aleks Homework 3',
                 type: 'homework',
