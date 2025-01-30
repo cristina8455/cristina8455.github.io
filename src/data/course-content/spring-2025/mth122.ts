@@ -102,6 +102,10 @@ export const courseContent: Record<string, DayContent> = {
             completed: {
             url: '/notes/mth122/Da4CACompleted.pdf',
                label: 'Completed Notes'
+            },
+            Quiz 1 Key: {
+            url: '/notes/mth122/Group_Quiz_1_Mth_122Key.pdf',
+               label: 'Quiz1 Key'
             }
             }
         ],
