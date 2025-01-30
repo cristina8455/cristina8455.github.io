@@ -98,7 +98,14 @@ export const courseContent: Record<string, DayContent> = {
             }
         ],
         assignments: [
-
+            {
+                id: 'HW3',
+                title: 'Homework 3 - WebAssign',
+                type: 'homework',
+                dueDate: new Date('2025-02-5'),
+                dueTime: '11:59 PM',
+                link: 'https://webassign.net/'
+            }
         ]
     },
 
