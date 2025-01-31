@@ -153,21 +153,21 @@ export const courseContent: Record<string, DayContent> = {
         notes: [
             {
                 title: 'Section 7.1 The Ellipse',
-                blank: {
-                    url: '/notes/mth122/Day6CABlank.pdf',
-                    label: 'Blank Notes'
-                },
-                completed: {
-                    url: '/notes/mth122/Day6CACompleted.pdf',
-                    label: 'Completed Notes'
-                }
+               // blank: {
+                    //url: '/notes/mth122/Day6CABlank.pdf',
+                   // label: 'Blank Notes'
+               // },
+               // completed: {
+                  //  url: '/notes/mth122/Day6CACompleted.pdf',
+                   // label: 'Completed Notes'
+                //}
             }
         ],
         resources: [
             {
-                title: 'Quiz 1 Key',
-                url: '/notes/mth122/Group_Quiz_1_Mth_122Key.pdf',
-                label: 'View Key'
+               // title: 'Quiz 1 Key',
+               // url: '/notes/mth122/Group_Quiz_1_Mth_122Key.pdf',
+              //  label: 'View Key'
             }
         ],
         assignments: [
