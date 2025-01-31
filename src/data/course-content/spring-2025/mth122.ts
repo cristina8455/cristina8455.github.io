@@ -123,7 +123,64 @@ export const courseContent: Record<string, DayContent> = {
             }
         ]
     },
-
+ // Week 3
+    '2025-02-04': {
+        notes: [
+            {
+                title: 'Section 2.2: Circles and Review',
+                blank: {
+                    url: '/notes/mth122/Day5NotesMth122Blank.pdf',
+                    label: 'Blank Notes'
+                },
+                completed: {
+                    url: '/notes/mth122/Day5NotesMth122.pdf',
+                    label: 'Completed Notes'
+                }
+            }
+        ],
+        assignments: [
+            {
+                id: '2.2-hw',
+                title: 'Aleks Homework 4',
+                type: 'homework',
+                dueDate: new Date('2025-02-11'),
+                dueTime: '11:59 PM',
+                link: 'https://clcillinois.instructure.com/courses/49127/external_tools/9470'
+            }
+        ]
+    },
+    '2025-02-06': {
+        notes: [
+            {
+                title: 'Section 7.1 The Ellipse',
+                blank: {
+                    url: '/notes/mth122/Day6CABlank.pdf',
+                    label: 'Blank Notes'
+                },
+                completed: {
+                    url: '/notes/mth122/Day6CACompleted.pdf',
+                    label: 'Completed Notes'
+                }
+            }
+        ],
+        resources: [
+            {
+                title: 'Quiz 1 Key',
+                url: '/notes/mth122/Group_Quiz_1_Mth_122Key.pdf',
+                label: 'View Key'
+            }
+        ],
+        assignments: [
+            {
+                id: '8.3-hw',
+                title: 'Aleks Homework 5',
+                type: 'homework',
+                dueDate: new Date('2025-02-13'),
+                dueTime: '11:59 PM',
+                link: 'https://clcillinois.instructure.com/courses/49127/external_tools/9470'
+            }
+        ]
+    },
 
 };
 
