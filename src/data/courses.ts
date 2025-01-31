@@ -155,7 +155,7 @@ export const currentCourses: DetailedCourse[] = [
         crn: "6439",
         schedule: "Online Asynchronous",
         location: "ONLINE",
-        dates: "Jan 21, 2025 - May 16, 2025",
+        dates: "Feb 3, 2025 - May 16, 2025",
         href: "mth144-202",
         isOnline: true,
         hasContent: true
