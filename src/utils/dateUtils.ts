@@ -35,11 +35,14 @@ export function generateCourseWeeks(semesterStart: string, semesterEnd: string):
     while (currentDate <= endDate) {
         const weekStart = new Date(currentDate);
         const weekEnd = new Date(currentDate);
-        weekEnd.setDate(weekEnd.getDate() + 3); // Add 3 days to get to Thursday
+        weekEnd.setDate(weekEnd.getDate() + 6); // Add 6 days to include the full week
+
+        // Ensure we don't go past the semester end date
+        const actualWeekEnd = new Date(Math.min(weekEnd.getTime(), endDate.getTime()));
 
         weeks.push({
             start: weekStart.toISOString().split('T')[0],
-            end: weekEnd.toISOString().split('T')[0]
+            end: actualWeekEnd.toISOString().split('T')[0]
         });
 
         // Move to next week's Monday

@@ -38,10 +38,6 @@ export const courseContent: Record<string, DayContent> = {
             }
         ]
     },
-    '2025-02-06': {
-        isHoliday: true,
-        holidayName: 'MLK Day - No Classes'
-    },
     '2025-02-07': {
         notes: [
             {
