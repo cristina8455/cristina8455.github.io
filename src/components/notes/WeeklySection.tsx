@@ -32,10 +32,7 @@ export function WeeklySection({
         setIsExpanded(forceExpanded);
     }, [forceExpanded]);
 
-    // Get the end of the week (Sunday) for the week label
-    const weekEndDisplay = new Date(endDate);
-    weekEndDisplay.setDate(weekEndDisplay.getDate() + 3); // Add 3 days to get to Sunday
-
+    // Use the provided endDate directly since it now correctly represents Sunday
     const formatDate = (date: Date) => {
         return date.toLocaleDateString('en-US', {
             month: 'short',
@@ -55,7 +52,7 @@ export function WeeklySection({
                 <h3 className="text-lg font-semibold flex items-center gap-2">
                     Week {weekNumber}
                     <span className="text-sm font-normal text-muted-foreground">
-                        ({formatDate(startDate)} - {formatDate(weekEndDisplay)})
+                        ({formatDate(startDate)} - {formatDate(endDate)})
                     </span>
                     {isCurrentWeek && (
                         <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded">
