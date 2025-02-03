@@ -23,7 +23,7 @@ const resourceSections: ResourceSection[] = [
             {
                 title: 'TI-84 Calculator Guide',
                 description: 'Official Texas Instruments guide for TI-84 Plus CE calculators, including tutorials and examples',
-                link: 'https://education.ti.com/en/guidebook/details/en/97C07288457D4C0F918F4D9B78CAA422/84p-ce-guidebook'
+                link: 'https://education.ti.com/en/guidebook/details/en/3BBF042421644CE2AF713484B03A8B11/ti-84-plus-ce'
             },
             {
                 title: 'Canvas Student Guide',
