@@ -85,7 +85,7 @@ export const courseContent: Record<string, DayContent> = {
     },
     '2025-01-29': {
         notes: [
-         {
+            {
                 title: 'Day 3 Notes',
                 blank: {
                     url: '/notes/mth144-005/Day3PrecalcNotesBlank.pdf',
@@ -112,10 +112,34 @@ export const courseContent: Record<string, DayContent> = {
     // Week 3
     '2025-02-03': {
         notes: [
-
+            {
+                title: 'Day 4 Notes',
+                blank: {
+                    url: '/notes/mth144-005/Day4PrecalcBlank.pdf',
+                    label: 'Blank Notes'
+                },
+                completed: {
+                    url: '/notes/mth144-005/Day4PrecalcCompleted.pdf',
+                    label: 'Completed Notes'
+                }
+            }
+        ],
+        resources: [
+            {
+                title: 'Algebra Quick Reference',
+                url: '/notes/mth144-005/AlgebraQuickRefrence.pdf',
+                label: 'Download pdf'
+            }
         ],
         assignments: [
-
+            {
+                id: 'HW4',
+                title: 'Homework 4 - WebAssign',
+                type: 'homework',
+                dueDate: new Date('2025-02-10'),
+                dueTime: '11:59 PM',
+                link: 'https://webassign.net/'
+            }
         ]
     },
     '2025-02-05': {

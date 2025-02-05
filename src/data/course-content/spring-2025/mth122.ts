@@ -128,14 +128,21 @@ export const courseContent: Record<string, DayContent> = {
         notes: [
             {
                 title: 'Section 2.2: Circles and Review',
-                //blank: {
-                // url: '/notes/mth122/Day5NotesMth122Blank.pdf',
-                // label: 'Blank Notes'
-                //},
-                //completed: {
-                // url: '/notes/mth122/Day5NotesMth122.pdf',
-                // label: 'Completed Notes'
-                //}
+                blank: {
+                    url: '/notes/mth122/Day5AlgebraNotesBlank.pdf',
+                    label: 'Blank Notes'
+                },
+                completed: {
+                    url: '/notes/mth122/Day5CollegeAlgebraNotesCompleted.pdf',
+                    label: 'Completed Notes'
+                }
+            }
+        ],
+        resources: [
+            {
+                title: 'Algebra Quick Reference',
+                url: '/notes/mth122/AlgebraQuickRefrence.pdf',
+                label: 'Download pdf'
             }
         ],
         assignments: [

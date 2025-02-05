@@ -23,7 +23,10 @@ function formatDateKey(date: Date): string {
 
 // Helper function to format the due date
 function formatDueDate(date: Date): string {
-    return date.toLocaleDateString('en-US', {
+    // Add the time to the date if it's not already there
+    const dueDate = new Date(`${date.toISOString().split('T')[0]}T23:59:00`);
+
+    return dueDate.toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
         year: 'numeric'
