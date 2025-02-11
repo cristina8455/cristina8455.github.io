@@ -143,8 +143,53 @@ export const courseContent: Record<string, DayContent> = {
         ]
     },
     '2025-02-05': {
+        notes: [
+            {
+                title: 'Day 5 Notes',
+                blank: {
+                    url: '/notes/mth144-005/Day5PrecalcBlank.pdf',
+                    label: 'Blank Notes'
+                },
+                completed: {
+                    url: '/notes/mth144-005/Day5NotesPrecalcCompleted.pdf',
+                    label: 'Completed Notes'
+                }
+            }
+        ],
         assignments: [
-
+            {
+                id: 'HW5',
+                title: 'Homework 5 - WebAssign',
+                type: 'homework',
+                dueDate: new Date('2025-02-12'),
+                dueTime: '11:59 PM',
+                link: 'https://webassign.net/'
+            }
+        ]
+    },
+    '2025-02-10': {
+        notes: [
+            {
+                title: 'Day 6 Notes',
+                blank: {
+                    url: '/notes/mth144-005/Day_6_Notes_Precalc_Blank.pdf',
+                    label: 'Blank Notes'
+                },
+                completed: {
+                    url: '/notes/mth144-005/Day_6_Notes_Precalc_Completed.pdf',
+                    label: 'Completed Notes'
+                }
+            }
+        ],
+        assignments: [
+            {
+                id: 'practice-exam-1',
+                title: 'Practice Problems Exam 1 - WebAssign',
+                type: 'homework',
+                dueDate: new Date('2025-02-12'),
+                dueTime: '11:59 PM',
+                link: 'https://webassign.net/'
+            }
         ]
     }
 };
