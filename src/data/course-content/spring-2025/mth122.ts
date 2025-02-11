@@ -159,23 +159,23 @@ export const courseContent: Record<string, DayContent> = {
     '2025-02-06': {
         notes: [
             {
-                title: 'Section 7.1 The Ellipse',
-                // blank: {
-                //url: '/notes/mth122/Day6CABlank.pdf',
-                // label: 'Blank Notes'
-                // },
-                // completed: {
-                //  url: '/notes/mth122/Day6CACompleted.pdf',
-                // label: 'Completed Notes'
-                //}
+                title: 'Cricles',
+                 blank: {
+                url: '/notes/mth122/Day5AlgebraNotesBlank.pdf',
+                 label: 'Blank Notes'
+                 },
+                 completed: {
+                  url: '/notes/mth122/Day6NOtesAlgebraCompleted.pdf',
+                 label: 'Completed Notes'
+                }
             }
         ],
         resources: [
-            //{
-            // title: 'Quiz 1 Key',
-            // url: '/notes/mth122/Group_Quiz_1_Mth_122Key.pdf',
-            //  label: 'View Key'
-            //}
+            {
+             title: 'Practice Exam 1 Key',
+             url: '/notes/mth122/Practice Exam 1 Mth 122WithKey.pdf',
+              label: 'View Key'
+            }
         ],
         assignments: [
             {
