@@ -171,8 +171,11 @@ export async function getNotesAndAssignmentsPage(courseId: number): Promise<Canv
   const pages = await getCoursePages(courseId);
 
   // Look for common naming patterns (case-insensitive)
+  // Priority order: most specific first
   const patterns = [
-    /notes\s*(and|&)\s*assignments/i,
+    /notes\s*(and|&)\s*assignments/i,       // Current naming: "Notes and Assignments"
+    /calendar\s*(and|&)\s*daily\s*notes/i,  // Fall 2024 naming: "Calendar and Daily Notes"
+    /daily\s*notes\s*(and|&)\s*calendar/i,  // Alternate ordering
     /course\s*calendar/i,
     /schedule/i,
   ];

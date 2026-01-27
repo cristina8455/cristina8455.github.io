@@ -66,6 +66,35 @@ function transformCourse(canvas: CanvasCourse): Course {
 }
 
 /**
+ * Check if a term is Fall 2024 or later
+ * Terms before Fall 2024 should be excluded (before she started teaching here)
+ */
+function isTermFall2024OrLater(termName: string): boolean {
+  // Parse term like "Fall 2024", "Spring 2025", etc.
+  const match = termName.match(/(Spring|Summer|Fall)\s*(\d{4})/i);
+  if (!match) return false;
+
+  const season = match[1].toLowerCase();
+  const year = parseInt(match[2]);
+
+  // Fall 2024 is the cutoff
+  if (year > 2024) return true;
+  if (year === 2024 && season === 'fall') return true;
+  return false;
+}
+
+/**
+ * Check if a course should be excluded
+ */
+function shouldExcludeCourse(course: Course): boolean {
+  // Exclude "Math Dept Resources" or similar
+  if (/math\s*dept\s*resources/i.test(course.name)) return true;
+  if (/math\s*dept\s*resources/i.test(course.code)) return true;
+
+  return false;
+}
+
+/**
  * Get all courses, transformed and sorted
  */
 export async function getAllCourses(): Promise<Course[]> {
@@ -74,6 +103,8 @@ export async function getAllCourses(): Promise<Course[]> {
   return canvasCourses
     .map(transformCourse)
     .filter(c => c.term !== null && c.term.name.trim() !== '') // Only include courses with real terms
+    .filter(c => c.term !== null && isTermFall2024OrLater(c.term.name)) // Only Fall 2024 and later
+    .filter(c => !shouldExcludeCourse(c)) // Exclude specific courses
     .sort((a, b) => {
       // Sort by term ID descending (newest first)
       if (a.term && b.term) {
