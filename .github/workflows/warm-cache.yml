@@ -1,0 +1,41 @@
+name: Warm Cache
+
+on:
+  # Run daily at 6 AM UTC (midnight CST)
+  schedule:
+    - cron: '0 6 * * *'
+
+  # Also run after Vercel deploys (via webhook)
+  repository_dispatch:
+    types: [vercel-deploy]
+
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  warm-cache:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Warm homepage
+        run: |
+          echo "Warming cache for main pages..."
+
+          # Set your production URL here after Vercel deployment
+          BASE_URL="${{ vars.SITE_URL || 'https://your-site.vercel.app' }}"
+
+          # Warm main pages
+          curl -s -o /dev/null -w "Homepage: %{http_code} (%{time_total}s)\n" "$BASE_URL/"
+          curl -s -o /dev/null -w "Courses: %{http_code} (%{time_total}s)\n" "$BASE_URL/courses"
+
+          echo "Cache warming complete!"
+
+      - name: Warm course pages
+        run: |
+          BASE_URL="${{ vars.SITE_URL || 'https://your-site.vercel.app' }}"
+
+          # Warm current semester course pages
+          # These URLs will be populated after we know the actual course slugs
+          # For now, warming the main /courses page will trigger Canvas API calls
+          # which caches the course list
+
+          echo "Current courses cached via /courses page"
