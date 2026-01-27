@@ -53,7 +53,6 @@ export default async function CoursesPage() {
               <TermSection
                 key={term.slug}
                 termName={term.name}
-                termSlug={term.slug}
                 courses={coursesByTerm.get(term.slug) || []}
               />
             ))}
@@ -71,7 +70,6 @@ export default async function CoursesPage() {
               <TermSection
                 key={term.slug}
                 termName={term.name}
-                termSlug={term.slug}
                 courses={coursesByTerm.get(term.slug) || []}
                 collapsed
               />
@@ -85,12 +83,10 @@ export default async function CoursesPage() {
 
 function TermSection({
   termName,
-  termSlug,
   courses,
   collapsed = false,
 }: {
   termName: string;
-  termSlug: string;
   courses: Course[];
   collapsed?: boolean;
 }) {
