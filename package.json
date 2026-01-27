@@ -3,12 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "sync-canvas": "tsx src/sync/run-sync.ts",
-    "build-with-sync": "npm run sync-canvas && next build"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.2",
