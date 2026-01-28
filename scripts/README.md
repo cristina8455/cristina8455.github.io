@@ -19,9 +19,28 @@ To get a Canvas API token:
 
 ## Scripts
 
+### bulk-update-links.ts
+
+Updates all links on Notes & Assignments pages and Day pages for configured courses to open in new tabs.
+
+```bash
+# Preview changes
+npx tsx scripts/bulk-update-links.ts --dry-run
+
+# Apply changes with backup
+npx tsx scripts/bulk-update-links.ts --backup
+
+# Apply without backup
+npx tsx scripts/bulk-update-links.ts
+```
+
+Backups are saved to `backups/<course-id>-<course-code>/` as HTML files.
+
+To configure courses, edit the `COURSES` array in the script.
+
 ### update-canvas-links.ts
 
-Updates all links on a Canvas page to open in new tabs (`target="_blank"`).
+Updates all links on a single Canvas page to open in new tabs (`target="_blank"`).
 
 ```bash
 # Preview changes (dry run)

@@ -32,7 +32,8 @@ Next.js on Vercel (read-only mirror)
 - `src/app/resources/page.tsx` - Student resources (static)
 
 ### Scripts
-- `scripts/update-canvas-links.ts` - Update links on Canvas pages to open in new tabs
+- `scripts/bulk-update-links.ts` - Bulk update links across multiple courses/pages
+- `scripts/update-canvas-links.ts` - Update links on a single Canvas page
 - `scripts/analyze-links.ts` - Analyze links on a Canvas page
 
 ## Environment Variables

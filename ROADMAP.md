@@ -30,8 +30,10 @@ Transformed the site from manually-maintained content to automatic Canvas sync.
 
 ### Phase 3: Canvas API Tooling (Jan 2026)
 
-- Script to update page links to open in new tabs
+- Script to update page links to open in new tabs (single page)
+- Bulk script to update all courses/pages at once (with backup option)
 - Script to analyze links on a page
+- Updated 71 pages / 170 links across Spring 2026 courses
 - Foundation for more Canvas automation
 
 ---
@@ -40,8 +42,8 @@ Transformed the site from manually-maintained content to automatic Canvas sync.
 
 ### Near-term (Low Effort, High Value)
 
-**1. Bulk link updates**
-Extend `update-canvas-links.ts` to update all courses at once, or all pages within a course.
+**1. ~~Bulk link updates~~** ✅ Completed
+`bulk-update-links.ts` updates all Notes & Assignments + Day pages across configured courses.
 
 **2. Course template script**
 Script to set up a new course from a template:
