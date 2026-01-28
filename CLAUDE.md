@@ -80,6 +80,17 @@ Defined in `src/lib/courses.ts`:
 - GitHub Action warms cache daily at 6 AM UTC
 - Manual revalidation: redeploy on Vercel or wait for cache expiry
 
+## Canvas HTML Restrictions
+
+When creating/updating Canvas pages via API, content is sanitized. Key points:
+- No JavaScript or event handlers
+- No `<style>` blocks (inline `style=""` works)
+- No form elements
+- `<details>`/`<summary>` work for collapsible sections
+- Flexbox and Grid CSS work
+
+See [docs/canvas-html-restrictions.md](docs/canvas-html-restrictions.md) for full reference.
+
 ## Tech Stack
 
 - Next.js 16 (App Router, Turbopack)

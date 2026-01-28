@@ -85,3 +85,5 @@ The pattern for Canvas API scripts:
 4. Update content: `PUT /api/v1/courses/:id/pages/:url` with `{ wiki_page: { body: newHtml } }`
 
 See Canvas API docs: https://canvas.instructure.com/doc/api/
+
+**Important:** Canvas sanitizes HTML content. See [docs/canvas-html-restrictions.md](../docs/canvas-html-restrictions.md) for what's allowed/blocked.

@@ -99,6 +99,10 @@ These were considered but intentionally deferred:
 
 ---
 
+## Reference Documentation
+
+- [docs/canvas-html-restrictions.md](docs/canvas-html-restrictions.md) - What HTML/CSS Canvas allows and blocks. Consult before building Canvas page automation.
+
 ## Technical Debt
 
 Minor items to address when convenient:
