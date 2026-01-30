@@ -16,26 +16,35 @@ jobs:
   warm-cache:
     runs-on: ubuntu-latest
     steps:
-      - name: Warm homepage
+      - name: Warm static pages
         run: |
-          echo "Warming cache for main pages..."
+          echo "Warming cache for static pages..."
+          BASE_URL="${{ vars.SITE_URL || 'https://cristina8455.vercel.app' }}"
 
-          # Set your production URL here after Vercel deployment
-          BASE_URL="${{ vars.SITE_URL || 'https://your-site.vercel.app' }}"
-
-          # Warm main pages
           curl -s -o /dev/null -w "Homepage: %{http_code} (%{time_total}s)\n" "$BASE_URL/"
           curl -s -o /dev/null -w "Courses: %{http_code} (%{time_total}s)\n" "$BASE_URL/courses"
+          curl -s -o /dev/null -w "Office Hours: %{http_code} (%{time_total}s)\n" "$BASE_URL/office-hours"
+          curl -s -o /dev/null -w "Resources: %{http_code} (%{time_total}s)\n" "$BASE_URL/resources"
+          curl -s -o /dev/null -w "About: %{http_code} (%{time_total}s)\n" "$BASE_URL/about"
 
-          echo "Cache warming complete!"
-
-      - name: Warm course pages
+      - name: Warm Spring 2026 course pages
         run: |
-          BASE_URL="${{ vars.SITE_URL || 'https://your-site.vercel.app' }}"
+          BASE_URL="${{ vars.SITE_URL || 'https://cristina8455.vercel.app' }}"
+          echo ""
+          echo "Warming Spring 2026 course pages..."
 
-          # Warm current semester course pages
-          # These URLs will be populated after we know the actual course slugs
-          # For now, warming the main /courses page will trigger Canvas API calls
-          # which caches the course list
+          # MTH122-008
+          curl -s -o /dev/null -w "MTH122-008: %{http_code} (%{time_total}s)\n" "$BASE_URL/courses/spring-2026/mth122-008"
+          curl -s -o /dev/null -w "MTH122-008 Syllabus: %{http_code} (%{time_total}s)\n" "$BASE_URL/courses/spring-2026/mth122-008/syllabus"
 
-          echo "Current courses cached via /courses page"
+          # MTH122-202
+          curl -s -o /dev/null -w "MTH122-202: %{http_code} (%{time_total}s)\n" "$BASE_URL/courses/spring-2026/mth122-202"
+          curl -s -o /dev/null -w "MTH122-202 Syllabus: %{http_code} (%{time_total}s)\n" "$BASE_URL/courses/spring-2026/mth122-202/syllabus"
+
+          # MTH140-201
+          curl -s -o /dev/null -w "MTH140-201: %{http_code} (%{time_total}s)\n" "$BASE_URL/courses/spring-2026/mth140-201"
+          curl -s -o /dev/null -w "MTH140-201 Syllabus: %{http_code} (%{time_total}s)\n" "$BASE_URL/courses/spring-2026/mth140-201/syllabus"
+
+          echo ""
+          echo "Cache warming complete!"
+          echo "Note: Individual Day pages are warmed on-demand when visited."
