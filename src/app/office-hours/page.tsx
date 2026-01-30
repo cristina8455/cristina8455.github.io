@@ -1,19 +1,19 @@
 // src/app/office-hours/page.tsx
 import { Clock, AlertCircle, MapPin, Video, ExternalLink } from 'lucide-react';
-import { getOfficeHours, getTeacherCourses } from '@/lib/canvas-api';
+import { getOfficeHours } from '@/lib/canvas-api';
+import { getCurrentCourses } from '@/lib/courses';
 
 // ISR: revalidate every 24 hours
 export const revalidate = 86400;
 
 export default async function OfficeHoursPage() {
-  // Get current courses to fetch office hours from
-  const courses = await getTeacherCourses();
-  const availableCourses = courses.filter(c => c.workflow_state === 'available');
+  // Get current courses (filtered: Fall 2024+, excludes Math Dept Resources)
+  const courses = await getCurrentCourses();
 
   // Try multiple courses to find the most complete office hours data
   // (some courses may have the Zoom link, others may not)
   let officeHours = null;
-  for (const course of availableCourses.slice(0, 3)) {
+  for (const course of courses.slice(0, 3)) {
     const hours = await getOfficeHours(course.id);
     if (hours && hours.schedule.length > 0) {
       // Prefer data with a Zoom link
