@@ -36,6 +36,14 @@ Transformed the site from manually-maintained content to automatic Canvas sync.
 - Updated 71 pages / 170 links across Spring 2026 courses
 - Foundation for more Canvas automation
 
+### Phase 4: Office Hours Sync (Jan 2026)
+
+- Auto-parse office hours from Canvas course front page
+- Extract schedule (virtual/in-person), room, Zoom link
+- Tries multiple courses to find most complete data
+- Graceful fallback if parsing fails
+- Removed static office hours data files
+
 ---
 
 ## Next Steps

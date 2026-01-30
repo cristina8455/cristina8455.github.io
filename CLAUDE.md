@@ -28,7 +28,7 @@ Next.js on Vercel (read-only mirror)
 - `src/app/courses/[term]/[courseSlug]/page.tsx` - Course homepage (Notes & Assignments)
 - `src/app/courses/[term]/[courseSlug]/[page]/page.tsx` - Individual Canvas pages
 - `src/app/courses/[term]/[courseSlug]/syllabus/page.tsx` - Course syllabus
-- `src/app/office-hours/page.tsx` - Office hours (static)
+- `src/app/office-hours/page.tsx` - Office hours (auto-synced from Canvas front page)
 - `src/app/resources/page.tsx` - Student resources (static)
 
 ### Scripts

@@ -18,8 +18,9 @@ The instructor updates course content in Canvas. The website automatically refle
 
 ## Features
 
-- **Auto-sync from Canvas** - Courses, pages, and syllabi pulled from Canvas API
+- **Auto-sync from Canvas** - Courses, pages, syllabi, and office hours pulled from Canvas API
 - **Course discovery** - New courses automatically appear when added in Canvas
+- **Office hours sync** - Parsed from course front page (schedule, room, Zoom link)
 - **ISR caching** - Fast page loads with 24-hour cache refresh
 - **Dark mode** - System preference detection with manual toggle
 - **Mobile responsive** - Works on all devices
