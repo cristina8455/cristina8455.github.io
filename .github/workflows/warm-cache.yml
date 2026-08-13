@@ -29,6 +29,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # The SITE_URL repo variable may carry a trailing slash, which would
+      # produce "//sitemap.xml" and silently return nothing.
+      - name: Normalize base URL
+        run: echo "BASE_URL=${BASE_URL%/}" >> "$GITHUB_ENV"
+
       # Runs first so a broken data source is reported even if warming
       # succeeds — ISR will happily serve stale pages with Canvas down.
       # The result is gated at the end so warming still happens on a warning.
@@ -36,7 +41,7 @@ jobs:
         id: health
         run: |
           echo "Checking $BASE_URL/api/health"
-          response=$(curl -sS --max-time 45 -w '\n%{http_code}' "$BASE_URL/api/health" || echo $'\n000')
+          response=$(curl -sSL --max-time 45 -w '\n%{http_code}' "$BASE_URL/api/health" || echo $'\n000')
           code=$(printf '%s' "$response" | tail -n1)
           body=$(printf '%s' "$response" | sed '$d')
 
@@ -56,7 +61,7 @@ jobs:
       - name: Warm every URL in the sitemap
         run: |
           echo "Fetching $BASE_URL/sitemap.xml"
-          urls=$(curl -sS --max-time 60 "$BASE_URL/sitemap.xml" \
+          urls=$(curl -sSL --max-time 60 "$BASE_URL/sitemap.xml" \
                  | grep -oE '<loc>[^<]+</loc>' \
                  | sed -E 's#</?loc>##g')
 
@@ -70,7 +75,7 @@ jobs:
           failed=0
           while IFS= read -r url; do
             [ -z "$url" ] && continue
-            code=$(curl -s -o /dev/null --max-time 60 -w '%{http_code}' "$url")
+            code=$(curl -sL -o /dev/null --max-time 60 -w '%{http_code}' "$url")
             printf '  %-6s %s\n' "$code" "$url"
             case "$code" in
               2*|3*) ;;
