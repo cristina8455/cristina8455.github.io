@@ -13,19 +13,11 @@
  * - All Day pages for all Spring 2026 courses
  */
 
-import { config } from 'dotenv';
 import { mkdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
+import { requireCanvasEnv } from './load-env';
 
-config({ path: '.env.local' });
-
-const CANVAS_BASE_URL = process.env.CANVAS_BASE_URL;
-const CANVAS_API_TOKEN = process.env.CANVAS_API_TOKEN;
-
-if (!CANVAS_BASE_URL || !CANVAS_API_TOKEN) {
-  console.error('Error: CANVAS_BASE_URL and CANVAS_API_TOKEN must be set');
-  process.exit(1);
-}
+const { baseUrl: CANVAS_BASE_URL, token: CANVAS_API_TOKEN } = requireCanvasEnv();
 
 // Spring 2026 courses to update
 const COURSES = [

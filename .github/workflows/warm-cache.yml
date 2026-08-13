@@ -1,7 +1,7 @@
 name: Warm Cache
 
 on:
-  # Run daily at 6 AM UTC (midnight CST)
+  # Daily at 6 AM UTC (midnight CST)
   schedule:
     - cron: '0 6 * * *'
 
@@ -9,42 +9,104 @@ on:
   repository_dispatch:
     types: [vercel-deploy]
 
-  # Allow manual trigger
   workflow_dispatch:
+
+# Needed by the keepalive step, which commits a heartbeat so GitHub does not
+# disable this schedule for inactivity.
+permissions:
+  contents: write
+
+concurrency:
+  group: warm-cache
+  cancel-in-progress: false
 
 jobs:
   warm-cache:
     runs-on: ubuntu-latest
+    env:
+      BASE_URL: ${{ vars.SITE_URL || 'https://cristina8455.vercel.app' }}
+
     steps:
-      - name: Warm static pages
+      - uses: actions/checkout@v4
+
+      # Runs first so a broken data source is reported even if warming
+      # succeeds — ISR will happily serve stale pages with Canvas down.
+      # The result is gated at the end so warming still happens on a warning.
+      - name: Check Canvas health
+        id: health
         run: |
-          echo "Warming cache for static pages..."
-          BASE_URL="${{ vars.SITE_URL || 'https://cristina8455.vercel.app' }}"
+          echo "Checking $BASE_URL/api/health"
+          response=$(curl -sS --max-time 45 -w '\n%{http_code}' "$BASE_URL/api/health" || echo $'\n000')
+          code=$(printf '%s' "$response" | tail -n1)
+          body=$(printf '%s' "$response" | sed '$d')
 
-          curl -s -o /dev/null -w "Homepage: %{http_code} (%{time_total}s)\n" "$BASE_URL/"
-          curl -s -o /dev/null -w "Courses: %{http_code} (%{time_total}s)\n" "$BASE_URL/courses"
-          curl -s -o /dev/null -w "Office Hours: %{http_code} (%{time_total}s)\n" "$BASE_URL/office-hours"
-          curl -s -o /dev/null -w "Resources: %{http_code} (%{time_total}s)\n" "$BASE_URL/resources"
-          curl -s -o /dev/null -w "About: %{http_code} (%{time_total}s)\n" "$BASE_URL/about"
+          echo "HTTP $code"
+          printf '%s\n' "$body" | jq . 2>/dev/null || printf '%s\n' "$body"
 
-      - name: Warm Spring 2026 course pages
+          status=$(printf '%s' "$body" | jq -r '.status // "unreachable"' 2>/dev/null || echo unreachable)
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+
+          if [ "$status" != "healthy" ]; then
+            printf '%s' "$body" \
+              | jq -r '.checks[]? | select(.ok == false) | "  - \(.name): \(.detail)"' 2>/dev/null \
+              || true
+          fi
+
+      - name: Warm every URL in the sitemap
         run: |
-          BASE_URL="${{ vars.SITE_URL || 'https://cristina8455.vercel.app' }}"
-          echo ""
-          echo "Warming Spring 2026 course pages..."
+          echo "Fetching $BASE_URL/sitemap.xml"
+          urls=$(curl -sS --max-time 60 "$BASE_URL/sitemap.xml" \
+                 | grep -oE '<loc>[^<]+</loc>' \
+                 | sed -E 's#</?loc>##g')
 
-          # MTH122-008
-          curl -s -o /dev/null -w "MTH122-008: %{http_code} (%{time_total}s)\n" "$BASE_URL/courses/spring-2026/mth122-008"
-          curl -s -o /dev/null -w "MTH122-008 Syllabus: %{http_code} (%{time_total}s)\n" "$BASE_URL/courses/spring-2026/mth122-008/syllabus"
+          count=$(printf '%s\n' "$urls" | grep -c . || true)
+          if [ "$count" -eq 0 ]; then
+            echo "::error::Sitemap returned no URLs — cannot warm cache"
+            exit 1
+          fi
+          echo "Warming $count URLs"
 
-          # MTH122-202
-          curl -s -o /dev/null -w "MTH122-202: %{http_code} (%{time_total}s)\n" "$BASE_URL/courses/spring-2026/mth122-202"
-          curl -s -o /dev/null -w "MTH122-202 Syllabus: %{http_code} (%{time_total}s)\n" "$BASE_URL/courses/spring-2026/mth122-202/syllabus"
+          failed=0
+          while IFS= read -r url; do
+            [ -z "$url" ] && continue
+            code=$(curl -s -o /dev/null --max-time 60 -w '%{http_code}' "$url")
+            printf '  %-6s %s\n' "$code" "$url"
+            case "$code" in
+              2*|3*) ;;
+              *) failed=$((failed + 1)) ;;
+            esac
+          done <<< "$urls"
 
-          # MTH140-201
-          curl -s -o /dev/null -w "MTH140-201: %{http_code} (%{time_total}s)\n" "$BASE_URL/courses/spring-2026/mth140-201"
-          curl -s -o /dev/null -w "MTH140-201 Syllabus: %{http_code} (%{time_total}s)\n" "$BASE_URL/courses/spring-2026/mth140-201/syllabus"
+          echo "Done. $failed of $count returned an error status."
+          if [ "$failed" -gt 0 ]; then
+            echo "::warning::$failed URL(s) did not return success"
+          fi
 
-          echo ""
-          echo "Cache warming complete!"
-          echo "Note: Individual Day pages are warmed on-demand when visited."
+      # GitHub disables scheduled workflows after 60 days without repository
+      # activity, which is how this job silently stopped running in April.
+      # A heartbeat every ~45 days keeps the schedule alive without adding
+      # daily commit noise.
+      - name: Keepalive
+        run: |
+          last=$(git log -1 --format=%ct)
+          age_days=$(( ( $(date +%s) - last ) / 86400 ))
+          echo "Last commit was $age_days day(s) ago."
+
+          if [ "$age_days" -lt 45 ]; then
+            echo "Recent enough; no heartbeat needed."
+            exit 0
+          fi
+
+          date -u +'%Y-%m-%dT%H:%M:%SZ' > .github/last-warm.txt
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/last-warm.txt
+          git commit -m "chore: keepalive heartbeat so the warm-cache schedule stays enabled"
+          git push
+
+      - name: Fail if Canvas is unhealthy
+        if: steps.health.outputs.status != 'healthy'
+        run: |
+          echo "::error::Canvas health check reported '${{ steps.health.outputs.status }}' (HTTP ${{ steps.health.outputs.code }}). The site may be serving stale content."
+          exit 1

@@ -34,6 +34,23 @@ export interface Course {
 export interface CourseWithPages extends Course {
   pages: CanvasPageSummary[];
   notesPage: CanvasPage | null;
+  /**
+   * False when Canvas holds no syllabus content for the course — which is the
+   * norm now that CLC publishes through Simple Syllabus, an external tool the
+   * Canvas API cannot read.
+   */
+  hasSyllabus: boolean;
+}
+
+/** Canvas returns an empty string, not null, when there is no syllabus. */
+export function hasSyllabusContent(syllabusHtml?: string | null): boolean {
+  return typeof syllabusHtml === 'string' && syllabusHtml.trim().length > 0;
+}
+
+/** Public Canvas URL for a course, for linking out when we can't mirror content. */
+export function canvasCourseUrl(courseId: number): string | null {
+  const base = process.env.CANVAS_BASE_URL;
+  return base ? `${base.replace(/\/$/, '')}/courses/${courseId}` : null;
 }
 
 /**
@@ -161,6 +178,50 @@ export async function getArchivedCourses(): Promise<Course[]> {
 }
 
 /**
+ * What the homepage should show.
+ *
+ * Between terms there are no current courses at all — the summer term ends
+ * weeks before the fall shells are published in Canvas — so falling back to
+ * the most recent term keeps the page from rendering as empty.
+ */
+export interface HomepageCourses {
+  courses: Course[];
+  termName: string | null;
+  /** False when we fell back to a term that has already ended. */
+  isCurrent: boolean;
+}
+
+export async function getHomepageCourses(): Promise<HomepageCourses> {
+  const current = await getCurrentCourses();
+
+  if (current.length > 0) {
+    return {
+      courses: current,
+      termName: current[0].term?.name ?? null,
+      isCurrent: true,
+    };
+  }
+
+  // Fall back to whichever term ended most recently. Sort on end date rather
+  // than term ID, which Canvas does not guarantee to be chronological.
+  const all = await getAllCourses();
+  const mostRecent = all
+    .map(c => c.term)
+    .filter((t): t is NonNullable<Course['term']> => t !== null && t.endAt !== null)
+    .sort((a, b) => b.endAt!.getTime() - a.endAt!.getTime())[0];
+
+  if (!mostRecent) {
+    return { courses: [], termName: null, isCurrent: false };
+  }
+
+  return {
+    courses: all.filter(c => c.term?.slug === mostRecent.slug),
+    termName: mostRecent.name,
+    isCurrent: false,
+  };
+}
+
+/**
  * Find a course by term slug and course slug
  */
 export async function getCourseBySlug(termSlug: string, courseSlug: string): Promise<Course | null> {
@@ -178,10 +239,11 @@ export async function getCourseWithPages(termSlug: string, courseSlug: string): 
   const course = await getCourseBySlug(termSlug, courseSlug);
   if (!course) return null;
 
-  // Fetch pages and notes page in parallel
+  // Fetch pages and notes page in parallel. The term name is passed through so
+  // the page matcher can reject calendars left over from the source course.
   const [pages, notesPage, fullCourse] = await Promise.all([
     getCoursePages(course.id),
-    getNotesAndAssignmentsPage(course.id),
+    getNotesAndAssignmentsPage(course.id, course.term?.name),
     getCourse(course.id),
   ]);
 
@@ -190,6 +252,7 @@ export async function getCourseWithPages(termSlug: string, courseSlug: string): 
     syllabusHtml: fullCourse.syllabus_body,
     pages,
     notesPage,
+    hasSyllabus: hasSyllabusContent(fullCourse.syllabus_body),
   };
 }
 

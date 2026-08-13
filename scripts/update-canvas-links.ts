@@ -12,21 +12,13 @@
  * 2. Adds target="_blank" rel="noopener noreferrer" to all <a> tags
  * 3. Updates the page on Canvas via PUT request
  *
- * Requires CANVAS_BASE_URL and CANVAS_API_TOKEN in .env.local
+ * Requires CANVAS_BASE_URL and CANVAS_API_TOKEN — from .env.local here, or
+ * from the shared ~/.config/canvas/.env used by the other Canvas repos.
  */
 
-import { config } from 'dotenv';
+import { requireCanvasEnv } from './load-env';
 
-// Load .env.local
-config({ path: '.env.local' });
-
-const CANVAS_BASE_URL = process.env.CANVAS_BASE_URL;
-const CANVAS_API_TOKEN = process.env.CANVAS_API_TOKEN;
-
-if (!CANVAS_BASE_URL || !CANVAS_API_TOKEN) {
-  console.error('Error: CANVAS_BASE_URL and CANVAS_API_TOKEN must be set in .env.local');
-  process.exit(1);
-}
+const { baseUrl: CANVAS_BASE_URL, token: CANVAS_API_TOKEN } = requireCanvasEnv();
 
 interface CanvasPage {
   page_id: string;

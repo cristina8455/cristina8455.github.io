@@ -54,17 +54,20 @@ export default async function CoursePage({ params }: PageProps) {
             <BookOpen size={32} className="text-primary opacity-80" />
           </div>
 
-          {/* Quick Links */}
-          <div className="flex gap-3 mt-4">
-            <Link
-              href={`/courses/${term}/${courseSlug}/syllabus`}
-              className="inline-flex items-center px-4 py-2 bg-primary/10 text-primary
-                         rounded-lg hover:bg-primary/20 transition-colors text-sm font-medium"
-            >
-              <FileText size={16} className="mr-2" />
-              Syllabus
-            </Link>
-          </div>
+          {/* Quick Links — the syllabus link is hidden when Canvas holds no
+              syllabus content, rather than leading to an empty page. */}
+          {course.hasSyllabus && (
+            <div className="flex gap-3 mt-4">
+              <Link
+                href={`/courses/${term}/${courseSlug}/syllabus`}
+                className="inline-flex items-center px-4 py-2 bg-primary/10 text-primary
+                           rounded-lg hover:bg-primary/20 transition-colors text-sm font-medium"
+              >
+                <FileText size={16} className="mr-2" />
+                Syllabus
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Notes and Assignments Content */}

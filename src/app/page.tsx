@@ -3,16 +3,15 @@ import Image from 'next/image';
 import { Clock, ChevronRight, MapPin, BookOpen, Archive } from 'lucide-react';
 import Link from 'next/link';
 import type { LucideIcon } from 'lucide-react';
-import { getCurrentCourses, type Course } from '@/lib/courses';
+import { getHomepageCourses, type Course } from '@/lib/courses';
 
 // ISR: revalidate every 24 hours
 export const revalidate = 86400;
 
 export default async function Home() {
-  const courses = await getCurrentCourses();
+  const { courses, termName, isCurrent } = await getHomepageCourses();
 
-  // Get the term name from the first course (they should all be same term)
-  const currentTermName = courses[0]?.term?.name || 'Current';
+  const headingTerm = termName ?? 'Current';
 
   return (
     <div className="min-h-screen bg-background">
@@ -35,7 +34,13 @@ export default async function Home() {
           <div className="flex justify-between items-center mb-3">
             <h3 className="text-lg font-semibold flex items-center text-card-foreground">
               <Clock size={18} className="mr-2 text-primary opacity-90" />
-              {currentTermName} Courses
+              {headingTerm} Courses
+              {!isCurrent && courses.length > 0 && (
+                <span className="ml-2 text-xs font-normal text-muted-foreground border border-border
+                                 rounded-full px-2 py-0.5">
+                  most recent term
+                </span>
+              )}
             </h3>
             <Link
               href="/courses"
@@ -48,7 +53,9 @@ export default async function Home() {
           </div>
 
           {courses.length === 0 ? (
-            <p className="text-muted-foreground">No current courses.</p>
+            <p className="text-muted-foreground">
+              Courses for the upcoming term will be posted here before the semester begins.
+            </p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {courses.map((course) => (

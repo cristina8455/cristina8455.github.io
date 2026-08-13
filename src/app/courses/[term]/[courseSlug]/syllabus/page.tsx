@@ -1,8 +1,8 @@
 // src/app/courses/[term]/[courseSlug]/syllabus/page.tsx
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, FileText } from 'lucide-react';
-import { getCourseBySlug } from '@/lib/courses';
+import { ArrowLeft, FileText, ExternalLink } from 'lucide-react';
+import { getCourseBySlug, canvasCourseUrl } from '@/lib/courses';
 import { getCourse } from '@/lib/canvas-api';
 
 // ISR: revalidate every 24 hours
@@ -42,7 +42,9 @@ export default async function SyllabusPage({ params }: PageProps) {
 
   // Fetch full course with syllabus
   const fullCourse = await getCourse(course.id);
-  const syllabusHtml = fullCourse.syllabus_body;
+  // Canvas returns an empty string rather than null when there is no syllabus.
+  const syllabusHtml = fullCourse.syllabus_body?.trim() ? fullCourse.syllabus_body : null;
+  const canvasUrl = canvasCourseUrl(course.id);
 
   return (
     <div className="min-h-screen bg-background">
@@ -81,7 +83,26 @@ export default async function SyllabusPage({ params }: PageProps) {
               dangerouslySetInnerHTML={{ __html: syllabusHtml }}
             />
           ) : (
-            <p className="text-muted-foreground">No syllabus available for this course.</p>
+            <div className="text-muted-foreground space-y-3">
+              <p>
+                This syllabus isn&apos;t published through Canvas&apos;s own syllabus field, so it
+                can&apos;t be mirrored here. CLC distributes syllabi through Simple Syllabus, which
+                lives outside the Canvas API.
+              </p>
+              {canvasUrl && (
+                <p>
+                  <a
+                    href={`${canvasUrl}/assignments/syllabus`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center text-primary hover:underline font-medium"
+                  >
+                    Open the syllabus in Canvas
+                    <ExternalLink size={14} className="ml-1.5" />
+                  </a>
+                </p>
+              )}
+            </div>
           )}
         </div>
       </main>

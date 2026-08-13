@@ -163,14 +163,32 @@ export async function getFrontPage(courseId: number): Promise<CanvasPage | null>
   }
 }
 
+/** Seasons that can appear in a term name or a page title. */
+const SEASONS = ['spring', 'summer', 'fall', 'winter'] as const;
+
+function seasonOf(text: string): string | null {
+  const lower = text.toLowerCase();
+  return SEASONS.find(s => new RegExp(`\\b${s}\\b`).test(lower)) ?? null;
+}
+
 /**
- * Find the "Notes and Assignments" page for a course
- * Looks for pages with common naming patterns
+ * Find the "Notes and Assignments" page for a course.
+ *
+ * Courses are copied forward between terms, so a summer shell can still carry
+ * the previous spring's calendar page alongside the new one. Matching purely
+ * on name priority picked the stale page — "Notes and Assignments Page 16
+ * weeks Spring" outranked "Course Calendar" in a Summer course.
+ *
+ * So: collect every candidate, drop any whose title names a different season
+ * than the course's own term, then rank by name priority and prefer the most
+ * recently updated page within a tier.
  */
-export async function getNotesAndAssignmentsPage(courseId: number): Promise<CanvasPage | null> {
+export async function getNotesAndAssignmentsPage(
+  courseId: number,
+  termName?: string
+): Promise<CanvasPage | null> {
   const pages = await getCoursePages(courseId);
 
-  // Look for common naming patterns (case-insensitive)
   // Priority order: most specific first
   const patterns = [
     /notes\s*(and|&)\s*assignments/i,       // Current naming: "Notes and Assignments"
@@ -180,11 +198,28 @@ export async function getNotesAndAssignmentsPage(courseId: number): Promise<Canv
     /schedule/i,
   ];
 
-  for (const pattern of patterns) {
-    const match = pages.find(p => pattern.test(p.title));
-    if (match) {
-      return getCoursePage(courseId, match.url);
-    }
+  const courseSeason = termName ? seasonOf(termName) : null;
+
+  const candidates = pages
+    .map(page => ({
+      page,
+      tier: patterns.findIndex(pattern => pattern.test(page.title)),
+    }))
+    .filter(c => c.tier !== -1)
+    .filter(({ page }) => {
+      // Keep pages that name no season, or the course's own season. A page
+      // naming a different season is left over from the source course.
+      if (!courseSeason) return true;
+      const pageSeason = seasonOf(page.title);
+      return pageSeason === null || pageSeason === courseSeason;
+    })
+    .sort((a, b) => {
+      if (a.tier !== b.tier) return a.tier - b.tier;
+      return Date.parse(b.page.updated_at) - Date.parse(a.page.updated_at);
+    });
+
+  if (candidates.length > 0) {
+    return getCoursePage(courseId, candidates[0].page.url);
   }
 
   // Fallback to front page

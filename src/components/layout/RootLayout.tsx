@@ -7,9 +7,15 @@ import CanvasLayout from './CanvasLayout';
 
 interface RootLayoutProps {
     children: React.ReactNode;
+    /**
+     * Rendered below the main content on the standalone site. Passed in from
+     * the server layout so it can carry server-rendered content; suppressed
+     * when embedded in Canvas, where the chrome would be redundant.
+     */
+    footer?: React.ReactNode;
 }
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default function RootLayout({ children, footer }: RootLayoutProps) {
     const inCanvas = useIsInCanvas();
 
     if (inCanvas) {
@@ -22,6 +28,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <main className="container mx-auto px-4 py-6">
                 {children}
             </main>
+            {footer}
         </>
     );
 }

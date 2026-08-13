@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { ThemeProvider } from '@/components/theme/theme-provider'
 import RootLayout from '@/components/layout/RootLayout'
+import SyncStamp from '@/components/layout/SyncStamp'
 import './globals.css'
 import 'katex/dist/katex.min.css'
 
@@ -22,7 +23,7 @@ export default function Layout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} min-h-screen bg-background`}>
         <ThemeProvider>
-          <RootLayout>{children}</RootLayout>
+          <RootLayout footer={<SyncStamp />}>{children}</RootLayout>
         </ThemeProvider>
       </body>
     </html>

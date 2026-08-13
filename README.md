@@ -14,7 +14,9 @@ Website (auto-updated mirror)
 
 The instructor updates course content in Canvas. The website automatically reflects those changes within 24 hours (or immediately on the next visit after cache expires).
 
-**Zero manual content updates required.**
+**No manual content updates required** — but the Canvas API token expires, and
+rotating it is the one recurring maintenance task. See
+[Monitoring](#monitoring) for how the site tells you when that's due.
 
 ## Features
 
@@ -22,14 +24,34 @@ The instructor updates course content in Canvas. The website automatically refle
 - **Course discovery** - New courses automatically appear when added in Canvas
 - **Office hours sync** - Parsed from course front page (schedule, room, Zoom link)
 - **ISR caching** - Fast page loads with 24-hour cache refresh
+- **Health monitoring** - `/api/health` plus a daily job that fails loudly when Canvas stops answering
 - **Dark mode** - System preference detection with manual toggle
 - **Mobile responsive** - Works on all devices
+
+## Monitoring
+
+ISR serves the last successful render indefinitely, so when the Canvas token
+died in July 2026 the site kept serving months-old content with no visible
+error. Three things now make that state observable:
+
+| Signal | Where |
+|---|---|
+| `status: healthy \| warning \| unhealthy` | `/api/health` |
+| Daily job goes red when Canvas is unreachable | GitHub Actions → Warm Cache |
+| "Last synced" date on every page | Site footer |
+
+```bash
+curl -s https://cristina8455.vercel.app/api/health | jq .
+```
+
+Set `CANVAS_TOKEN_EXPIRES_AT` in Vercel to get a warning 30 days ahead of the
+next expiry rather than discovering it afterwards.
 
 ## Pages
 
 | Route | Content |
 |-------|---------|
-| `/` | Current semester courses |
+| `/` | Current semester courses (most recent term between semesters) |
 | `/courses` | All courses (current + archive) |
 | `/courses/[term]/[course]` | Course homepage (Notes & Assignments) |
 | `/courses/[term]/[course]/syllabus` | Course syllabus |

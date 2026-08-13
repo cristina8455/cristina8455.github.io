@@ -1,5 +1,5 @@
-import { config } from 'dotenv';
-config({ path: '.env.local' });
+import { loadCanvasEnv } from './load-env';
+loadCanvasEnv();
 
 const courseId = process.argv[2] || '57795';
 const pageUrl = process.argv[3] || 'notes-and-assignments-page-16-weeks-spring';
