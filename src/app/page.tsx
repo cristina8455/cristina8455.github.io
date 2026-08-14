@@ -4,6 +4,7 @@ import { Clock, ChevronRight, MapPin, BookOpen, Archive } from 'lucide-react';
 import Link from 'next/link';
 import type { LucideIcon } from 'lucide-react';
 import { getHomepageCourses, type Course } from '@/lib/courses';
+import { profile, officeLabel } from '@/lib/profile';
 
 // ISR: revalidate every 24 hours
 export const revalidate = 86400;
@@ -73,8 +74,8 @@ export default async function Home() {
             icon={MapPin}
             title="Contact & Location"
             content={<>
-              <p>Office: Room C162</p>
-              <p>csizemore@clcillinois.edu</p>
+              <p>Office: {officeLabel}</p>
+              <p>{profile.email}</p>
             </>}
             linkText="More Details"
             href="/about"

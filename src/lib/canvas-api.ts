@@ -236,7 +236,7 @@ export async function getFrontPage(courseId: number): Promise<CanvasPage | null>
 /** Seasons that can appear in a term name or a page title. */
 const SEASONS = ['spring', 'summer', 'fall', 'winter'] as const;
 
-function seasonOf(text: string): string | null {
+export function seasonOf(text: string): string | null {
   const lower = text.toLowerCase();
   return SEASONS.find(s => new RegExp(`\\b${s}\\b`).test(lower)) ?? null;
 }
@@ -331,7 +331,7 @@ export interface ParsedOfficeHours {
 /**
  * Parse time range like "9-10am" or "12:30-1pm" into start/end
  */
-function parseTimeRange(timeStr: string): { start: string; end: string } | null {
+export function parseTimeRange(timeStr: string): { start: string; end: string } | null {
   // Handle formats like "9-10am", "12:30-1pm", "11:30-1pm"
   const match = timeStr.match(/(\d{1,2}(?::\d{2})?)\s*-\s*(\d{1,2}(?::\d{2})?)\s*(am|pm)/i);
   if (!match) return null;
@@ -369,7 +369,7 @@ function parseTimeRange(timeStr: string): { start: string; end: string } | null 
 /**
  * Normalize day names
  */
-function normalizeDay(day: string): string {
+export function normalizeDay(day: string): string {
   const dayMap: Record<string, string> = {
     'mon': 'Monday',
     'tue': 'Tuesday',
@@ -394,7 +394,7 @@ function normalizeDay(day: string): string {
 /**
  * Parse a schedule line like "Tuesday 9-10am; Wed 10-11:30am"
  */
-function parseScheduleLine(
+export function parseScheduleLine(
   line: string,
   type: 'in-person' | 'virtual'
 ): Array<{ day: string; start: string; end: string; type: 'in-person' | 'virtual' }> {

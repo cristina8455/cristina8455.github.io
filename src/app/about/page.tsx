@@ -2,6 +2,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Mail, MapPin, Clock, ChevronRight } from 'lucide-react';
+import { profile, officeLabel, officeLocation } from '@/lib/profile';
 
 export default function About() {
     return (
@@ -65,14 +66,14 @@ export default function About() {
                                     <Mail className="text-primary mt-1 mr-2 flex-shrink-0" size={18} />
                                     <div>
                                         <p className="font-medium">Email</p>
-                                        <p className="text-muted-foreground">csizemore@clcillinois.edu</p>
+                                        <p className="text-muted-foreground">{profile.email}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start">
                                     <MapPin className="text-primary mt-1 mr-2 flex-shrink-0" size={18} />
                                     <div>
                                         <p className="font-medium">Office Location</p>
-                                        <p className="text-muted-foreground">Room C162<br />Building C, First Floor</p>
+                                        <p className="text-muted-foreground">{officeLabel}<br />{officeLocation}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start">
