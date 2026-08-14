@@ -1,16 +1,24 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+import { defineConfig, globalIgnores } from 'eslint/config'
+import nextVitals from 'eslint-config-next/core-web-vitals'
+import nextTs from 'eslint-config-next/typescript'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// Next 16 ships flat configs directly, so FlatCompat is no longer needed —
+// and `next lint` was removed in 16, which is why package.json calls the
+// ESLint CLI instead.
+const eslintConfig = defineConfig([
+  ...nextVitals,
+  ...nextTs,
+  // globalIgnores REPLACES eslint-config-next's defaults rather than adding to
+  // them, so the defaults have to be repeated here or build output gets linted.
+  globalIgnores([
+    // eslint-config-next's own defaults:
+    '.next/**',
+    'out/**',
+    'build/**',
+    'next-env.d.ts',
+    // Ours: Canvas page snapshots, not source.
+    'backups/**',
+  ]),
+])
 
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
-
-const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
-];
-
-export default eslintConfig;
+export default eslintConfig

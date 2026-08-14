@@ -31,7 +31,7 @@ export interface CanvasCourse {
 }
 
 export interface CanvasPage {
-  page_id: string;
+  page_id: number;
   url: string;
   title: string;
   body: string;
@@ -41,7 +41,7 @@ export interface CanvasPage {
 }
 
 export interface CanvasPageSummary {
-  page_id: string;
+  page_id: number;
   url: string;
   title: string;
   published: boolean;
@@ -60,8 +60,70 @@ class CanvasAPIError extends Error {
   }
 }
 
+/** Canvas throttles with 403 plus a rate-limit body, not only with 429. */
+async function isThrottled(response: Response): Promise<boolean> {
+  if (response.status === 429) return true;
+  if (response.status !== 403) return false;
+  const body = await response.clone().text().catch(() => '');
+  return /rate limit/i.test(body);
+}
+
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 /**
- * Make an authenticated request to Canvas API
+ * One authenticated request to Canvas, with a timeout and rate-limit retry.
+ *
+ * Returns the Response rather than parsed JSON so callers can read the `Link`
+ * header, which is what pagination depends on.
+ */
+async function canvasRequest(url: string, endpoint: string, attempts = 4): Promise<Response> {
+  const { token } = getConfig();
+
+  for (let attempt = 0; attempt < attempts; attempt++) {
+    // Fresh controller per attempt: an aborted signal cannot be reused.
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+    try {
+      const response = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json',
+        },
+        signal: controller.signal,
+        next: { revalidate: 86400 }, // ISR: revalidate every 24 hours
+      });
+
+      clearTimeout(timeoutId);
+
+      if (response.ok) return response;
+
+      if (await isThrottled(response) && attempt < attempts - 1) {
+        await sleep(2 ** attempt * 1000);
+        continue;
+      }
+
+      throw new CanvasAPIError(
+        `Canvas API error: ${response.status} ${response.statusText}`,
+        response.status,
+        endpoint
+      );
+    } catch (error) {
+      clearTimeout(timeoutId);
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new Error(`Canvas API request timed out: ${endpoint}`);
+      }
+      throw error;
+    }
+  }
+
+  throw new CanvasAPIError(`Canvas API error: gave up after ${attempts} attempts`, 429, endpoint);
+}
+
+/**
+ * Make an authenticated request to Canvas API. For single objects.
+ *
+ * Does not paginate — use `canvasFetchAll` for collections.
  */
 async function canvasFetch<T>(endpoint: string): Promise<T> {
   const { baseUrl, token } = getConfig();
@@ -71,48 +133,56 @@ async function canvasFetch<T>(endpoint: string): Promise<T> {
     throw new Error('Canvas API credentials not configured. Set CANVAS_BASE_URL and CANVAS_API_TOKEN.');
   }
 
-  const url = `${baseUrl}${endpoint}`;
+  const response = await canvasRequest(`${baseUrl}${endpoint}`, endpoint);
+  return response.json();
+}
 
-  // Add timeout to prevent hanging
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
-
-  try {
-    const response = await fetch(url, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json',
-      },
-      signal: controller.signal,
-      next: { revalidate: 86400 }, // ISR: revalidate every 24 hours
-    });
-
-    clearTimeout(timeoutId);
-
-    if (!response.ok) {
-      throw new CanvasAPIError(
-        `Canvas API error: ${response.status} ${response.statusText}`,
-        response.status,
-        endpoint
-      );
-    }
-
-    return response.json();
-  } catch (error) {
-    clearTimeout(timeoutId);
-    if (error instanceof Error && error.name === 'AbortError') {
-      throw new Error(`Canvas API request timed out: ${endpoint}`);
-    }
-    throw error;
+/** Extract the `rel="next"` URL from a Link header. */
+function nextLink(header: string | null): string | null {
+  if (!header) return null;
+  for (const part of header.split(',')) {
+    const match = part.match(/<([^>]*)>\s*;\s*rel="next"/);
+    if (match) return match[1];
   }
+  return null;
+}
+
+/**
+ * Fetch every page of a collection by following `Link: rel="next"`.
+ *
+ * `per_page=100` alone is not enough: Canvas caps the page size and silently
+ * returns only the first page, so a course with more pages than the cap loses
+ * the remainder with no error. Two of the courses here exceed it — one has 194
+ * pages. Numeric `page=N` params are not a substitute; some endpoints paginate
+ * with bookmark cursors, and the Link header is the only reliable method.
+ */
+async function canvasFetchAll<T>(endpoint: string): Promise<T[]> {
+  const { baseUrl, token } = getConfig();
+
+  if (!baseUrl || !token) {
+    console.error('Canvas API credentials not configured');
+    throw new Error('Canvas API credentials not configured. Set CANVAS_BASE_URL and CANVAS_API_TOKEN.');
+  }
+
+  const separator = endpoint.includes('?') ? '&' : '?';
+  let url: string | null = `${baseUrl}${endpoint}${separator}per_page=100`;
+
+  const items: T[] = [];
+  while (url) {
+    const response = await canvasRequest(url, endpoint);
+    items.push(...(await response.json() as T[]));
+    url = nextLink(response.headers.get('link'));
+  }
+
+  return items;
 }
 
 /**
  * Get all courses where user is a teacher
  */
 export async function getTeacherCourses(): Promise<CanvasCourse[]> {
-  const courses = await canvasFetch<CanvasCourse[]>(
-    '/api/v1/courses?enrollment_type=teacher&state[]=available&include[]=term&per_page=100'
+  const courses = await canvasFetchAll<CanvasCourse>(
+    '/api/v1/courses?enrollment_type=teacher&state[]=available&include[]=term'
   );
 
   return courses.filter(c => c.workflow_state === 'available');
@@ -131,8 +201,8 @@ export async function getCourse(courseId: number): Promise<CanvasCourse> {
  * Get all published pages for a course
  */
 export async function getCoursePages(courseId: number): Promise<CanvasPageSummary[]> {
-  const pages = await canvasFetch<CanvasPageSummary[]>(
-    `/api/v1/courses/${courseId}/pages?per_page=100`
+  const pages = await canvasFetchAll<CanvasPageSummary>(
+    `/api/v1/courses/${courseId}/pages`
   );
 
   return pages.filter(p => p.published);

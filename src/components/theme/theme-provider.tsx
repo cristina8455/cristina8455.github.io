@@ -1,7 +1,13 @@
 // src/components/theme/theme-provider.tsx
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useSyncExternalStore } from 'react';
+
+/** Cross-tab theme changes arrive as `storage` events. */
+function subscribeToStorage(onChange: () => void): () => void {
+    window.addEventListener('storage', onChange);
+    return () => window.removeEventListener('storage', onChange);
+}
 
 type Theme = 'dark' | 'light' | 'system';
 
@@ -29,14 +35,19 @@ export function ThemeProvider({
     storageKey = 'ui-theme',
     ...props
 }: ThemeProviderProps) {
-    const [theme, setTheme] = useState<Theme>(defaultTheme);
+    // The saved theme lives in localStorage, which does not exist during SSR.
+    // Reading it through useSyncExternalStore gives React an explicit server
+    // snapshot (null -> defaultTheme) instead of syncing it in an effect, and
+    // subscribing to `storage` keeps other tabs in step for free.
+    const stored = useSyncExternalStore(
+        subscribeToStorage,
+        () => localStorage.getItem(storageKey),
+        () => null
+    );
 
-    useEffect(() => {
-        const savedTheme = localStorage.getItem(storageKey) as Theme | null;
-        if (savedTheme) {
-            setTheme(savedTheme);
-        }
-    }, [storageKey]);
+    // A choice made in this tab wins over what is currently in storage.
+    const [override, setOverride] = useState<Theme | null>(null);
+    const theme = override ?? (stored as Theme | null) ?? defaultTheme;
 
     useEffect(() => {
         const root = window.document.documentElement;
@@ -73,9 +84,9 @@ export function ThemeProvider({
 
     const value = {
         theme,
-        setTheme: (theme: Theme) => {
-            localStorage.setItem(storageKey, theme);
-            setTheme(theme);
+        setTheme: (next: Theme) => {
+            localStorage.setItem(storageKey, next);
+            setOverride(next);
         },
     };
 

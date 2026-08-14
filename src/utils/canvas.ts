@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useSyncExternalStore } from 'react';
 
 /**
  * Check if the current page is embedded in Canvas LMS
@@ -40,11 +40,13 @@ export function isInCanvas(): boolean {
  * @returns [boolean] indicating if page is embedded in Canvas
  */
 export function useIsInCanvas(): boolean {
-    const [inCanvas, setInCanvas] = useState<boolean>(false);
-
-    useEffect(() => {
-        setInCanvas(isInCanvas());
-    }, []);
-
-    return inCanvas;
+    // Whether we are framed cannot be known during SSR and never changes after
+    // load, so this is an external value with a fixed server snapshot rather
+    // than state to sync in an effect. useSyncExternalStore models exactly
+    // that: `false` on the server, the real answer once hydrated.
+    return useSyncExternalStore(
+        () => () => {},        // nothing to subscribe to; it cannot change
+        () => isInCanvas(),    // client snapshot
+        () => false            // server snapshot
+    );
 }
