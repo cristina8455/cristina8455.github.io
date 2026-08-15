@@ -60,9 +60,22 @@ class CanvasAPIError extends Error {
   }
 }
 
-/** Canvas throttles with 403 plus a rate-limit body, not only with 429. */
+/**
+ * Identify the client. Requests without a User-Agent look like scrapers to a
+ * WAF, and Canvas's edge answers those with 406 Not Acceptable — which is what
+ * took every course page down once the site started making more API calls.
+ * Node's fetch sends no User-Agent unless told to.
+ */
+const USER_AGENT =
+  'academic-website-cristina (+https://cristina8455.vercel.app; Canvas course mirror)';
+
+/**
+ * Canvas throttles with 403 plus a rate-limit body, not only with 429 — and
+ * its edge returns 406 when it decides a request looks automated. All three
+ * are worth another try.
+ */
 async function isThrottled(response: Response): Promise<boolean> {
-  if (response.status === 429) return true;
+  if (response.status === 429 || response.status === 406) return true;
   if (response.status !== 403) return false;
   const body = await response.clone().text().catch(() => '');
   return /rate limit/i.test(body);
@@ -89,6 +102,7 @@ async function canvasRequest(url: string, endpoint: string, attempts = 4): Promi
         headers: {
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/json',
+          'User-Agent': USER_AGENT,
         },
         signal: controller.signal,
         next: { revalidate: 86400 }, // ISR: revalidate every 24 hours
