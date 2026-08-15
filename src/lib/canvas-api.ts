@@ -262,6 +262,45 @@ export function sanitizeCanvasHtml(html: string): string {
     .replace(/<script\b[^>]*\/>/gi, '');
 }
 
+export interface LinkRewriteContext {
+  /** Canvas id of the course whose content this is. */
+  courseId: number;
+  termSlug: string;
+  courseSlug: string;
+  /** Slugs of pages this site actually serves for the course. */
+  publishedSlugs: Set<string>;
+}
+
+/**
+ * Point Canvas page links at the mirror instead of at Canvas.
+ *
+ * Calendar pages are mostly links to other pages — day notes, completed
+ * notes, review material. Canvas rewrites those to absolute URLs on its own
+ * host, so following one from this site lands on a Canvas login wall: fine
+ * for an enrolled student, a dead end for everyone else. Since the site
+ * already serves every published page, those links can simply point here.
+ *
+ * Deliberately narrow. Only `/courses/<id>/pages/<slug>` links are rewritten,
+ * only when the id matches the course being viewed, and only when the target
+ * page is one this site actually serves. Assignments, quizzes, discussions
+ * and files stay on Canvas: they are things a student *does* rather than
+ * content that was mirrored, and there is nothing here to point them at —
+ * redirecting those would turn a login prompt into a 404.
+ */
+export function rewriteCanvasLinks(html: string, ctx: LinkRewriteContext): string {
+  const pattern = new RegExp(
+    `https?://[a-z0-9.-]+\\.instructure\\.com/courses/(\\d+)/pages/([^"'#?\\s]+)`,
+    'gi'
+  );
+
+  return html.replace(pattern, (match, id: string, slug: string) => {
+    if (Number(id) !== ctx.courseId) return match;
+    const decoded = decodeURIComponent(slug).toLowerCase();
+    if (!ctx.publishedSlugs.has(decoded)) return match;
+    return `/courses/${ctx.termSlug}/${ctx.courseSlug}/${decoded}`;
+  });
+}
+
 /** Seasons that can appear in a term name or a page title. */
 const SEASONS = ['spring', 'summer', 'fall', 'winter'] as const;
 
@@ -288,12 +327,16 @@ export async function getNotesAndAssignmentsPage(
 ): Promise<CanvasPage | null> {
   const pages = await getCoursePages(courseId);
 
-  // Priority order: most specific first
+  // Priority order: most specific first. Naming has drifted every year or so,
+  // and an unrecognised name means the course falls back to its front page —
+  // which is how Fall 2026 ended up showing a homepage instead of a calendar.
   const patterns = [
     /notes\s*(and|&)\s*assignments/i,       // Current naming: "Notes and Assignments"
     /calendar\s*(and|&)\s*daily\s*notes/i,  // Fall 2024 naming: "Calendar and Daily Notes"
     /daily\s*notes\s*(and|&)\s*calendar/i,  // Alternate ordering
     /course\s*calendar/i,
+    /weekly\s*learning\s*portal/i,          // Fall 2026 naming
+    /learning\s*(hub|portal)/i,             // Related variants
     /schedule/i,
   ];
 

@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { BookOpen, FileText, ChevronRight } from 'lucide-react';
 import { getCourseWithPages } from '@/lib/courses';
-import { sanitizeCanvasHtml } from '@/lib/canvas-api';
+import { sanitizeCanvasHtml, rewriteCanvasLinks, type CanvasPageSummary } from '@/lib/canvas-api';
 
 // ISR: revalidate every 24 hours
 export const revalidate = 86400;
@@ -80,39 +80,101 @@ export default async function CoursePage({ params }: PageProps) {
                          prose-a:text-primary prose-a:no-underline hover:prose-a:underline
                          prose-table:border-collapse prose-td:border prose-td:border-border prose-td:p-2
                          prose-th:border prose-th:border-border prose-th:p-2 prose-th:bg-muted/50"
-              dangerouslySetInnerHTML={{ __html: sanitizeCanvasHtml(course.notesPage.body) }}
+              dangerouslySetInnerHTML={{
+                __html: rewriteCanvasLinks(
+                  sanitizeCanvasHtml(course.notesPage.body),
+                  {
+                    courseId: course.id,
+                    termSlug: term,
+                    courseSlug,
+                    publishedSlugs: new Set(course.pages.map(p => p.url.toLowerCase())),
+                  }
+                ),
+              }}
             />
           </div>
         ) : (
           <div className="bg-card rounded-lg shadow-sm p-6">
-            <p className="text-muted-foreground">No course content available.</p>
-
-            {/* Show available pages as fallback */}
-            {course.pages.length > 0 && (
-              <div className="mt-6">
-                <h2 className="text-lg font-semibold mb-4">Available Pages</h2>
-                <div className="grid gap-2">
-                  {course.pages.slice(0, 20).map(page => (
-                    <Link
-                      key={page.page_id}
-                      href={`/courses/${term}/${courseSlug}/${page.url}`}
-                      className="flex items-center justify-between p-3 rounded-lg border border-border
-                                 hover:bg-muted/50 transition-colors group"
-                    >
-                      <span className="text-card-foreground">{page.title}</span>
-                      <ChevronRight
-                        size={16}
-                        className="text-muted-foreground group-hover:text-primary
-                                   group-hover:translate-x-1 transition-all"
-                      />
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
+            <p className="text-muted-foreground">
+              No calendar page is published for this course yet. Everything that has been
+              published is listed below.
+            </p>
           </div>
         )}
+
+        {/* Every published page, always — not only when there is no calendar.
+            The calendar is the curated entry point, but a course should not
+            become unreachable just because it is missing or still a draft. */}
+        <PageIndex pages={course.pages} term={term} courseSlug={courseSlug} />
       </main>
     </div>
+  );
+}
+
+/** All published pages, day/week material separated from everything else. */
+function PageIndex({
+  pages,
+  term,
+  courseSlug,
+}: {
+  pages: CanvasPageSummary[];
+  term: string;
+  courseSlug: string;
+}) {
+  if (pages.length === 0) return null;
+
+  const dayNumber = (title: string) => {
+    const match = title.match(/^(?:day|week)\s*(\d+)/i);
+    return match ? parseInt(match[1], 10) : null;
+  };
+
+  const sequential = pages
+    .filter(p => dayNumber(p.title) !== null)
+    .sort((a, b) => (dayNumber(a.title) ?? 0) - (dayNumber(b.title) ?? 0));
+  const other = pages
+    .filter(p => dayNumber(p.title) === null)
+    .sort((a, b) => a.title.localeCompare(b.title));
+
+  const groups: Array<[string, CanvasPageSummary[]]> = [
+    ['Daily & weekly material', sequential],
+    ['Other pages', other],
+  ];
+
+  return (
+    <details className="bg-card rounded-lg shadow-sm mt-6 group" open={!sequential.length}>
+      <summary className="cursor-pointer select-none p-6 flex items-center justify-between
+                          text-card-foreground font-semibold">
+        <span>All pages ({pages.length})</span>
+        <ChevronRight size={18} className="text-muted-foreground transition-transform
+                                           group-open:rotate-90" />
+      </summary>
+
+      <div className="px-6 pb-6 space-y-6">
+        {groups.map(([label, items]) =>
+          items.length === 0 ? null : (
+            <div key={label}>
+              <h3 className="text-sm font-medium text-muted-foreground mb-2">{label}</h3>
+              <div className="grid gap-1.5 sm:grid-cols-2">
+                {items.map(page => (
+                  <Link
+                    key={page.page_id}
+                    href={`/courses/${term}/${courseSlug}/${page.url}`}
+                    className="flex items-center justify-between px-3 py-2 rounded-md
+                               border border-border hover:bg-muted/50 transition-colors group/item"
+                  >
+                    <span className="text-sm text-card-foreground truncate pr-2">{page.title}</span>
+                    <ChevronRight
+                      size={14}
+                      className="flex-shrink-0 text-muted-foreground
+                                 group-hover/item:text-primary transition-colors"
+                    />
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )
+        )}
+      </div>
+    </details>
   );
 }

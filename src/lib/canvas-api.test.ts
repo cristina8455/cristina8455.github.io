@@ -7,6 +7,7 @@ import {
   parseScheduleLine,
   seasonOf,
   sanitizeCanvasHtml,
+  rewriteCanvasLinks,
 } from './canvas-api';
 
 /**
@@ -161,5 +162,62 @@ describe('sanitizeCanvasHtml', () => {
   test('leaves ordinary content untouched', () => {
     const body = '<h2>Week 1</h2><ul><li><a href="/x">Notes</a></li></ul>';
     assert.equal(sanitizeCanvasHtml(body), body);
+  });
+});
+
+describe('rewriteCanvasLinks', () => {
+  const ctx = {
+    courseId: 62966,
+    termSlug: 'fall-2026',
+    courseSlug: 'mth122-401',
+    publishedSlugs: new Set(['day-1-intro', 'course-calendar']),
+  };
+  const C = 'https://clcillinois.instructure.com';
+
+  test('rewrites a page link to the mirror', () => {
+    assert.equal(
+      rewriteCanvasLinks(`<a href="${C}/courses/62966/pages/day-1-intro">Notes</a>`, ctx),
+      '<a href="/courses/fall-2026/mth122-401/day-1-intro">Notes</a>'
+    );
+  });
+
+  test('leaves assignments, quizzes and discussions on Canvas', () => {
+    // These are things a student does, not content that was mirrored, so a
+    // login prompt is correct and a local 404 would not be.
+    for (const path of ['assignments/1423975', 'quizzes/123', 'discussion_topics/596231']) {
+      const html = `<a href="${C}/courses/62966/${path}">x</a>`;
+      assert.equal(rewriteCanvasLinks(html, ctx), html);
+    }
+  });
+
+  test('leaves files alone', () => {
+    const html = `<a href="${C}/courses/62966/files/13883659?verifier=abc">pdf</a>`;
+    assert.equal(rewriteCanvasLinks(html, ctx), html);
+  });
+
+  test('does not rewrite a page belonging to a different course', () => {
+    // The slug might coincidentally exist here; the target does not.
+    const html = `<a href="${C}/courses/57799/pages/day-1-intro">x</a>`;
+    assert.equal(rewriteCanvasLinks(html, ctx), html);
+  });
+
+  test('does not rewrite a page this site does not serve', () => {
+    // Unpublished pages are filtered out upstream, so the mirror has no copy.
+    const html = `<a href="${C}/courses/62966/pages/secret-draft">x</a>`;
+    assert.equal(rewriteCanvasLinks(html, ctx), html);
+  });
+
+  test('leaves unresolved Canvas placeholders alone', () => {
+    // $CANVAS_OBJECT_REFERENCE$ links are broken in Canvas too, left behind
+    // by course copies. Not ours to reinterpret.
+    const html = '<a href="$CANVAS_OBJECT_REFERENCE$/quizzes/gb2520b2e">quiz</a>';
+    assert.equal(rewriteCanvasLinks(html, ctx), html);
+  });
+
+  test('rewrites every occurrence', () => {
+    const html = `<a href="${C}/courses/62966/pages/day-1-intro">a</a>` +
+                 `<a href="${C}/courses/62966/pages/course-calendar">b</a>`;
+    const out = rewriteCanvasLinks(html, ctx);
+    assert.equal(out.includes('instructure.com'), false);
   });
 });
