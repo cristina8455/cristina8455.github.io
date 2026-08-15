@@ -59,6 +59,7 @@ jobs:
           fi
 
       - name: Warm every URL in the sitemap
+        id: warm
         run: |
           echo "Fetching $BASE_URL/sitemap.xml"
           urls=$(curl -sSL --max-time 60 "$BASE_URL/sitemap.xml" \
@@ -72,20 +73,51 @@ jobs:
           fi
           echo "Warming $count URLs"
 
-          failed=0
+          # Only failures are printed. Previously every URL was echoed, so a
+          # broken page was one line among 700 and nothing failed the job —
+          # which is how a batch of course pages served 500s unnoticed.
+          server_errors=0
+          client_errors=0
+          server_list=""
+          client_list=""
+
           while IFS= read -r url; do
             [ -z "$url" ] && continue
-            code=$(curl -sL -o /dev/null --max-time 60 -w '%{http_code}' "$url")
-            printf '  %-6s %s\n' "$code" "$url"
+            code=$(curl -sL -o /dev/null --max-time 60 -w '%{http_code}' "$url" || echo 000)
+
+            # One retry before believing it: a cold start or a blip should not
+            # turn the whole run red.
+            case "$code" in
+              2*|3*) continue ;;
+            esac
+            sleep 2
+            code=$(curl -sL -o /dev/null --max-time 60 -w '%{http_code}' "$url" || echo 000)
+
             case "$code" in
               2*|3*) ;;
-              *) failed=$((failed + 1)) ;;
+              5*|000)
+                server_errors=$((server_errors + 1))
+                server_list="${server_list}  ${code}  ${url}"$'\n'
+                ;;
+              *)
+                client_errors=$((client_errors + 1))
+                client_list="${client_list}  ${code}  ${url}"$'\n'
+                ;;
             esac
           done <<< "$urls"
 
-          echo "Done. $failed of $count returned an error status."
-          if [ "$failed" -gt 0 ]; then
-            echo "::warning::$failed URL(s) did not return success"
+          echo "Checked $count URLs: $server_errors server error(s), $client_errors client error(s)."
+          echo "server_errors=$server_errors" >> "$GITHUB_OUTPUT"
+
+          if [ -n "$client_list" ]; then
+            echo "Client errors (usually a sitemap entry for a page that no longer exists):"
+            printf '%s' "$client_list"
+            echo "::warning::$client_errors URL(s) returned 4xx"
+          fi
+
+          if [ -n "$server_list" ]; then
+            echo "Server errors:"
+            printf '%s' "$server_list"
           fi
 
       # GitHub disables scheduled workflows after 60 days without repository
@@ -110,8 +142,24 @@ jobs:
           git commit -m "chore: keepalive heartbeat so the warm-cache schedule stays enabled"
           git push
 
-      - name: Fail if Canvas is unhealthy
-        if: steps.health.outputs.status != 'healthy'
+      # Both conditions are reported together, and after the keepalive, so one
+      # problem never hides the other or skips the heartbeat.
+      - name: Report
+        if: always()
         run: |
-          echo "::error::Canvas health check reported '${{ steps.health.outputs.status }}' (HTTP ${{ steps.health.outputs.code }}). The site may be serving stale content."
-          exit 1
+          status='${{ steps.health.outputs.status }}'
+          broken='${{ steps.warm.outputs.server_errors }}'
+          failed=0
+
+          if [ "$status" != "healthy" ]; then
+            echo "::error::Canvas health check reported '$status' (HTTP ${{ steps.health.outputs.code }}). The site may be serving stale content."
+            failed=1
+          fi
+
+          if [ -n "$broken" ] && [ "$broken" -gt 0 ]; then
+            echo "::error::$broken page(s) returned 5xx. The site is serving broken pages — see the warming step for the list."
+            failed=1
+          fi
+
+          [ "$failed" -eq 0 ] && echo "Canvas healthy, no broken pages."
+          exit "$failed"
