@@ -6,6 +6,7 @@ import {
   normalizeDay,
   parseScheduleLine,
   seasonOf,
+  sanitizeCanvasHtml,
 } from './canvas-api';
 
 /**
@@ -133,5 +134,32 @@ describe('seasonOf', () => {
     // unrelated word happens to contain a season.
     assert.equal(seasonOf('Springboard problems'), null);
     assert.equal(seasonOf('Downfall of the empire'), null);
+  });
+});
+
+describe('sanitizeCanvasHtml', () => {
+  test('removes the DesignPlus stylesheet Canvas embeds in page bodies', () => {
+    const body = '<link rel="stylesheet" href="https://x.s3.amazonaws.com/dp_app.css"><p>Hi</p>';
+    const out = sanitizeCanvasHtml(body);
+    assert.equal(out.includes('<link'), false);
+    assert.equal(out.includes('<p>Hi</p>'), true);
+  });
+
+  test('removes style and script blocks', () => {
+    const body = '<style>body{display:none}</style><p>a</p><script>alert(1)</script>';
+    const out = sanitizeCanvasHtml(body);
+    assert.equal(/<style|<script/.test(out), false);
+    assert.equal(out.includes('<p>a</p>'), true);
+  });
+
+  test('keeps inline style attributes', () => {
+    // Element-level styling is scoped and is how the page was authored.
+    const body = '<p style="color: red">a</p>';
+    assert.equal(sanitizeCanvasHtml(body), '<p style="color: red">a</p>');
+  });
+
+  test('leaves ordinary content untouched', () => {
+    const body = '<h2>Week 1</h2><ul><li><a href="/x">Notes</a></li></ul>';
+    assert.equal(sanitizeCanvasHtml(body), body);
   });
 });

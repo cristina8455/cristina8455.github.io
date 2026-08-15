@@ -18,6 +18,10 @@ const eslintConfig = defineConfig([
     'next-env.d.ts',
     // Ours: Canvas page snapshots, not source.
     'backups/**',
+    // node_modules is a symlink to node_modules.nosync so iCloud leaves it
+    // alone (see .gitignore). ESLint's built-in ignore matches the symlink
+    // name, not the real directory, so name it explicitly.
+    'node_modules.nosync/**',
   ]),
 ])
 

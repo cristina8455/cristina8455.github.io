@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, FileText } from 'lucide-react';
 import { getCoursePageBySlug } from '@/lib/courses';
+import { sanitizeCanvasHtml } from '@/lib/canvas-api';
 
 // ISR: revalidate every 24 hours
 export const revalidate = 86400;
@@ -77,7 +78,7 @@ export default async function ContentPage({ params }: PageProps) {
                          prose-th:border prose-th:border-border prose-th:p-2 prose-th:bg-muted/50
                          prose-img:rounded-lg prose-img:shadow-md
                          prose-ul:list-disc prose-ol:list-decimal"
-              dangerouslySetInnerHTML={{ __html: page.body }}
+              dangerouslySetInnerHTML={{ __html: sanitizeCanvasHtml(page.body) }}
             />
           ) : (
             <p className="text-muted-foreground">This page has no content.</p>

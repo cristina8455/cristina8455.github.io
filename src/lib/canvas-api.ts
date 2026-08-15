@@ -233,6 +233,35 @@ export async function getFrontPage(courseId: number): Promise<CanvasPage | null>
   }
 }
 
+/**
+ * Strip document-level styling out of Canvas HTML before it is injected.
+ *
+ * Canvas embeds the account's DesignPlus stylesheet directly in page bodies:
+ *
+ *     <link rel="stylesheet" href="…/dp_app.css">
+ *
+ * Injected with dangerouslySetInnerHTML that is not scoped to the content —
+ * the browser applies it to the whole document. On this site it overrode the
+ * layout badly enough that the header link rendered invisible and the page
+ * collapsed into a narrow column.
+ *
+ * Element-level `style=""` attributes are kept: those are scoped, and they
+ * carry the formatting the page was actually authored with. Only things that
+ * can reach outside the content area are removed.
+ *
+ * (canvaskit.py strips the same stylesheet for its content comparison, for a
+ * different reason — Canvas injects it on ingest, so it defeats diffing.)
+ */
+export function sanitizeCanvasHtml(html: string): string {
+  return html
+    .replace(/<link\b[^>]*>/gi, '')
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '')
+    // React will not execute these, but they should not travel with the
+    // content either.
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<script\b[^>]*\/>/gi, '');
+}
+
 /** Seasons that can appear in a term name or a page title. */
 const SEASONS = ['spring', 'summer', 'fall', 'winter'] as const;
 

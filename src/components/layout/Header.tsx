@@ -17,9 +17,14 @@ export default function Header() {
         <header className="bg-card border-b border-border">
             <div className="max-w-6xl mx-auto px-4 py-3">
                 <div className="flex justify-between items-center">
+                    {/* Solid colour, not gradient-clipped text. The previous
+                        version relied on `bg-clip-text text-transparent`, so
+                        anything that disturbed the background left the text
+                        genuinely invisible — which is exactly what injected
+                        Canvas CSS did, hiding the only link back to home. */}
                     <Link
                         href="/"
-                        className="text-lg sm:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80"
+                        className="text-lg sm:text-xl font-bold text-primary hover:text-primary/80 transition-colors"
                     >
                         Cristina Sizemore
                     </Link>

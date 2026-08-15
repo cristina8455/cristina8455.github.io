@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { BookOpen, FileText, ChevronRight } from 'lucide-react';
 import { getCourseWithPages } from '@/lib/courses';
+import { sanitizeCanvasHtml } from '@/lib/canvas-api';
 
 // ISR: revalidate every 24 hours
 export const revalidate = 86400;
@@ -79,7 +80,7 @@ export default async function CoursePage({ params }: PageProps) {
                          prose-a:text-primary prose-a:no-underline hover:prose-a:underline
                          prose-table:border-collapse prose-td:border prose-td:border-border prose-td:p-2
                          prose-th:border prose-th:border-border prose-th:p-2 prose-th:bg-muted/50"
-              dangerouslySetInnerHTML={{ __html: course.notesPage.body }}
+              dangerouslySetInnerHTML={{ __html: sanitizeCanvasHtml(course.notesPage.body) }}
             />
           </div>
         ) : (
