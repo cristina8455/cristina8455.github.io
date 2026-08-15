@@ -40,3 +40,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 backups/
+
+# iCloud syncs ~/Documents and corrupts these with " 2" conflict
+# copies, so they live under a .nosync name that iCloud skips.
+node_modules.nosync/
