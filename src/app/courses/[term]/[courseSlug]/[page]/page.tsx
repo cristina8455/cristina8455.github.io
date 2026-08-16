@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ArrowLeft, FileText } from 'lucide-react';
 import { getCoursePageBySlug } from '@/lib/courses';
 import { prepareCanvasHtml } from '@/lib/canvas-html';
+import { getPublishedFiles } from '@/lib/published-files';
 
 // ISR: revalidate every 24 hours
 export const revalidate = 86400;
@@ -42,6 +43,7 @@ export default async function ContentPage({ params }: PageProps) {
   }
 
   const { course, page } = result;
+  const { lookup } = await getPublishedFiles();
 
   return (
     <div className="min-h-screen bg-background">
@@ -78,7 +80,7 @@ export default async function ContentPage({ params }: PageProps) {
                          prose-th:border prose-th:border-border prose-th:p-2 prose-th:bg-muted/50
                          prose-img:rounded-lg prose-img:shadow-md
                          prose-ul:list-disc prose-ol:list-decimal"
-              dangerouslySetInnerHTML={{ __html: prepareCanvasHtml(page.body) }}
+              dangerouslySetInnerHTML={{ __html: prepareCanvasHtml(page.body, undefined, lookup) }}
             />
           ) : (
             <p className="text-muted-foreground">This page has no content.</p>

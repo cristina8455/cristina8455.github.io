@@ -43,6 +43,21 @@ describe('prepareCanvasHtml', () => {
     assert.match(out, /canvas-link/);
   });
 
+  test('a published file is repointed and not marked', () => {
+    const lookup = (id: string) =>
+      id === '13883659' ? 'https://files.example/f/ab/notes.pdf' : null;
+    const out = prepareCanvasHtml(`<a href="${C}/courses/57799/files/13883659">PDF</a>`, ctx, lookup);
+    assert.match(out, /href="https:\/\/files\.example\/f\/ab\/notes\.pdf"/);
+    assert.equal(out.includes('canvas-link'), false);
+  });
+
+  test('an unpublished file stays on Canvas and is marked', () => {
+    const lookup = () => null;
+    const out = prepareCanvasHtml(`<a href="${C}/courses/57799/files/999">PDF</a>`, ctx, lookup);
+    assert.match(out, /instructure\.com/);
+    assert.match(out, /canvas-link/);
+  });
+
   test('works with no rewrite context at all', () => {
     // Individual page and syllabus routes call it this way.
     const out = prepareCanvasHtml(`<a href="${C}/courses/57799/files/1">PDF</a>`);

@@ -1,32 +1,38 @@
-import manifest from '@/data/published-files.json';
+import fallbackManifest from '@/data/published-files.json';
 
 /**
  * Course files published to a static host, keyed by Canvas file id.
  *
  * Canvas file links are behind CLC's single sign-on, so nobody outside the
  * college can open them. Publishing the PDFs elsewhere fixes that, but the
- * files themselves cannot live in this repo: Vercel caps a Hobby deployment's
- * source files at 100 MB and the corpus is around 515 MB.
+ * files cannot live in this repo: Vercel caps a Hobby deployment's source
+ * files at 100 MB and the corpus is around 490 MB. So they are hosted
+ * separately and only this map is needed here.
  *
- * So the files are hosted separately and only this map ships with the site —
- * a few hundred short entries rather than half a gigabyte of PDFs. It is
- * generated from the archive in `canvas-courses`, which is where the files are
- * captured and where the same document uploaded across several terms is
- * already deduplicated by content.
+ * The map is fetched from the host, which publishes it alongside the files.
+ * That is deliberate: the alternative is a job in the archive repo pushing a
+ * regenerated map into this one, which needs a long-lived cross-account write
+ * token — the kind of credential this project has been removing.
  *
- * Everything here degrades to nothing:
+ * `@/data/published-files.json` is the floor, not the source of truth. It is
+ * whatever was committed last and is used when the host cannot be reached.
+ * A stale copy is never *wrong*: paths are content-addressed, so an entry
+ * never changes meaning. It can only be short of newer files, and those fall
+ * back to Canvas exactly as they did before anything was published.
  *
- *   - no `NEXT_PUBLIC_FILES_CDN_URL` set  -> no rewriting at all
- *   - file id absent from the manifest    -> that one link stays on Canvas
+ * Every layer degrades to the previous behaviour:
  *
- * In either case the link keeps working exactly as before and
- * `markCanvasLinks` labels it as needing a CLC login. Losing the host is a
- * loss of convenience, never a broken page — the mistake this whole project
- * started from was letting a dependency become load-bearing without a path
- * for its absence.
+ *   no NEXT_PUBLIC_FILES_CDN_URL  -> no rewriting at all
+ *   host unreachable              -> committed map, possibly short
+ *   id not in the map             -> that link stays on Canvas
+ *
+ * and in every case `markCanvasLinks` labels what is left as needing a CLC
+ * login. Losing the host costs convenience, never a working page.
  */
 
-const files = manifest as Record<string, string>;
+export type FileManifest = Record<string, string>;
+
+const fallback = fallbackManifest as FileManifest;
 
 /** Base URL of the file host, or null when none is configured. */
 export function filesCdnBase(): string | null {
@@ -34,16 +40,55 @@ export function filesCdnBase(): string | null {
   return base ? base.replace(/\/+$/, '') : null;
 }
 
-/** Published URL for a Canvas file id, or null to leave the link on Canvas. */
-export function publishedFileUrl(canvasFileId: string): string | null {
-  const base = filesCdnBase();
-  if (!base) return null;
-
-  const path = files[canvasFileId];
-  return path ? `${base}/${path.replace(/^\/+/, '')}` : null;
+export interface PublishedFiles {
+  lookup: (canvasFileId: string) => string | null;
+  count: number;
+  /** Where the map came from, for the health check. */
+  source: 'host' | 'committed' | 'none';
 }
 
-/** How many files are published. Used by the health check. */
-export function publishedFileCount(): number {
-  return Object.keys(files).length;
+/**
+ * Current file map. Cached for 24 hours alongside the rest of the ISR content,
+ * so this is one request per revalidation rather than one per page view.
+ */
+export async function getPublishedFiles(): Promise<PublishedFiles> {
+  const base = filesCdnBase();
+  if (!base) {
+    return { lookup: () => null, count: 0, source: 'none' };
+  }
+
+  let manifest = fallback;
+  let source: PublishedFiles['source'] = 'committed';
+
+  try {
+    const response = await fetch(`${base}/manifest.json`, {
+      next: { revalidate: 86400 },
+      signal: AbortSignal.timeout(10000),
+    });
+    if (response.ok) {
+      const fetched = (await response.json()) as FileManifest;
+      // Guard against an empty or malformed body replacing a good floor.
+      if (fetched && typeof fetched === 'object' && Object.keys(fetched).length > 0) {
+        manifest = fetched;
+        source = 'host';
+      }
+    }
+  } catch {
+    // Unreachable or slow: keep the committed map. Not worth failing a page
+    // over — the consequence is some links staying on Canvas.
+  }
+
+  return {
+    lookup: (canvasFileId: string) => {
+      const path = manifest[canvasFileId];
+      return path ? `${base}/${path.replace(/^\/+/, '')}` : null;
+    },
+    count: Object.keys(manifest).length,
+    source,
+  };
+}
+
+/** Size of the committed floor. Used by the health check. */
+export function committedFileCount(): number {
+  return Object.keys(fallback).length;
 }

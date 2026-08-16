@@ -5,6 +5,7 @@ import { BookOpen, FileText, ChevronRight } from 'lucide-react';
 import { getCourseWithPages } from '@/lib/courses';
 import { type CanvasPageSummary } from '@/lib/canvas-api';
 import { prepareCanvasHtml } from '@/lib/canvas-html';
+import { getPublishedFiles } from '@/lib/published-files';
 
 // ISR: revalidate every 24 hours
 export const revalidate = 86400;
@@ -41,6 +42,8 @@ export default async function CoursePage({ params }: PageProps) {
   if (!course) {
     notFound();
   }
+
+  const { lookup } = await getPublishedFiles();
 
   return (
     <div className="min-h-screen bg-background">
@@ -89,7 +92,8 @@ export default async function CoursePage({ params }: PageProps) {
                     termSlug: term,
                     courseSlug,
                     publishedSlugs: new Set(course.pages.map(p => p.url.toLowerCase())),
-                  }
+                  },
+                  lookup
                 ),
               }}
             />

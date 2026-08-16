@@ -5,6 +5,7 @@ import { ArrowLeft, FileText, ExternalLink } from 'lucide-react';
 import { getCourseBySlug, canvasCourseUrl } from '@/lib/courses';
 import { getCourse } from '@/lib/canvas-api';
 import { prepareCanvasHtml } from '@/lib/canvas-html';
+import { getPublishedFiles } from '@/lib/published-files';
 
 // ISR: revalidate every 24 hours
 export const revalidate = 86400;
@@ -46,6 +47,7 @@ export default async function SyllabusPage({ params }: PageProps) {
   // Canvas returns an empty string rather than null when there is no syllabus.
   const syllabusHtml = fullCourse.syllabus_body?.trim() ? fullCourse.syllabus_body : null;
   const canvasUrl = canvasCourseUrl(course.id);
+  const { lookup } = await getPublishedFiles();
 
   return (
     <div className="min-h-screen bg-background">
@@ -81,7 +83,7 @@ export default async function SyllabusPage({ params }: PageProps) {
                          prose-table:border-collapse prose-td:border prose-td:border-border prose-td:p-2
                          prose-th:border prose-th:border-border prose-th:p-2 prose-th:bg-muted/50
                          prose-ul:list-disc prose-ol:list-decimal"
-              dangerouslySetInnerHTML={{ __html: prepareCanvasHtml(syllabusHtml) }}
+              dangerouslySetInnerHTML={{ __html: prepareCanvasHtml(syllabusHtml, undefined, lookup) }}
             />
           ) : (
             <div className="text-muted-foreground space-y-3">

@@ -9,7 +9,7 @@
  * Never cached: it has to reflect the state of Canvas right now.
  */
 
-import { filesCdnBase, publishedFileCount } from '@/lib/published-files';
+import { filesCdnBase, getPublishedFiles, committedFileCount } from '@/lib/published-files';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -114,38 +114,33 @@ export async function GET() {
   }
 
   // 4. Published course files. Optional by design — with no host configured
-  //    every file link simply stays on Canvas. The one state worth reporting
-  //    is a half-configured one, where a host is set but nothing is listed,
-  //    because then the links silently fall back and look the same as before.
+  //    every file link simply stays on Canvas. What matters is distinguishing
+  //    "reading the current map from the host" from "falling back to whatever
+  //    was last committed", because both serve pages and only one is fresh.
   const cdn = filesCdnBase();
-  const published = publishedFileCount();
-  if (!cdn && published === 0) {
+  if (!cdn) {
     checks.push({
       name: 'course-files',
       ok: true,
       detail: 'Not published — file links point at Canvas (CLC login required)',
     });
-  } else if (cdn && published === 0) {
-    checks.push({
-      name: 'course-files',
-      ok: false,
-      detail: `NEXT_PUBLIC_FILES_CDN_URL is set (${cdn}) but no files are listed in ` +
-              'published-files.json, so every link still falls back to Canvas',
-    });
-    status = worst(status, 'warning');
-  } else if (!cdn && published > 0) {
-    checks.push({
-      name: 'course-files',
-      ok: false,
-      detail: `${published} file(s) listed but NEXT_PUBLIC_FILES_CDN_URL is not set`,
-    });
-    status = worst(status, 'warning');
   } else {
-    checks.push({
-      name: 'course-files',
-      ok: true,
-      detail: `${published} file(s) published via ${cdn}`,
-    });
+    const { count, source } = await getPublishedFiles();
+    if (source === 'host') {
+      checks.push({
+        name: 'course-files',
+        ok: true,
+        detail: `${count} file(s) published via ${cdn}`,
+      });
+    } else {
+      checks.push({
+        name: 'course-files',
+        ok: false,
+        detail: `${cdn} is unreachable; using the committed map ` +
+                `(${committedFileCount()} file(s)). Newer files fall back to Canvas.`,
+      });
+      status = worst(status, 'warning');
+    }
   }
 
   return respond(status, checks);
