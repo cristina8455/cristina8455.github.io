@@ -8,6 +8,8 @@ import {
   seasonOf,
   sanitizeCanvasHtml,
   rewriteCanvasLinks,
+  rewriteCanvasFileLinks,
+  markCanvasLinks,
 } from './canvas-api';
 
 /**
@@ -163,6 +165,17 @@ describe('sanitizeCanvasHtml', () => {
     const body = '<h2>Week 1</h2><ul><li><a href="/x">Notes</a></li></ul>';
     assert.equal(sanitizeCanvasHtml(body), body);
   });
+
+  test('strips the data-api-* attributes Canvas adds to internal links', () => {
+    // These outlive link rewriting, leaving a local href beside a
+    // data-api-endpoint that still names Canvas.
+    const body = '<a title="Day 2" href="/x" data-api-endpoint="https://c.instructure.com/api/v1/x"' +
+                 ' data-api-returntype="Page" data-course-type="wiki_page" data-published="true">D2</a>';
+    const out = sanitizeCanvasHtml(body);
+    assert.equal(/data-api-endpoint|data-api-returntype|data-course-type|data-published/.test(out), false);
+    assert.match(out, /title="Day 2"/);
+    assert.match(out, /href="\/x"/);
+  });
 });
 
 describe('rewriteCanvasLinks', () => {
@@ -219,5 +232,70 @@ describe('rewriteCanvasLinks', () => {
                  `<a href="${C}/courses/62966/pages/course-calendar">b</a>`;
     const out = rewriteCanvasLinks(html, ctx);
     assert.equal(out.includes('instructure.com'), false);
+  });
+});
+
+describe('rewriteCanvasFileLinks', () => {
+  const C = 'https://clcillinois.instructure.com';
+  const lookup = (id: string) =>
+    id === '13883659' ? 'https://files.example/f/ab/notes.pdf' : null;
+
+  test('repoints a published file at its copy', () => {
+    const html = `<a href="${C}/courses/57799/files/13883659?verifier=abc">Notes</a>`;
+    assert.equal(
+      rewriteCanvasFileLinks(html, lookup),
+      '<a href="https://files.example/f/ab/notes.pdf">Notes</a>'
+    );
+  });
+
+  test('leaves an unpublished file on Canvas', () => {
+    // The normal case while most of the corpus is unpublished.
+    const html = `<a href="${C}/courses/57799/files/99999?verifier=abc">Notes</a>`;
+    assert.equal(rewriteCanvasFileLinks(html, lookup), html);
+  });
+
+  test('leaves everything alone when nothing is published', () => {
+    const html = `<a href="${C}/courses/57799/files/13883659">a</a>`;
+    assert.equal(rewriteCanvasFileLinks(html, () => null), html);
+  });
+
+  test('does not touch page or assignment links', () => {
+    const html = `<a href="${C}/courses/57799/assignments/1">a</a>` +
+                 `<a href="${C}/courses/57799/pages/day-1">b</a>`;
+    assert.equal(rewriteCanvasFileLinks(html, lookup), html);
+  });
+});
+
+describe('markCanvasLinks', () => {
+  const C = 'https://clcillinois.instructure.com';
+
+  test('marks a link that still points at Canvas', () => {
+    const out = markCanvasLinks(`<a href="${C}/courses/1/assignments/2">Submit</a>`);
+    assert.match(out, /class="[^"]*canvas-link/);
+    assert.match(out, /target="_blank"/);
+    assert.match(out, /rel="noopener noreferrer"/);
+    assert.match(out, /title="Opens in Canvas — CLC login required"/);
+  });
+
+  test('preserves an existing class', () => {
+    const out = markCanvasLinks(`<a class="btn" href="${C}/courses/1/files/2">pdf</a>`);
+    assert.match(out, /class="btn canvas-link"/);
+  });
+
+  test('leaves non-Canvas links untouched', () => {
+    for (const html of [
+      '<a href="/courses/fall-2026/mth146-004/day-1">local</a>',
+      '<a href="https://files.example/f/ab/notes.pdf">published copy</a>',
+      '<a href="https://example.com/x">external</a>',
+    ]) {
+      assert.equal(markCanvasLinks(html), html);
+    }
+  });
+
+  test('is idempotent', () => {
+    // Pages are re-rendered on every ISR revalidation; marking twice must not
+    // stack attributes.
+    const once = markCanvasLinks(`<a href="${C}/courses/1/files/2">pdf</a>`);
+    assert.equal(markCanvasLinks(once), once);
   });
 });

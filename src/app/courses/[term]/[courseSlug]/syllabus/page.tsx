@@ -3,7 +3,8 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, FileText, ExternalLink } from 'lucide-react';
 import { getCourseBySlug, canvasCourseUrl } from '@/lib/courses';
-import { getCourse , sanitizeCanvasHtml } from '@/lib/canvas-api';
+import { getCourse } from '@/lib/canvas-api';
+import { prepareCanvasHtml } from '@/lib/canvas-html';
 
 // ISR: revalidate every 24 hours
 export const revalidate = 86400;
@@ -80,7 +81,7 @@ export default async function SyllabusPage({ params }: PageProps) {
                          prose-table:border-collapse prose-td:border prose-td:border-border prose-td:p-2
                          prose-th:border prose-th:border-border prose-th:p-2 prose-th:bg-muted/50
                          prose-ul:list-disc prose-ol:list-decimal"
-              dangerouslySetInnerHTML={{ __html: sanitizeCanvasHtml(syllabusHtml) }}
+              dangerouslySetInnerHTML={{ __html: prepareCanvasHtml(syllabusHtml) }}
             />
           ) : (
             <div className="text-muted-foreground space-y-3">

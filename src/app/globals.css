@@ -46,3 +46,31 @@
 body {
   @apply bg-background text-foreground;
 }
+/* Links that lead back into Canvas.
+ *
+ * Canvas sits behind CLC's single sign-on, so following one of these without
+ * an institutional account lands on a Microsoft sign-in page. Most of them are
+ * PDFs, so this is the common case rather than an edge one. Marked with a
+ * small outward arrow so the destination is obvious before the click; the
+ * title attribute carries the explanation for pointer and screen-reader users.
+ *
+ * Applied by markCanvasLinks in src/lib/canvas-api.ts. Links that were
+ * rewritten to this site, or to published copies of the files, never get the
+ * class and so are not marked.
+ */
+.canvas-link::after {
+  content: "↗";
+  display: inline-block;
+  margin-left: 0.2em;
+  font-size: 0.8em;
+  line-height: 1;
+  vertical-align: 0.15em;
+  opacity: 0.65;
+}
+
+.canvas-link {
+  /* Dotted underline distinguishes "leaves the site" from ordinary links
+     without relying on colour alone. */
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+}

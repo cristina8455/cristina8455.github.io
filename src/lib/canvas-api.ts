@@ -273,7 +273,74 @@ export function sanitizeCanvasHtml(html: string): string {
     // React will not execute these, but they should not travel with the
     // content either.
     .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
-    .replace(/<script\b[^>]*\/>/gi, '');
+    .replace(/<script\b[^>]*\/>/gi, '')
+    // Canvas decorates internal links with these on ingest. They mean nothing
+    // outside Canvas's own JavaScript, they publish internal API paths, and
+    // they survive link rewriting — leaving a local href sitting next to a
+    // data-api-endpoint still pointing at Canvas. (canvaskit.canonical_html
+    // strips the same set, for its own reasons.)
+    .replace(/\s+data-(?:api-endpoint|api-returntype|course-type|published)="[^"]*"/gi, '');
+}
+
+/**
+ * Point Canvas file links at published copies where they exist.
+ *
+ * Around 1,400 links in the mirrored pages are PDFs — guided notes, completed
+ * notes, practice sets — and every one of them is behind CLC's single sign-on,
+ * so a visitor who is not enrolled cannot open any of them.
+ *
+ * `lookup` returns a published URL for a Canvas file id, or null. Null is the
+ * normal case, not an error: if nothing is published, or the CDN is not
+ * configured, or a particular file was left out, the link stays on Canvas and
+ * `markCanvasLinks` labels it. The published copies are an enhancement layered
+ * on top, never something the page depends on.
+ */
+export function rewriteCanvasFileLinks(
+  html: string,
+  lookup: (canvasFileId: string) => string | null
+): string {
+  return html.replace(
+    /href="(https?:\/\/[a-z0-9.-]+\.instructure\.com\/[^"]*?\/files\/(\d+)[^"]*)"/gi,
+    (match, _original: string, fileId: string) => {
+      const published = lookup(fileId);
+      return published ? `href="${published}"` : match;
+    }
+  );
+}
+
+/**
+ * Flag links that lead back into Canvas so they announce themselves.
+ *
+ * Whatever is left pointing at Canvas after `rewriteCanvasLinks` — assignments,
+ * quizzes, discussions, and every file — is behind CLC's single sign-on. A
+ * visitor who is not enrolled follows one and lands on a Microsoft login page
+ * with no explanation. There are around 1,400 file links alone, so this is the
+ * common case, not an edge one.
+ *
+ * Marks them rather than hiding them: the material genuinely is in Canvas, and
+ * a student following the same link is exactly where they should be. Styling
+ * lives in globals.css against `.canvas-link`.
+ */
+export function markCanvasLinks(html: string): string {
+  return html.replace(
+    /<a\b([^>]*?)href="(https?:\/\/[a-z0-9.-]+\.instructure\.com\/[^"]*)"([^>]*)>/gi,
+    (match, before: string, href: string, after: string) => {
+      const attrs = `${before} ${after}`;
+      // Leave anything already marked or already opening in a new tab alone.
+      if (/canvas-link/.test(attrs)) return match;
+
+      const rest = `${before}${after}`.replace(/\s+/g, ' ').trim();
+      const existingClass = rest.match(/class="([^"]*)"/i);
+      const cleaned = rest
+        .replace(/\s*class="[^"]*"/i, '')
+        .replace(/\s*target="[^"]*"/i, '')
+        .replace(/\s*rel="[^"]*"/i, '');
+      const className = existingClass ? `${existingClass[1]} canvas-link` : 'canvas-link';
+
+      return `<a ${cleaned} href="${href}" class="${className}" target="_blank" ` +
+             `rel="noopener noreferrer" title="Opens in Canvas — CLC login required">`;
+    }
+  );
 }
 
 export interface LinkRewriteContext {
