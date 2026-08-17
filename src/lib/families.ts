@@ -124,3 +124,79 @@ export async function getCourseFamily(code: string): Promise<CourseFamily | null
   const wanted = code.toUpperCase().replace(/[^A-Z0-9]/g, '');
   return families.find(f => f.code === wanted) ?? null;
 }
+
+export interface TeachingRecord {
+  /** Terms oldest first, so the grid reads left to right as time. */
+  terms: Array<{ slug: string; name: string; short: string }>;
+  families: Array<{
+    code: string;
+    label: string;
+    name: string;
+    /** Section count per term slug; absent means not taught that term. */
+    byTerm: Record<string, number>;
+    total: number;
+  }>;
+  totals: { courses: number; sections: number; terms: number };
+}
+
+/** "Spring 2026" -> "Sp 26", for a grid column head. */
+function shortTerm(name: string): string {
+  const match = name.match(/(Spring|Summer|Fall|Winter)\s*(\d{4})/i);
+  if (!match) return name;
+  const season = { spring: 'Sp', summer: 'Su', fall: 'Fa', winter: 'Wi' }[match[1].toLowerCase()]!;
+  return `${season} ${match[2].slice(2)}`;
+}
+
+/**
+ * Courses against terms, as a grid.
+ *
+ * Nine terms and twenty-one sections is the most distinctive thing about this
+ * record, and as a list it reads as twenty-one unrelated rows. Laid out as
+ * courses down and terms across, the shape of a teaching career is legible in
+ * one glance — which course is the staple, which is new, where the gaps are.
+ */
+export async function getTeachingRecord(): Promise<TeachingRecord> {
+  const families = await getCourseFamilies();
+
+  const termMap = new Map<string, { slug: string; name: string; endAt: Date | null }>();
+  for (const family of families) {
+    for (const course of family.courses) {
+      if (course.term && !termMap.has(course.term.slug)) {
+        termMap.set(course.term.slug, {
+          slug: course.term.slug,
+          name: course.term.name,
+          endAt: course.term.endAt,
+        });
+      }
+    }
+  }
+
+  const terms = [...termMap.values()]
+    .sort((a, b) => (a.endAt?.getTime() ?? 0) - (b.endAt?.getTime() ?? 0))
+    .map(t => ({ slug: t.slug, name: t.name, short: shortTerm(t.name) }));
+
+  const rows = families.map(family => {
+    const byTerm: Record<string, number> = {};
+    for (const course of family.courses) {
+      if (!course.term) continue;
+      byTerm[course.term.slug] = (byTerm[course.term.slug] ?? 0) + 1;
+    }
+    return {
+      code: family.code,
+      label: family.label,
+      name: family.name,
+      byTerm,
+      total: family.courses.length,
+    };
+  });
+
+  return {
+    terms,
+    families: rows,
+    totals: {
+      courses: rows.length,
+      sections: rows.reduce((n, r) => n + r.total, 0),
+      terms: terms.length,
+    },
+  };
+}

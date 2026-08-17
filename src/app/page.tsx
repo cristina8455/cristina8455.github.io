@@ -1,55 +1,75 @@
-// src/app/page.tsx
 import Image from 'next/image';
-import { Clock, ChevronRight, MapPin, BookOpen, Archive } from 'lucide-react';
 import Link from 'next/link';
-import type { LucideIcon } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { getHomepageCourses, type Course } from '@/lib/courses';
+import { getTeachingRecord, familyCode, familyLabel, type TeachingRecord } from '@/lib/families';
 import { profile, officeLabel } from '@/lib/profile';
 
-// ISR: revalidate every 24 hours
 export const revalidate = 86400;
 
+/**
+ * The front page.
+ *
+ * Not a grid of cards. Cards give every element equal weight, which on a page
+ * whose job is to say what someone does is exactly backwards. This is three
+ * things in descending order of importance: who she is, what is running now,
+ * and the record behind it — separated by rules rather than boxed, so the
+ * hierarchy comes from typography and space instead of from borders.
+ */
 export default async function Home() {
-  const { courses, termName, isCurrent } = await getHomepageCourses();
-
-  const headingTerm = termName ?? 'Current';
+  const [{ courses, termName, isCurrent }, record] = await Promise.all([
+    getHomepageCourses(),
+    getTeachingRecord(),
+  ]);
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="max-w-6xl mx-auto px-4 py-8">
-        <div className="bg-card rounded-lg shadow-sm p-6 mb-6 flex items-center justify-between">
-          <div className="pr-6">
-            <h2 className="text-2xl font-bold mb-1 text-card-foreground">Mathematics & Statistics</h2>
-            <p className="text-muted-foreground text-sm">College of Lake County</p>
-          </div>
-          <Image
-            src="/headshotCK.jpg"
-            alt="Cristina Sizemore"
-            width={80}
-            height={80}
-            className="rounded-lg object-cover shadow-md hover:shadow-lg transition-shadow duration-200"
-          />
-        </div>
+      <main className="max-w-5xl mx-auto px-5 sm:px-8">
 
-        <div className="mb-6">
-          <div className="flex justify-between items-center mb-3">
-            <h3 className="text-lg font-semibold flex items-center text-card-foreground">
-              <Clock size={18} className="mr-2 text-primary opacity-90" />
-              {headingTerm} Courses
-              {!isCurrent && courses.length > 0 && (
-                <span className="ml-2 text-xs font-normal text-muted-foreground border border-border
-                                 rounded-full px-2 py-0.5">
-                  most recent term
-                </span>
-              )}
-            </h3>
+        {/* Opening. A typographic statement, not a headshot in a box. */}
+        <section className="pt-14 sm:pt-24 pb-12">
+          <div className="flex items-start gap-8">
+            <div className="min-w-0 flex-1">
+              <p className="font-mono text-[11px] tracking-[0.16em] uppercase text-brass">
+                Mathematics &amp; Statistics
+              </p>
+              <h1 className="font-serif font-semibold text-[clamp(2.4rem,7vw,4rem)]
+                             leading-[1.04] tracking-[-0.022em] mt-4 text-foreground">
+                {profile.name}
+              </h1>
+              <p className="font-serif text-lg sm:text-xl leading-relaxed text-muted-foreground
+                            mt-5 max-w-[42ch]">
+                I teach algebra, precalculus, statistics and calculus at the{' '}
+                {profile.institution}. Course materials for every section I have taught are
+                collected here.
+              </p>
+            </div>
+
+            {/* Small, aligned to the type rather than floating in a card. */}
+            <Image
+              src="/headshotCK.jpg"
+              alt=""
+              width={104}
+              height={104}
+              className="hidden sm:block rounded-sm object-cover flex-shrink-0 mt-1
+                         grayscale-[0.15] saturate-[0.95]"
+              priority
+            />
+          </div>
+        </section>
+
+        {/* Now teaching. A list with hierarchy, not equal-weight tiles. */}
+        <section className="border-t border-foreground/15 py-10">
+          <div className="flex items-baseline justify-between gap-4 mb-6">
+            <h2 className="font-mono text-[11px] tracking-[0.16em] uppercase text-muted-foreground">
+              {isCurrent ? 'Now teaching' : 'Most recent term'}
+              {termName && <span className="text-brass"> · {termName}</span>}
+            </h2>
             <Link
               href="/courses"
-              className="text-sm text-muted-foreground hover:text-primary flex items-center group
-                       transition-colors duration-200"
+              className="text-sm text-primary hover:underline underline-offset-2 flex-shrink-0"
             >
-              <Archive size={16} className="mr-1 opacity-70 group-hover:opacity-100" />
-              All Courses
+              All terms
             </Link>
           </div>
 
@@ -58,125 +78,170 @@ export default async function Home() {
               Courses for the upcoming term will be posted here before the semester begins.
             </p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {courses.map((course) => (
-                <CourseCard
-                  key={course.id}
-                  course={course}
-                />
+            <ul className="divide-y divide-border">
+              {courses.map(course => (
+                <CourseRow key={course.id} course={course} />
               ))}
-            </div>
+            </ul>
           )}
-        </div>
+        </section>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <QuickInfoCard
-            icon={MapPin}
-            title="Contact & Location"
-            content={<>
-              <p>Office: {officeLabel}</p>
-              <p>{profile.email}</p>
-            </>}
-            linkText="More Details"
-            href="/about"
-          />
+        {/* The record. The one thing here no template has. */}
+        <section className="border-t border-foreground/15 py-10">
+          <div className="flex items-baseline justify-between gap-4 mb-6">
+            <h2 className="font-mono text-[11px] tracking-[0.16em] uppercase text-muted-foreground">
+              Teaching record
+            </h2>
+            <Link
+              href="/teaching"
+              className="text-sm text-primary hover:underline underline-offset-2 flex-shrink-0"
+            >
+              By course
+            </Link>
+          </div>
+          <RecordGrid record={record} />
+        </section>
 
-          <QuickInfoCard
-            icon={BookOpen}
-            title="Background"
-            content="Mathematics and statistics instructor with research background in statistical methodology."
-            linkText="Learn More"
-            href="/about"
-          />
-        </div>
+        {/* Practical detail, kept quiet. */}
+        <section className="border-t border-foreground/15 py-10 grid gap-8 sm:grid-cols-2">
+          <div>
+            <h2 className="font-mono text-[11px] tracking-[0.16em] uppercase text-muted-foreground mb-3">
+              Office hours
+            </h2>
+            <p className="text-sm text-muted-foreground mb-2">
+              In person in {officeLabel}, and on Zoom.
+            </p>
+            <Link href="/office-hours" className="text-sm text-primary hover:underline underline-offset-2">
+              This term&rsquo;s schedule
+            </Link>
+          </div>
+          <div>
+            <h2 className="font-mono text-[11px] tracking-[0.16em] uppercase text-muted-foreground mb-3">
+              Contact
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              <a href={`mailto:${profile.email}`} className="text-primary hover:underline underline-offset-2">
+                {profile.email}
+              </a>
+              <br />
+              {officeLabel}, {profile.institution}
+            </p>
+          </div>
+        </section>
       </main>
     </div>
   );
 }
 
-function CourseCard({ course }: { course: Course }) {
-  const href = `/courses/${course.term?.slug}/${course.slug}`;
+/** One current course. Number leads, because that is how students name them. */
+function CourseRow({ course }: { course: Course }) {
+  const code = familyCode(course.code);
+  const section = course.code.replace(/^[A-Za-z]+\s*\d{3}\s*/, '').trim();
 
   return (
-    <Link
-      href={href}
-      aria-label={`View details for ${course.code} - ${course.name}`}
-    >
-      <div className="bg-card rounded-lg border border-border p-4
-                      transition-all duration-200
-                      hover:shadow-md hover:border-primary/15
-                      hover:translate-y-[-2px]
-                      dark:hover:shadow-lg dark:hover:shadow-primary/5
-                      group cursor-pointer">
-        <div className="flex items-start justify-between mb-3">
-          <div>
-            <h4 className="font-medium mb-1 text-card-foreground">{course.name}</h4>
-            <p className="text-sm text-muted-foreground">{course.code}</p>
-          </div>
-          <BookOpen size={16} className="text-primary opacity-80 flex-shrink-0 ml-2
-                                       group-hover:opacity-100 transition-opacity duration-200" />
-        </div>
-        <div
-          className="text-sm text-primary group-hover:text-primary/80
-                     inline-flex items-center transition-colors duration-200"
-        >
-          View Details
-          <ChevronRight
-            size={14}
-            className="ml-1 transform group-hover:translate-x-1
-                       transition-transform duration-200"
-          />
-        </div>
-      </div>
-    </Link>
+    <li>
+      <Link
+        href={`/courses/${course.term?.slug}/${course.slug}`}
+        className="group flex items-baseline gap-4 py-4 -mx-2 px-2 rounded
+                   hover:bg-muted/60 transition-colors"
+      >
+        <span className="font-mono text-sm text-brass tabular-nums w-[4.5rem] flex-shrink-0">
+          {familyLabel(code)}
+        </span>
+        <span className="font-serif text-lg text-foreground flex-1 min-w-0 truncate">
+          {course.name}
+        </span>
+        {section && (
+          <span className="hidden sm:block font-mono text-xs text-muted-foreground tabular-nums">
+            {section}
+          </span>
+        )}
+        <ArrowRight
+          size={15}
+          className="text-muted-foreground group-hover:text-primary
+                     group-hover:translate-x-0.5 transition-all flex-shrink-0"
+        />
+      </Link>
+    </li>
   );
 }
 
-function QuickInfoCard({
-  icon: Icon,
-  title,
-  content,
-  linkText,
-  href
-}: {
-  icon: LucideIcon;
-  title: string;
-  content: React.ReactNode;
-  linkText: string;
-  href: string;
-}) {
+/**
+ * Courses down, terms across. A filled cell means the course ran that term;
+ * the number is how many sections. The shape is the point — which course is
+ * the staple, which is new, where the gaps fall.
+ */
+function RecordGrid({ record }: { record: TeachingRecord }) {
+  const { terms, families, totals } = record;
+
   return (
-    <Link
-      href={href}
-      aria-label={`${linkText} about ${title}`}
-    >
-      <div className="bg-card rounded-lg border border-border p-4
-                      transition-all duration-200
-                      hover:shadow-md hover:border-primary/15
-                      hover:translate-y-[-2px]
-                      dark:hover:shadow-lg dark:hover:shadow-primary/5
-                      group cursor-pointer">
-        <div className="flex items-start">
-          <Icon size={16} className="text-primary opacity-90 mt-1 mr-2 flex-shrink-0
-                                   group-hover:opacity-100 transition-opacity duration-200" />
-          <div className="min-w-0 flex-1">
-            <h3 className="font-medium mb-1 text-card-foreground">{title}</h3>
-            <div className="text-sm text-muted-foreground">
-              {content}
-              <div className="text-primary group-hover:text-primary/80
-                          inline-flex items-center group mt-2
-                          transition-colors duration-200">
-                {linkText}
-                <ChevronRight
-                  size={14}
-                  className="ml-1 transform group-hover:translate-x-1
-                            transition-transform duration-200"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+    <div>
+      <div className="overflow-x-auto -mx-5 px-5 sm:mx-0 sm:px-0">
+        <table className="w-full min-w-[34rem] border-collapse">
+          <thead>
+            <tr>
+              <th className="text-left font-normal pb-3 pr-4 w-px whitespace-nowrap">
+                <span className="sr-only">Course</span>
+              </th>
+              {terms.map(term => (
+                <th
+                  key={term.slug}
+                  scope="col"
+                  className="font-mono text-[10px] tracking-[0.08em] uppercase
+                             text-muted-foreground font-normal pb-3 px-1 text-center"
+                >
+                  <abbr title={term.name} className="no-underline">{term.short}</abbr>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {families.map(family => (
+              <tr key={family.code} className="border-t border-border">
+                <th scope="row" className="text-left py-2.5 pr-5 whitespace-nowrap font-normal">
+                  <Link
+                    href={`/teaching/${family.code.toLowerCase()}`}
+                    className="group inline-flex items-baseline gap-2.5"
+                  >
+                    <span className="font-mono text-xs text-brass tabular-nums">
+                      {family.label}
+                    </span>
+                    <span className="font-serif text-sm text-foreground
+                                     group-hover:text-primary transition-colors">
+                      {family.name}
+                    </span>
+                  </Link>
+                </th>
+
+                {terms.map(term => {
+                  const sections = family.byTerm[term.slug];
+                  return (
+                    <td key={term.slug} className="px-1 py-2.5 text-center">
+                      {sections ? (
+                        <span
+                          title={`${family.label}, ${term.name}: ${sections} section${sections === 1 ? '' : 's'}`}
+                          className="inline-flex items-center justify-center w-6 h-6 rounded-sm
+                                     bg-primary/12 text-primary font-mono text-[11px] tabular-nums"
+                        >
+                          {sections}
+                        </span>
+                      ) : (
+                        <span className="inline-block w-6 h-6 align-middle" aria-hidden="true">
+                          <span className="block w-1 h-1 rounded-full bg-border mx-auto mt-2.5" />
+                        </span>
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-    </Link>
+
+      <p className="text-sm text-muted-foreground mt-5 tabular-nums">
+        {totals.courses} courses · {totals.sections} sections · {totals.terms} terms
+      </p>
+    </div>
   );
 }
