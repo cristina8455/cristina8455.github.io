@@ -5,7 +5,7 @@ import { BookOpen, FileText, ChevronRight } from 'lucide-react';
 import { getCourseWithPages } from '@/lib/courses';
 import { type CanvasPageSummary } from '@/lib/canvas-api';
 import { prepareCanvasHtml } from '@/lib/canvas-html';
-import { getPublishedFiles } from '@/lib/published-files';
+import { getPublishedFiles, getPublishedSyllabus } from '@/lib/published-files';
 
 // ISR: revalidate every 24 hours
 export const revalidate = 86400;
@@ -45,6 +45,13 @@ export default async function CoursePage({ params }: PageProps) {
 
   const { lookup } = await getPublishedFiles();
 
+  // The syllabus link was hidden whenever Canvas held no syllabus — which is
+  // every recent course, since CLC publishes through Simple Syllabus. Show it
+  // when either source has content. Next's data cache makes this fetch free:
+  // the syllabus route asks for the same URL and gets the cached response.
+  const hasSyllabus =
+    course.hasSyllabus || (await getPublishedSyllabus(course.id)) !== null;
+
   return (
     <div className="min-h-screen bg-background">
       <main className="max-w-6xl mx-auto px-4 py-8">
@@ -61,7 +68,7 @@ export default async function CoursePage({ params }: PageProps) {
 
           {/* Quick Links — the syllabus link is hidden when Canvas holds no
               syllabus content, rather than leading to an empty page. */}
-          {course.hasSyllabus && (
+          {hasSyllabus && (
             <div className="flex gap-3 mt-4">
               <Link
                 href={`/courses/${term}/${courseSlug}/syllabus`}

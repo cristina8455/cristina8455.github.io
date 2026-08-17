@@ -5,7 +5,7 @@ import { ArrowLeft, FileText, ExternalLink } from 'lucide-react';
 import { getCourseBySlug, canvasCourseUrl } from '@/lib/courses';
 import { getCourse } from '@/lib/canvas-api';
 import { prepareCanvasHtml } from '@/lib/canvas-html';
-import { getPublishedFiles } from '@/lib/published-files';
+import { getPublishedFiles, getPublishedSyllabus } from '@/lib/published-files';
 
 // ISR: revalidate every 24 hours
 export const revalidate = 86400;
@@ -44,8 +44,13 @@ export default async function SyllabusPage({ params }: PageProps) {
 
   // Fetch full course with syllabus
   const fullCourse = await getCourse(course.id);
-  // Canvas returns an empty string rather than null when there is no syllabus.
-  const syllabusHtml = fullCourse.syllabus_body?.trim() ? fullCourse.syllabus_body : null;
+  // Canvas returns an empty string rather than null when there is no syllabus,
+  // which is the norm: CLC publishes through Simple Syllabus, so syllabus_body
+  // is empty for every recent course. Fall back to the copy captured from
+  // there, which the archive publishes.
+  const canvasSyllabus = fullCourse.syllabus_body?.trim() ? fullCourse.syllabus_body : null;
+  const publishedSyllabus = canvasSyllabus ? null : await getPublishedSyllabus(course.id);
+  const syllabusHtml = canvasSyllabus ?? publishedSyllabus;
   const canvasUrl = canvasCourseUrl(course.id);
   const { lookup } = await getPublishedFiles();
 

@@ -92,3 +92,33 @@ export async function getPublishedFiles(): Promise<PublishedFiles> {
 export function committedFileCount(): number {
   return Object.keys(fallback).length;
 }
+
+/**
+ * Syllabus published for a course, or null.
+ *
+ * CLC publishes syllabi through Simple Syllabus, an external tool the Canvas
+ * API cannot read, so `syllabus_body` is empty for every recent course and the
+ * site had no syllabus to show at all. The archive captures that content via
+ * an LTI launch (see canvas-courses/docs/simple-syllabus-extraction.md) and
+ * publishes it here.
+ *
+ * One syllabus per course at a predictable path, so no map is needed — unlike
+ * the file map, where 1,200 Canvas ids collapse onto ~510 documents.
+ */
+export async function getPublishedSyllabus(courseId: number): Promise<string | null> {
+  const base = filesCdnBase();
+  if (!base) return null;
+
+  try {
+    const response = await fetch(`${base}/s/${courseId}.html`, {
+      next: { revalidate: 86400 },
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!response.ok) return null;
+    const html = await response.text();
+    return html.trim() ? html : null;
+  } catch {
+    // Unreachable: the page falls back to explaining the syllabus is in Canvas.
+    return null;
+  }
+}
