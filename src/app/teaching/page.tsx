@@ -45,7 +45,72 @@ export default async function TeachingPage() {
           </p>
         </header>
 
-        <ul className="border-t border-foreground/15 divide-y divide-border pb-10">
+        {/* How a course runs.
+          *
+          * Deliberately descriptive. Every sentence here states something the
+          * course pages demonstrably do — checked against 308 archived lesson
+          * pages, where videos, a to-do list, guided notes and named reading
+          * each appear on more than 90% of them. Nothing claims a reason.
+          * The reason is hers to write, and this is the section it expands
+          * into rather than replaces.
+          */}
+        <section className="border-t border-foreground/15 py-10">
+          <h2 className="font-mono text-[11px] tracking-[0.16em] uppercase text-muted-foreground mb-6">
+            How a course runs
+          </h2>
+
+          <div className="grid gap-x-12 gap-y-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+            <div className="space-y-5 font-serif text-[17px] leading-relaxed text-foreground">
+              <p>
+                Every course is built the same way, so finding your way around one means
+                finding your way around all of them.
+              </p>
+              <p>
+                Each class day has its own page. It lists the sections to read, a short
+                video or two to watch, and a to-do list of what to finish before the next
+                class. Newer courses open the page with what you should be able to do by
+                the end of the day.
+              </p>
+            </div>
+
+            <dl className="space-y-6">
+              <div>
+                <dt className="font-mono text-[10px] tracking-[0.14em] uppercase text-brass mb-1.5">
+                  Guided notes
+                </dt>
+                <dd className="text-[15px] leading-relaxed text-muted-foreground">
+                  Most days come with a partly-written handout that follows along with class.
+                  You fill in the rest as we work through it.
+                </dd>
+              </div>
+              <div>
+                <dt className="font-mono text-[10px] tracking-[0.14em] uppercase text-brass mb-1.5">
+                  If you miss a class
+                </dt>
+                <dd className="text-[15px] leading-relaxed text-muted-foreground">
+                  A completed copy of the notes goes up after most classes, alongside the
+                  videos and the reading — enough to work through the day on your own.
+                </dd>
+              </div>
+              <div>
+                <dt className="font-mono text-[10px] tracking-[0.14em] uppercase text-brass mb-1.5">
+                  After the term
+                </dt>
+                <dd className="text-[15px] leading-relaxed text-muted-foreground">
+                  Course pages stay up. Materials from every term are collected here, so
+                  they remain available once the class has ended.
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </section>
+
+        <h2 className="border-t border-foreground/15 pt-10 font-mono text-[11px]
+                       tracking-[0.16em] uppercase text-muted-foreground">
+          Courses
+        </h2>
+
+        <ul className="divide-y divide-border pb-10 mt-5">
           {families.map(family => (
             <li key={family.code}>
               <Link
