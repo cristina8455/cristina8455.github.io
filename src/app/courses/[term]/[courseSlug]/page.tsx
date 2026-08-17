@@ -1,9 +1,10 @@
 // src/app/courses/[term]/[courseSlug]/page.tsx
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { BookOpen, FileText, ChevronRight } from 'lucide-react';
+import { ChevronRight, ArrowLeft } from 'lucide-react';
 import { getCourseWithPages } from '@/lib/courses';
 import { type CanvasPageSummary } from '@/lib/canvas-api';
+import { familyCode } from '@/lib/families';
 import { prepareCanvasHtml } from '@/lib/canvas-html';
 import { getPublishedFiles, getPublishedSyllabus } from '@/lib/published-files';
 
@@ -54,37 +55,47 @@ export default async function CoursePage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="max-w-6xl mx-auto px-4 py-8">
-        {/* Course Header */}
-        <div className="bg-card rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-card-foreground">{course.name}</h1>
-              <p className="text-primary font-medium">{course.code}</p>
-              <p className="text-sm text-muted-foreground mt-1">{course.term?.name}</p>
-            </div>
-            <BookOpen size={32} className="text-primary opacity-80" />
-          </div>
+      <main className="max-w-5xl mx-auto px-5 sm:px-8">
+        {/* Header. The course number leads — it is how students name a course —
+            and the metadata sits on one quiet line rather than in a box. */}
+        <header className="pt-12 sm:pt-16 pb-8">
+          <Link
+            href={`/teaching/${familyCode(course.code).toLowerCase()}`}
+            className="inline-flex items-center text-sm text-muted-foreground
+                       hover:text-foreground transition-colors mb-6"
+          >
+            <ArrowLeft size={15} className="mr-1.5" />
+            All terms of this course
+          </Link>
 
-          {/* Quick Links — the syllabus link is hidden when Canvas holds no
-              syllabus content, rather than leading to an empty page. */}
-          {hasSyllabus && (
-            <div className="flex gap-3 mt-4">
-              <Link
-                href={`/courses/${term}/${courseSlug}/syllabus`}
-                className="inline-flex items-center px-4 py-2 bg-primary/10 text-primary
-                           rounded-lg hover:bg-primary/20 transition-colors text-sm font-medium"
-              >
-                <FileText size={16} className="mr-2" />
-                Syllabus
-              </Link>
-            </div>
-          )}
-        </div>
+          <p className="font-mono text-[11px] tracking-[0.16em] uppercase text-brass">
+            {course.code}
+          </p>
+          <h1 className="font-serif font-semibold text-[clamp(1.9rem,4.5vw,2.75rem)]
+                         leading-[1.08] tracking-[-0.02em] mt-3 text-foreground">
+            {course.name}
+          </h1>
+          <p className="text-sm text-muted-foreground mt-4 tabular-nums">
+            {course.term?.name}
+            {' · '}
+            {course.pages.length} {course.pages.length === 1 ? 'page' : 'pages'}
+            {hasSyllabus && (
+              <>
+                {' · '}
+                <Link
+                  href={`/courses/${term}/${courseSlug}/syllabus`}
+                  className="text-primary hover:underline underline-offset-2"
+                >
+                  Syllabus
+                </Link>
+              </>
+            )}
+          </p>
+        </header>
 
         {/* Notes and Assignments Content */}
         {course.notesPage ? (
-          <div className="bg-card rounded-lg shadow-sm p-6">
+          <div className="border-t border-foreground/15 py-8">
             <div
               className="prose prose-slate dark:prose-invert max-w-none
                          prose-headings:text-card-foreground
@@ -106,7 +117,7 @@ export default async function CoursePage({ params }: PageProps) {
             />
           </div>
         ) : (
-          <div className="bg-card rounded-lg shadow-sm p-6">
+          <div className="border-t border-foreground/15 py-8">
             <p className="text-muted-foreground">
               No calendar page is published for this course yet. Everything that has been
               published is listed below.
@@ -153,19 +164,20 @@ function PageIndex({
   ];
 
   return (
-    <details className="bg-card rounded-lg shadow-sm mt-6 group" open={!sequential.length}>
-      <summary className="cursor-pointer select-none p-6 flex items-center justify-between
-                          text-card-foreground font-semibold">
+    <details className="border-t border-foreground/15 group mb-10" open={!sequential.length}>
+      <summary className="cursor-pointer select-none py-6 flex items-center justify-between
+                          font-mono text-[11px] tracking-[0.16em] uppercase text-muted-foreground
+                          hover:text-foreground transition-colors">
         <span>All pages ({pages.length})</span>
-        <ChevronRight size={18} className="text-muted-foreground transition-transform
-                                           group-open:rotate-90" />
+        <ChevronRight size={16} className="transition-transform group-open:rotate-90" />
       </summary>
 
-      <div className="px-6 pb-6 space-y-6">
+      <div className="pb-8 space-y-6">
         {groups.map(([label, items]) =>
           items.length === 0 ? null : (
             <div key={label}>
-              <h3 className="text-sm font-medium text-muted-foreground mb-2">{label}</h3>
+              <h3 className="font-mono text-[10px] tracking-[0.14em] uppercase
+                             text-muted-foreground mb-2.5">{label}</h3>
               <div className="grid gap-1.5 sm:grid-cols-2">
                 {items.map(page => (
                   <Link

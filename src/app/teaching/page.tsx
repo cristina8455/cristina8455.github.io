@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { BookOpen, ChevronRight, Clock } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { getCourseFamilies } from '@/lib/families';
 
 export const revalidate = 86400;
@@ -10,76 +10,76 @@ export const metadata = {
 };
 
 /**
- * Courses by course number rather than by term.
+ * Courses by number rather than by term.
  *
- * `/courses` remains the chronological view — that is what a student following
- * a live course wants, and it stays the default. This view answers a different
- * question: what has she taught, and for how long. Seven terms of MTH 122 is
- * one course developed over three years, not seven unrelated list entries.
+ * `/courses` stays the chronological default, which is what a student
+ * following a live course wants. This answers the other question: what has she
+ * taught, and for how long. Ordered most-taught first, because breadth is the
+ * thing this view exists to show.
  */
 export default async function TeachingPage() {
   const families = await getCourseFamilies();
-
-  const totalSections = families.reduce((n, f) => n + f.courses.length, 0);
+  const sections = families.reduce((n, f) => n + f.courses.length, 0);
   const terms = new Set(families.flatMap(f => f.terms.map(t => t.slug))).size;
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="max-w-6xl mx-auto px-4 py-8">
-        <header className="mb-8">
-          <h1 className="text-2xl font-bold text-card-foreground">Teaching</h1>
-          <p className="text-muted-foreground mt-2 max-w-2xl">
-            Mathematics courses at the College of Lake County, grouped by course. Each one links
-            to every term it has been taught, with the calendar, syllabus and materials for that
-            term.
+      <main className="max-w-5xl mx-auto px-5 sm:px-8">
+        <header className="pt-12 sm:pt-16 pb-8">
+          <p className="font-mono text-[11px] tracking-[0.16em] uppercase text-brass">
+            By course
           </p>
-          <p className="text-sm text-muted-foreground mt-3 tabular-nums">
-            {families.length} courses · {totalSections} sections · {terms} terms
-            {' · '}
-            <Link href="/courses" className="text-primary hover:underline">
-              browse by term instead
+          <h1 className="font-serif font-semibold text-[clamp(1.9rem,4.5vw,2.75rem)]
+                         leading-[1.08] tracking-[-0.02em] mt-3 text-foreground">
+            Teaching
+          </h1>
+          <p className="font-serif text-lg text-muted-foreground mt-4 max-w-[46ch]">
+            Mathematics courses at the College of Lake County. Each links to every term it has
+            been taught, with the calendar, syllabus and materials for that term.
+          </p>
+          <p className="text-sm text-muted-foreground mt-4 tabular-nums">
+            {families.length} courses · {sections} sections · {terms} terms ·{' '}
+            <Link href="/courses" className="text-primary hover:underline underline-offset-2">
+              by term instead
             </Link>
           </p>
         </header>
 
-        <div className="grid gap-3 md:grid-cols-2">
+        <ul className="border-t border-foreground/15 divide-y divide-border pb-10">
           {families.map(family => (
-            <Link
-              key={family.code}
-              href={`/teaching/${family.code.toLowerCase()}`}
-              className="bg-card rounded-lg border border-border p-5 group
-                         hover:border-primary/20 hover:shadow-md transition-all"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="text-sm font-medium text-primary">{family.label}</p>
-                  <h2 className="font-semibold text-card-foreground mt-0.5">{family.name}</h2>
-                </div>
-                <BookOpen size={18} className="text-primary opacity-70 flex-shrink-0" />
-              </div>
+            <li key={family.code}>
+              <Link
+                href={`/teaching/${family.code.toLowerCase()}`}
+                className="group flex items-baseline gap-4 sm:gap-6 py-5 -mx-2 px-2 rounded
+                           hover:bg-muted/60 transition-colors"
+              >
+                <span className="font-mono text-sm text-brass tabular-nums w-[4.5rem] flex-shrink-0">
+                  {family.label}
+                </span>
 
-              <p className="text-sm text-muted-foreground mt-3 flex items-center tabular-nums">
-                <Clock size={14} className="mr-1.5 opacity-70" />
-                {family.terms.length} {family.terms.length === 1 ? 'term' : 'terms'}
-                {family.courses.length !== family.terms.length &&
-                  ` · ${family.courses.length} sections`}
-              </p>
+                <span className="flex-1 min-w-0">
+                  <span className="block font-serif text-lg sm:text-xl text-foreground truncate">
+                    {family.name}
+                  </span>
+                  <span className="block text-sm text-muted-foreground mt-0.5 tabular-nums">
+                    {family.terms.length} {family.terms.length === 1 ? 'term' : 'terms'}
+                    {family.courses.length !== family.terms.length &&
+                      ` · ${family.courses.length} sections`}
+                    {' · '}
+                    {family.terms[family.terms.length - 1]?.name}
+                    {family.terms.length > 1 && ` – ${family.terms[0]?.name}`}
+                  </span>
+                </span>
 
-              <p className="text-xs text-muted-foreground/80 mt-1">
-                {family.terms[family.terms.length - 1]?.name}
-                {family.terms.length > 1 && ` – ${family.terms[0]?.name}`}
-              </p>
-
-              <span className="text-sm text-primary inline-flex items-center mt-3">
-                View course
-                <ChevronRight
-                  size={14}
-                  className="ml-1 group-hover:translate-x-1 transition-transform"
+                <ArrowRight
+                  size={16}
+                  className="text-muted-foreground group-hover:text-primary
+                             group-hover:translate-x-0.5 transition-all flex-shrink-0"
                 />
-              </span>
-            </Link>
+              </Link>
+            </li>
           ))}
-        </div>
+        </ul>
       </main>
     </div>
   );

@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, FileText, ChevronRight, Calendar } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { getCourseFamily } from '@/lib/families';
 
 export const revalidate = 86400;
@@ -44,66 +44,64 @@ export default async function FamilyPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="max-w-4xl mx-auto px-4 py-8">
-        <Link
-          href="/teaching"
-          className="inline-flex items-center text-muted-foreground hover:text-primary
-                     transition-colors mb-4 text-sm"
-        >
-          <ArrowLeft size={16} className="mr-1" />
-          All courses
-        </Link>
+      <main className="max-w-5xl mx-auto px-5 sm:px-8">
+        <header className="pt-12 sm:pt-16 pb-8">
+          <Link
+            href="/teaching"
+            className="inline-flex items-center text-sm text-muted-foreground
+                       hover:text-foreground transition-colors mb-6"
+          >
+            <ArrowLeft size={15} className="mr-1.5" />
+            All courses
+          </Link>
 
-        <div className="bg-card rounded-lg shadow-sm p-6 mb-6">
-          <p className="text-sm font-medium text-primary">{found.label}</p>
-          <h1 className="text-2xl font-bold text-card-foreground mt-0.5">{found.name}</h1>
-          <p className="text-sm text-muted-foreground mt-2 tabular-nums">
+          <p className="font-mono text-[11px] tracking-[0.16em] uppercase text-brass">
+            {found.label}
+          </p>
+          <h1 className="font-serif font-semibold text-[clamp(1.9rem,4.5vw,2.75rem)]
+                         leading-[1.08] tracking-[-0.02em] mt-3 text-foreground">
+            {found.name}
+          </h1>
+          <p className="text-sm text-muted-foreground mt-4 tabular-nums">
             {found.terms.length} {found.terms.length === 1 ? 'term' : 'terms'}
             {found.courses.length !== found.terms.length && ` · ${found.courses.length} sections`}
             {span && ` · ${span}`}
           </p>
-        </div>
+        </header>
 
-        <h2 className="text-lg font-semibold text-card-foreground mb-3 flex items-center">
-          <Calendar size={17} className="mr-2 text-primary opacity-90" />
-          Terms
-        </h2>
-
-        <div className="space-y-3">
+        <div className="pb-10">
           {found.terms.map(term => (
-            <div key={term.slug} className="bg-card rounded-lg border border-border p-5">
-              <h3 className="font-semibold text-card-foreground">{term.name}</h3>
+            <section key={term.slug} className="border-t border-foreground/15 py-7">
+              <h2 className="font-mono text-[11px] tracking-[0.16em] uppercase
+                             text-muted-foreground mb-4">
+                {term.name}
+              </h2>
 
-              <div className="grid gap-2 mt-3 sm:grid-cols-2">
+              <div className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
                 {term.courses.map(course => (
-                  <div
-                    key={course.id}
-                    className="border border-border rounded-md p-3 flex flex-col gap-2"
-                  >
-                    <p className="text-sm text-card-foreground">{course.code}</p>
-                    <div className="flex flex-wrap gap-2">
+                  <div key={course.id} className="min-w-0">
+                    <p className="font-mono text-sm text-foreground tabular-nums">
+                      {course.code}
+                    </p>
+                    <p className="mt-1.5 flex flex-wrap items-baseline gap-x-4 gap-y-1">
                       <Link
                         href={`/courses/${term.slug}/${course.slug}`}
-                        className="inline-flex items-center text-xs px-2.5 py-1 rounded
-                                   bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                        className="text-sm text-primary hover:underline underline-offset-2"
                       >
                         Calendar &amp; materials
-                        <ChevronRight size={12} className="ml-1" />
                       </Link>
                       <Link
                         href={`/courses/${term.slug}/${course.slug}/syllabus`}
-                        className="inline-flex items-center text-xs px-2.5 py-1 rounded
-                                   border border-border text-muted-foreground
-                                   hover:text-primary hover:border-primary/30 transition-colors"
+                        className="text-sm text-muted-foreground hover:text-foreground
+                                   transition-colors"
                       >
-                        <FileText size={12} className="mr-1" />
                         Syllabus
                       </Link>
-                    </div>
+                    </p>
                   </div>
                 ))}
               </div>
-            </div>
+            </section>
           ))}
         </div>
       </main>

@@ -2,63 +2,53 @@
 'use client';
 
 import Link from 'next/link';
-import { BookOpen, Users, Calculator, User, GraduationCap } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme/theme-toggle';
 
 const navigation = [
-    { name: 'Courses', href: '/courses', icon: BookOpen, shortLabel: 'Courses' },
-    { name: 'Teaching', href: '/teaching', icon: GraduationCap, shortLabel: 'Teaching' },
-    { name: 'Resources', href: '/resources', icon: Calculator, shortLabel: 'Resources' },
-    { name: 'Office Hours', href: '/office-hours', icon: Users, shortLabel: 'Hours' },
-    { name: 'About', href: '/about', icon: User, shortLabel: 'About' }
+    { name: 'Courses', href: '/courses' },
+    { name: 'Teaching', href: '/teaching' },
+    { name: 'Resources', href: '/resources' },
+    { name: 'Office Hours', href: '/office-hours', short: 'Hours' },
+    { name: 'About', href: '/about' },
 ] as const;
 
+/**
+ * A masthead rather than an app bar.
+ *
+ * The previous version had an icon beside every link, which is a product-UI
+ * convention: it suits a toolbar of actions and reads as noise on a site whose
+ * items are all just pages. Set in type, with a rule under it, this behaves
+ * like the top of a publication.
+ */
 export default function Header() {
     return (
-        <header className="bg-card border-b border-border">
-            <div className="max-w-6xl mx-auto px-4 py-3">
-                <div className="flex justify-between items-center">
-                    {/* Solid colour, not gradient-clipped text. The previous
-                        version relied on `bg-clip-text text-transparent`, so
-                        anything that disturbed the background left the text
-                        genuinely invisible — which is exactly what injected
-                        Canvas CSS did, hiding the only link back to home. */}
+        <header className="border-b border-border">
+            <div className="max-w-5xl mx-auto px-5 sm:px-8">
+                <div className="flex items-center justify-between gap-6 h-14 sm:h-16">
                     <Link
                         href="/"
-                        className="text-lg sm:text-xl font-bold text-primary hover:text-primary/80 transition-colors"
+                        className="font-serif text-lg sm:text-xl font-semibold tracking-[-0.015em]
+                                   text-foreground hover:text-primary transition-colors
+                                   whitespace-nowrap"
                     >
                         Cristina Sizemore
                     </Link>
-                    <nav className="flex items-center">
-                        {/* Desktop Navigation */}
-                        <div className="hidden md:flex items-center space-x-6">
-                            {navigation.map((item) => (
-                                <Link
-                                    key={item.name}
-                                    href={item.href}
-                                    className="flex items-center space-x-1 text-muted-foreground hover:text-primary transition-colors duration-200 text-sm group"
-                                >
-                                    <item.icon size={16} className="group-hover:scale-110 transition-transform duration-200" />
-                                    <span>{item.name}</span>
-                                </Link>
-                            ))}
-                        </div>
-                        {/* Mobile Navigation */}
-                        <div className="flex md:hidden items-center ml-4 space-x-3">
-                            {navigation.map((item) => (
-                                <Link
-                                    key={item.name}
-                                    href={item.href}
-                                    className="flex flex-col items-center text-muted-foreground hover:text-primary transition-colors duration-200 group"
-                                >
-                                    <item.icon size={20} className="group-hover:scale-110 transition-transform duration-200" />
-                                    <span className="text-xs mt-0.5">{item.shortLabel}</span>
-                                </Link>
-                            ))}
-                        </div>
-                        <div className="ml-1 sm:ml-6">
+
+                    <nav className="flex items-center gap-4 sm:gap-6 min-w-0">
+                        {navigation.map(item => (
+                            <Link
+                                key={item.name}
+                                href={item.href}
+                                className="text-[13px] sm:text-sm text-muted-foreground
+                                           hover:text-foreground transition-colors whitespace-nowrap"
+                            >
+                                <span className="sm:hidden">{'short' in item ? item.short : item.name}</span>
+                                <span className="hidden sm:inline">{item.name}</span>
+                            </Link>
+                        ))}
+                        <span className="ml-1 sm:ml-2">
                             <ThemeToggle />
-                        </div>
+                        </span>
                     </nav>
                 </div>
             </div>

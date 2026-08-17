@@ -47,7 +47,7 @@ export default async function ContentPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="max-w-6xl mx-auto px-4 py-8">
+      <main className="max-w-5xl mx-auto px-5 sm:px-8 pt-12 sm:pt-16 pb-10">
         {/* Back Link */}
         <Link
           href={`/courses/${term}/${courseSlug}`}
@@ -59,7 +59,7 @@ export default async function ContentPage({ params }: PageProps) {
         </Link>
 
         {/* Header */}
-        <div className="bg-card rounded-lg shadow-sm p-6 mb-6">
+        <div className="pb-8 mb-8 border-b border-foreground/15">
           <div className="flex items-center gap-3">
             <FileText size={24} className="text-primary" />
             <div>
@@ -70,7 +70,7 @@ export default async function ContentPage({ params }: PageProps) {
         </div>
 
         {/* Page Content */}
-        <div className="bg-card rounded-lg shadow-sm p-6">
+        <div className="pb-8">
           {page.body ? (
             <div
               className="prose prose-slate dark:prose-invert max-w-none

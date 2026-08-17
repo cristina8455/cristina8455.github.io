@@ -1,160 +1,109 @@
-// src/app/courses/page.tsx
 import Link from 'next/link';
-import { ChevronRight, BookOpen, Clock, Archive } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { getAllCourses, getAllTerms, type Course } from '@/lib/courses';
+import { familyCode, familyLabel } from '@/lib/families';
 
-// ISR: revalidate every 24 hours
 export const revalidate = 86400;
 
+export const metadata = {
+  title: 'Courses',
+  description: 'Every course by term, newest first.',
+};
+
+/**
+ * The chronological view. Terms as a spine, courses hanging off it.
+ *
+ * Cards were doing nothing here except drawing a box around each course and
+ * making every term look equally recent. A term heading with a rule under it
+ * and a plain list beneath carries the same information with the hierarchy
+ * intact, and it scans far faster once there are nine of them.
+ */
 export default async function CoursesPage() {
-  const [courses, terms] = await Promise.all([
-    getAllCourses(),
-    getAllTerms(),
-  ]);
-
+  const [courses, terms] = await Promise.all([getAllCourses(), getAllTerms()]);
   const now = new Date();
-
-  // Group courses by term
-  const coursesByTerm = new Map<string, Course[]>();
-  for (const course of courses) {
-    if (!course.term) continue;
-    const termSlug = course.term.slug;
-    if (!coursesByTerm.has(termSlug)) {
-      coursesByTerm.set(termSlug, []);
-    }
-    coursesByTerm.get(termSlug)!.push(course);
-  }
-
-  // Separate current and past terms
-  const currentTerms = terms.filter(t => !t.endAt || t.endAt > now);
-  const pastTerms = terms.filter(t => t.endAt && t.endAt <= now);
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="max-w-6xl mx-auto px-4 py-8">
-        <div className="bg-card rounded-lg shadow-sm p-6 mb-6">
-          <h1 className="text-2xl font-bold flex items-center">
-            <BookOpen size={24} className="mr-3 text-primary" />
-            All Courses
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Current and past courses from Canvas
+      <main className="max-w-5xl mx-auto px-5 sm:px-8">
+        <header className="pt-12 sm:pt-16 pb-8">
+          <p className="font-mono text-[11px] tracking-[0.16em] uppercase text-brass">
+            By term
           </p>
+          <h1 className="font-serif font-semibold text-[clamp(1.9rem,4.5vw,2.75rem)]
+                         leading-[1.08] tracking-[-0.02em] mt-3 text-foreground">
+            Courses
+          </h1>
+          <p className="font-serif text-lg text-muted-foreground mt-4 max-w-[46ch]">
+            Every course by term, newest first — or{' '}
+            <Link href="/teaching" className="text-primary hover:underline underline-offset-2">
+              browse by course
+            </Link>{' '}
+            to see each one across the terms it has been taught.
+          </p>
+        </header>
+
+        <div className="pb-10">
+          {terms.map(term => {
+            const inTerm = courses.filter(c => c.term?.slug === term.slug);
+            if (inTerm.length === 0) return null;
+            const current = !term.endAt || term.endAt > now;
+
+            return (
+              <section key={term.slug} className="border-t border-foreground/15 py-8">
+                <div className="flex items-baseline gap-3 mb-4">
+                  <h2 className="font-mono text-[11px] tracking-[0.16em] uppercase text-muted-foreground">
+                    {term.name}
+                  </h2>
+                  {current && (
+                    <span className="font-mono text-[10px] tracking-[0.1em] uppercase
+                                     text-brass border border-brass/40 rounded-sm px-1.5 py-px">
+                      current
+                    </span>
+                  )}
+                </div>
+
+                <ul className="divide-y divide-border">
+                  {inTerm.map(course => (
+                    <CourseRow key={course.id} course={course} termSlug={term.slug} />
+                  ))}
+                </ul>
+              </section>
+            );
+          })}
         </div>
-
-        {/* Current Term Courses */}
-        {currentTerms.length > 0 && (
-          <section className="mb-8">
-            <h2 className="text-lg font-semibold flex items-center mb-4 text-card-foreground">
-              <Clock size={18} className="mr-2 text-primary" />
-              Current Courses
-            </h2>
-            {currentTerms.map(term => (
-              <TermSection
-                key={term.slug}
-                termName={term.name}
-                courses={coursesByTerm.get(term.slug) || []}
-              />
-            ))}
-          </section>
-        )}
-
-        {/* Past Term Courses */}
-        {pastTerms.length > 0 && (
-          <section>
-            <h2 className="text-lg font-semibold flex items-center mb-4 text-card-foreground">
-              <Archive size={18} className="mr-2 text-muted-foreground" />
-              Past Courses
-            </h2>
-            {pastTerms.map(term => (
-              <TermSection
-                key={term.slug}
-                termName={term.name}
-                courses={coursesByTerm.get(term.slug) || []}
-                collapsed
-              />
-            ))}
-          </section>
-        )}
       </main>
     </div>
   );
 }
 
-function TermSection({
-  termName,
-  courses,
-  collapsed = false,
-}: {
-  termName: string;
-  courses: Course[];
-  collapsed?: boolean;
-}) {
-  if (courses.length === 0) return null;
+function CourseRow({ course, termSlug }: { course: Course; termSlug: string }) {
+  const code = familyCode(course.code);
+  const section = course.code.replace(/^[A-Za-z]+\s*\d{3}\s*/, '').trim();
 
   return (
-    <div className="mb-6">
-      <h3 className="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wide">
-        {termName}
-      </h3>
-      <div className={`grid gap-4 ${collapsed ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'}`}>
-        {courses.map((course) => (
-          <CourseCard key={course.id} course={course} compact={collapsed} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function CourseCard({ course, compact = false }: { course: Course; compact?: boolean }) {
-  const href = `/courses/${course.term?.slug}/${course.slug}`;
-
-  if (compact) {
-    return (
+    <li>
       <Link
-        href={href}
-        className="group flex items-center justify-between bg-card rounded-lg border border-border p-4
-                   transition-all duration-200
-                   hover:shadow-md hover:border-primary/15
-                   dark:hover:shadow-lg dark:hover:shadow-primary/5"
+        href={`/courses/${termSlug}/${course.slug}`}
+        className="group flex items-baseline gap-4 py-3.5 -mx-2 px-2 rounded
+                   hover:bg-muted/60 transition-colors"
       >
-        <div>
-          <h4 className="font-medium text-card-foreground">{course.name}</h4>
-          <p className="text-sm text-muted-foreground">{course.code}</p>
-        </div>
-        <ChevronRight
-          size={18}
-          className="text-primary/60 group-hover:text-primary group-hover:translate-x-1
-                     transition-all duration-200"
+        <span className="font-mono text-sm text-brass tabular-nums w-[4.5rem] flex-shrink-0">
+          {familyLabel(code)}
+        </span>
+        <span className="font-serif text-base sm:text-lg text-foreground flex-1 min-w-0 truncate">
+          {course.name}
+        </span>
+        {section && (
+          <span className="hidden sm:block font-mono text-xs text-muted-foreground tabular-nums">
+            {section}
+          </span>
+        )}
+        <ArrowRight
+          size={15}
+          className="text-muted-foreground group-hover:text-primary
+                     group-hover:translate-x-0.5 transition-all flex-shrink-0"
         />
       </Link>
-    );
-  }
-
-  return (
-    <Link
-      href={href}
-      className="group block bg-card rounded-lg border border-border p-6
-                 transition-all duration-200
-                 hover:shadow-md hover:border-primary/15
-                 dark:hover:shadow-lg dark:hover:shadow-primary/5"
-    >
-      <div className="flex justify-between items-start">
-        <div className="flex-grow">
-          <div className="flex items-start justify-between mb-2">
-            <div>
-              <h2 className="text-xl font-semibold text-card-foreground">{course.name}</h2>
-              <p className="text-primary font-medium">{course.code}</p>
-            </div>
-            <BookOpen size={20} className="text-primary flex-shrink-0 ml-4 opacity-90" />
-          </div>
-        </div>
-        <ChevronRight
-          size={20}
-          className="text-primary/80 ml-4 transform transition-all duration-200
-                   group-hover:translate-x-1 group-hover:text-primary"
-        />
-      </div>
-    </Link>
+    </li>
   );
 }
