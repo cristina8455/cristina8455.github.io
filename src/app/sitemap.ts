@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 import { getAllCourses } from '@/lib/courses';
 import { getCoursePages } from '@/lib/canvas-api';
 import { siteUrl } from '@/lib/site';
+import { getCourseFamilies } from '@/lib/families';
 
 /**
  * Generated from Canvas, so new courses appear without anyone editing a list.
@@ -20,17 +21,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${base}/`, lastModified: now, changeFrequency: 'daily', priority: 1 },
     { url: `${base}/courses`, lastModified: now, changeFrequency: 'daily', priority: 0.9 },
+    { url: `${base}/teaching`, lastModified: now, changeFrequency: 'weekly', priority: 0.9 },
     { url: `${base}/office-hours`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${base}/resources`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
     { url: `${base}/about`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
   ];
 
   let courses;
+  let families;
   try {
     courses = await getAllCourses();
+    families = await getCourseFamilies();
   } catch {
     // Canvas unreachable — still emit the static routes rather than 500.
     return staticRoutes;
+  }
+
+  for (const family of families) {
+    staticRoutes.push({
+      url: `${base}/teaching/${family.code.toLowerCase()}`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    });
   }
 
   const perCourse = await Promise.all(

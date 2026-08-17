@@ -2,11 +2,12 @@
 'use client';
 
 import Link from 'next/link';
-import { BookOpen, Users, Calculator, User } from 'lucide-react';
+import { BookOpen, Users, Calculator, User, GraduationCap } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme/theme-toggle';
 
 const navigation = [
     { name: 'Courses', href: '/courses', icon: BookOpen, shortLabel: 'Courses' },
+    { name: 'Teaching', href: '/teaching', icon: GraduationCap, shortLabel: 'Teaching' },
     { name: 'Resources', href: '/resources', icon: Calculator, shortLabel: 'Resources' },
     { name: 'Office Hours', href: '/office-hours', icon: Users, shortLabel: 'Hours' },
     { name: 'About', href: '/about', icon: User, shortLabel: 'About' }
