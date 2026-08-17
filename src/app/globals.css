@@ -2,42 +2,63 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Palette
+ *
+ * Ink blue and warm paper, with brass for labels. The reference is
+ * mathematical publishing rather than a product landing page: for this subject
+ * restraint reads as authority, and it ages better than decoration.
+ *
+ * `muted` and `muted-foreground` are new. They were used in 54 places across
+ * the components and defined nowhere, so every piece of secondary text was
+ * silently rendering at full foreground colour — there was no hierarchy tier
+ * at all, which is most of why the site read flat.
+ *
+ * Every foreground/background pair clears 4.5:1 in both themes.
+ */
+
 :root {
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
-  --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
-  --primary: 221.2 83.2% 53.3%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222.2 47.4% 11.2%;
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 221.2 83.2% 53.3%;
-  --radius: 0.5rem;
+    --background: 45.0 33.3% 97.6%;
+    --foreground: 213.3 18.4% 9.6%;
+    --card: 0.0 0.0% 100.0%;
+    --card-foreground: 213.3 18.4% 9.6%;
+    --muted: 45.0 23.5% 93.3%;
+    --muted-foreground: 218.2 10.7% 40.4%;
+    --primary: 210.9 52.9% 36.7%;
+    --primary-foreground: 45.0 33.3% 97.6%;
+    --secondary: 45.0 23.5% 93.3%;
+    --secondary-foreground: 213.3 18.4% 9.6%;
+    --accent: 212.3 37.1% 93.1%;
+    --accent-foreground: 213.3 18.4% 9.6%;
+    --popover: 0.0 0.0% 100.0%;
+    --popover-foreground: 213.3 18.4% 9.6%;
+    --border: 42.9 15.2% 82.0%;
+    --input: 42.9 15.2% 82.0%;
+    --ring: 210.9 52.9% 36.7%;
+    --brass: 38.8 50.6% 31.8%;
+    --radius: 0.375rem;
 }
 
 .dark {
-  --background: 222.2 84% 4.9%;
-  --foreground: 210 40% 98%;
-  --card: 222.2 84% 5.9%;
-  --card-foreground: 210 40% 98%;
-  --popover: 222.2 84% 4.9%;
-  --popover-foreground: 210 40% 98%;
-  --primary: 213 60% 70%;
-  --primary-foreground: 222.2 47.4% 11.2%;
-  --secondary: 217.2 32.6% 17.5%;
-  --secondary-foreground: 210 40% 98%;
-  --accent: 215 25% 27%;
-  --accent-foreground: 210 40% 98%;
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
-  --ring: 213 60% 70%;
+    --background: 210.0 17.6% 6.7%;
+    --foreground: 42.0 21.7% 91.0%;
+    --card: 213.3 17.0% 10.4%;
+    --card-foreground: 42.0 21.7% 91.0%;
+    --muted: 210.0 16.2% 14.5%;
+    --muted-foreground: 213.0 11.0% 64.3%;
+    --primary: 209.6 52.4% 71.2%;
+    --primary-foreground: 210.0 17.6% 6.7%;
+    --secondary: 210.0 16.2% 14.5%;
+    --secondary-foreground: 42.0 21.7% 91.0%;
+    --accent: 205.0 34.3% 13.7%;
+    --accent-foreground: 42.0 21.7% 91.0%;
+    --popover: 213.3 17.0% 10.4%;
+    --popover-foreground: 42.0 21.7% 91.0%;
+    --border: 207.7 13.1% 19.4%;
+    --input: 207.7 13.1% 19.4%;
+    --ring: 209.6 52.4% 71.2%;
+    --brass: 39.3 54.1% 59.0%;
 }
+
 
 * {
   @apply border-border;
@@ -74,3 +95,32 @@ body {
   text-decoration-style: dotted;
   text-underline-offset: 2px;
 }
+
+/* Typography
+ *
+ * Headings in the serif, interface and data in the sans. Set here rather than
+ * class-by-class so every existing component picks it up without being
+ * touched, and so Canvas content inherits it too — those pages carry <h2>/<h3>
+ * of their own.
+ *
+ * `text-wrap: balance` stops short headings breaking one word onto a second
+ * line, which is the most common way a heading looks unconsidered.
+ */
+h1, h2, h3, h4 {
+  font-family: var(--font-serif), ui-serif, Georgia, serif;
+  text-wrap: balance;
+  letter-spacing: -0.01em;
+}
+
+h1 { letter-spacing: -0.018em; }
+
+/* Digits in tables and metadata should line up in columns. */
+table, .tabular-nums, time {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Canvas content sets its own inline styles, but its links inherit ours. */
+.prose a { text-underline-offset: 2px; }
+
+/* Wide Canvas tables scroll in place rather than pushing the page sideways. */
+.prose table { display: block; overflow-x: auto; max-width: 100%; }

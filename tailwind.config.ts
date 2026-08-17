@@ -11,6 +11,12 @@ export default {
   darkMode: "class",
   theme: {
     extend: {
+      fontFamily: {
+        // Serif for anything read at length; sans for interface, labels and
+        // dense course data. Set on <html> by src/app/layout.tsx.
+        serif: ["var(--font-serif)", "ui-serif", "Georgia", "serif"],
+        sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -29,6 +35,16 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // The secondary-text tier. Referenced in 54 places long before it was
+        // defined, so `text-muted-foreground` compiled to nothing and every
+        // piece of secondary text rendered at full foreground colour.
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        // Labels and metadata only, never body text — the one warm note
+        // against the ink blue.
+        brass: "hsl(var(--brass))",
         accent: {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
