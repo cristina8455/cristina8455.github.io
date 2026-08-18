@@ -124,3 +124,50 @@ table, .tabular-nums, time {
 
 /* Wide Canvas tables scroll in place rather than pushing the page sideways. */
 .prose table { display: block; overflow-x: auto; max-width: 100%; }
+
+/* Canvas course content
+ *
+ * Day pages carry a consistent spine — <h2> for "Guided Notes", "Required
+ * Reading", "Videos", "To-Do This Day" — so the structure is already in the
+ * markup and only needed treating as structure rather than as generic prose.
+ *
+ * Not a re-render. The content is still Canvas's HTML; this gives its own
+ * headings the same typographic system as the rest of the site so a course
+ * page stops looking like a document pasted into a frame.
+ */
+.prose h2 {
+  font-family: var(--font-serif), ui-serif, Georgia, serif;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  margin-top: 2.25rem;
+  margin-bottom: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid hsl(var(--border));
+  color: hsl(var(--foreground));
+}
+
+.prose h2:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.prose h3 {
+  font-family: var(--font-serif), ui-serif, Georgia, serif;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: hsl(var(--foreground));
+}
+
+/* Course material is mostly lists of links. Give them room to be scanned. */
+.prose ul, .prose ol { margin-top: 0.5rem; margin-bottom: 1.25rem; }
+.prose li { margin-top: 0.3rem; margin-bottom: 0.3rem; }
+.prose li > p { margin: 0; }
+
+/* Canvas pages set colours inline for emphasis; those survive. What does not
+ * survive well is its default heavy blue on links, so links follow ours. */
+.prose a { color: hsl(var(--primary)); }
+.prose a:hover { text-decoration: underline; }
