@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { getHomepageCourses, type Course } from '@/lib/courses';
 import { getTeachingRecord, familyCode, familyLabel, type TeachingRecord } from '@/lib/families';
-import { profile, officeLabel } from '@/lib/profile';
+import { profile, officeLabel, officeHours } from '@/lib/profile';
 
 export const revalidate = 86400;
 
@@ -112,7 +112,7 @@ export default async function Home() {
               In person in {officeLabel}, and on Zoom.
             </p>
             <Link href="/office-hours" className="text-sm text-primary hover:underline underline-offset-2">
-              This term&rsquo;s schedule
+              {officeHours.term} schedule
             </Link>
           </div>
           <div>

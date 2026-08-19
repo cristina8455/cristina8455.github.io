@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+
 import { getCourseFamilies } from '@/lib/families';
 
 export const revalidate = 86400;
@@ -27,21 +27,15 @@ export default async function TeachingPage() {
       <main className="max-w-5xl mx-auto px-5 sm:px-8">
         <header className="pt-12 sm:pt-16 pb-8">
           <p className="font-mono text-[11px] tracking-[0.16em] uppercase text-brass">
-            By course
+            {sections} sections · {terms} terms
           </p>
           <h1 className="font-serif font-semibold text-[clamp(1.9rem,4.5vw,2.75rem)]
                          leading-[1.08] tracking-[-0.02em] mt-3 text-foreground">
             Teaching
           </h1>
-          <p className="font-serif text-lg text-muted-foreground mt-4 max-w-[46ch]">
-            Mathematics courses at the College of Lake County. Each links to every term it has
-            been taught, with the calendar, syllabus and materials for that term.
-          </p>
-          <p className="text-sm text-muted-foreground mt-4 tabular-nums">
-            {families.length} courses · {sections} sections · {terms} terms ·{' '}
-            <Link href="/courses" className="text-primary hover:underline underline-offset-2">
-              by term instead
-            </Link>
+          <p className="font-serif text-lg text-muted-foreground mt-4 max-w-[48ch]">
+            Mathematics at the College of Lake County — how the courses are put together, and
+            what is in them.
           </p>
         </header>
 
@@ -105,46 +99,38 @@ export default async function TeachingPage() {
           </div>
         </section>
 
-        <h2 className="border-t border-foreground/15 pt-10 font-mono text-[11px]
-                       tracking-[0.16em] uppercase text-muted-foreground">
-          Courses
-        </h2>
-
-        <ul className="divide-y divide-border pb-10 mt-5">
-          {families.map(family => (
-            <li key={family.code}>
-              <Link
-                href={`/teaching/${family.code.toLowerCase()}`}
-                className="group flex items-baseline gap-4 sm:gap-6 py-5 -mx-2 px-2 rounded
-                           hover:bg-muted/60 transition-colors"
-              >
-                <span className="font-mono text-sm text-brass tabular-nums w-[4.5rem] flex-shrink-0">
-                  {family.label}
-                </span>
-
-                <span className="flex-1 min-w-0">
-                  <span className="block font-serif text-lg sm:text-xl text-foreground truncate">
+        <section className="border-t border-foreground/15 py-10">
+          <h2 className="font-mono text-[11px] tracking-[0.16em] uppercase text-muted-foreground mb-5">
+            The courses
+          </h2>
+          <ul className="grid gap-x-10 gap-y-2 sm:grid-cols-2 mb-6">
+            {families.map(family => (
+              <li key={family.code}>
+                <Link
+                  href={`/teaching/${family.code.toLowerCase()}`}
+                  className="group flex items-baseline gap-3 py-1"
+                >
+                  <span className="font-mono text-xs text-brass tabular-nums w-[4.25rem] flex-shrink-0">
+                    {family.label}
+                  </span>
+                  <span className="font-serif text-[17px] text-foreground group-hover:text-primary
+                                   transition-colors min-w-0 truncate">
                     {family.name}
                   </span>
-                  <span className="block text-sm text-muted-foreground mt-0.5 tabular-nums">
-                    {family.terms.length} {family.terms.length === 1 ? 'term' : 'terms'}
-                    {family.courses.length !== family.terms.length &&
-                      ` · ${family.courses.length} sections`}
-                    {' · '}
-                    {family.terms[family.terms.length - 1]?.name}
-                    {family.terms.length > 1 && ` – ${family.terms[0]?.name}`}
+                  <span className="text-xs text-muted-foreground tabular-nums flex-shrink-0">
+                    {family.terms.length}&times;
                   </span>
-                </span>
-
-                <ArrowRight
-                  size={16}
-                  className="text-muted-foreground group-hover:text-primary
-                             group-hover:translate-x-0.5 transition-all flex-shrink-0"
-                />
-              </Link>
-            </li>
-          ))}
-        </ul>
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <p className="text-sm text-muted-foreground">
+            <Link href="/courses" className="text-primary hover:underline underline-offset-2">
+              Browse every section
+            </Link>{' '}
+            by term or by course.
+          </p>
+        </section>
       </main>
     </div>
   );

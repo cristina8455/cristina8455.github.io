@@ -8,7 +8,6 @@ const navigation = [
     { name: 'Courses', href: '/courses' },
     { name: 'Teaching', href: '/teaching' },
     { name: 'Resources', href: '/resources' },
-    { name: 'Office Hours', href: '/office-hours', short: 'Hours' },
     { name: 'About', href: '/about' },
 ] as const;
 
@@ -42,8 +41,7 @@ export default function Header() {
                                 className="text-[13px] sm:text-sm text-muted-foreground
                                            hover:text-foreground transition-colors whitespace-nowrap"
                             >
-                                <span className="sm:hidden">{'short' in item ? item.short : item.name}</span>
-                                <span className="hidden sm:inline">{item.name}</span>
+                                {item.name}
                             </Link>
                         ))}
                         <span className="ml-1 sm:ml-2">
