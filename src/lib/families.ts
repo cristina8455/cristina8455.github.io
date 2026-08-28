@@ -200,3 +200,33 @@ export async function getTeachingRecord(): Promise<TeachingRecord> {
     },
   };
 }
+
+/**
+ * A course title fit to print.
+ *
+ * `familyName` cleans a set of names down to the course title, but a single
+ * course still arrives with whatever was typed into its Canvas shell. Three
+ * things survive that cleaning and show up on the page:
+ *
+ *   "MTH 122 401 and 402"          the number, where the title should be
+ *   "College Algebra 201 and 202"  section numbers glued onto the title
+ *   "Spring Contemporary Math"     a season left in front of it
+ *
+ * The first is the one that matters: a course whose displayed name is its own
+ * course number tells a reader nothing. When the cleaned name still looks like
+ * a code, fall back to the title the other sections of that course agree on.
+ */
+export function courseTitle(rawName: string, fallback: string): string {
+  const cleaned = familyName([rawName])
+    // "201 and 202", "201 & 202" — paired sections written into the name.
+    .replace(/\b\d{3}\s*(?:and|&|\/|,)\s*\d{3}\b/g, '')
+    // A leading season with no year, which familyName's year-anchored rule keeps.
+    .replace(/^\s*(?:spring|summer|fall|winter)\s+/i, '')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\s*[-–—:]\s*$/, '')
+    .trim();
+
+  // Still just a course number? Then it never carried a title.
+  if (!cleaned || /^[A-Za-z]{2,4}\s*\d{3}\b/.test(cleaned)) return fallback;
+  return cleaned;
+}

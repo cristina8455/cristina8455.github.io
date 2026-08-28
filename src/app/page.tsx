@@ -2,7 +2,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { getHomepageCourses, type Course } from '@/lib/courses';
-import { getTeachingRecord, familyCode, familyLabel, type TeachingRecord } from '@/lib/families';
+import { getTeachingRecord, familyCode, familyLabel, courseTitle,
+         type TeachingRecord } from '@/lib/families';
 import { profile, officeLabel, officeHours } from '@/lib/profile';
 
 export const revalidate = 86400;
@@ -80,7 +81,15 @@ export default async function Home() {
           ) : (
             <ul className="divide-y divide-border">
               {courses.map(course => (
-                <CourseRow key={course.id} course={course} />
+                <CourseRow
+                  key={course.id}
+                  course={course}
+                  title={courseTitle(
+                    course.name,
+                    record.families.find(f => f.code === familyCode(course.code))?.name
+                      ?? course.name
+                  )}
+                />
               ))}
             </ul>
           )}
@@ -134,7 +143,7 @@ export default async function Home() {
 }
 
 /** One current course. Number leads, because that is how students name them. */
-function CourseRow({ course }: { course: Course }) {
+function CourseRow({ course, title }: { course: Course; title: string }) {
   const code = familyCode(course.code);
   const section = course.code.replace(/^[A-Za-z]+\s*\d{3}\s*/, '').trim();
 
@@ -149,7 +158,7 @@ function CourseRow({ course }: { course: Course }) {
           {familyLabel(code)}
         </span>
         <span className="font-serif text-lg text-foreground flex-1 min-w-0 truncate">
-          {course.name}
+          {title}
         </span>
         {section && (
           <span className="hidden sm:block font-mono text-xs text-muted-foreground tabular-nums">

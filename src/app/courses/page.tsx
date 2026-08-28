@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { getAllCourses, getAllTerms, type Course } from '@/lib/courses';
-import { getCourseFamilies, familyCode, familyLabel } from '@/lib/families';
+import { getCourseFamilies, familyCode, familyLabel, courseTitle } from '@/lib/families';
 
 export const revalidate = 86400;
 
@@ -133,7 +133,16 @@ export default async function CoursesPage({ searchParams }: PageProps) {
 
                 <ul className="divide-y divide-border">
                   {inTerm.map(course => (
-                    <CourseRow key={course.id} course={course} termSlug={term.slug} />
+                    <CourseRow
+                      key={course.id}
+                      course={course}
+                      termSlug={term.slug}
+                      title={courseTitle(
+                        course.name,
+                        families.find(f => f.code === familyCode(course.code))?.name
+                          ?? course.name
+                      )}
+                    />
                   ))}
                 </ul>
               </section>
@@ -145,7 +154,9 @@ export default async function CoursesPage({ searchParams }: PageProps) {
   );
 }
 
-function CourseRow({ course, termSlug }: { course: Course; termSlug: string }) {
+function CourseRow(
+  { course, termSlug, title }: { course: Course; termSlug: string; title: string }
+) {
   const code = familyCode(course.code);
   const section = course.code.replace(/^[A-Za-z]+\s*\d{3}\s*/, '').trim();
 
@@ -160,7 +171,7 @@ function CourseRow({ course, termSlug }: { course: Course; termSlug: string }) {
           {familyLabel(code)}
         </span>
         <span className="font-serif text-base sm:text-lg text-foreground flex-1 min-w-0 truncate">
-          {course.name}
+          {title}
         </span>
         {section && (
           <span className="hidden sm:block font-mono text-xs text-muted-foreground tabular-nums">

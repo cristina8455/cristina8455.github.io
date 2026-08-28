@@ -1,7 +1,7 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { familyCode, familyLabel, familyName } from './families';
+import { familyCode, familyLabel, familyName, courseTitle } from './families';
 
 describe('familyCode', () => {
   test('drops the section', () => {
@@ -82,5 +82,36 @@ describe('familyName — meeting days and majority', () => {
 
   test('shortest still breaks a tie', () => {
     assert.equal(familyName(['Precalculus Online', 'Precalculus']), 'Precalculus');
+  });
+});
+
+describe('courseTitle', () => {
+  test('falls back when the name is just the course number', () => {
+    // The real Canvas name for MTH122 401, which rendered as the page title.
+    assert.equal(courseTitle('MTH 122 401 and 402', 'College Algebra'), 'College Algebra');
+    assert.equal(courseTitle('MTH146 004', 'Calc & Analytic Geometry II'),
+                 'Calc & Analytic Geometry II');
+  });
+
+  test('strips paired section numbers from a real title', () => {
+    assert.equal(courseTitle('College Algebra 201 and 202', 'College Algebra'),
+                 'College Algebra');
+    assert.equal(courseTitle('Contemporary Math 201/202', 'Contemporary Math'),
+                 'Contemporary Math');
+  });
+
+  test('strips a leading season', () => {
+    assert.equal(courseTitle('Spring Contemporary Math', 'Contemporary Math'),
+                 'Contemporary Math');
+  });
+
+  test('leaves a good title alone', () => {
+    assert.equal(courseTitle('Precalculus Online', 'Precalculus'), 'Precalculus Online');
+    assert.equal(courseTitle('General Education Statistics', 'General Education Statistics'),
+                 'General Education Statistics');
+  });
+
+  test('falls back on an empty name', () => {
+    assert.equal(courseTitle('', 'College Algebra'), 'College Algebra');
   });
 });

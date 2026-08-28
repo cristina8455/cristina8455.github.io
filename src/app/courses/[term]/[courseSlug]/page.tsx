@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { ChevronRight, ArrowLeft } from 'lucide-react';
 import { getCourseWithPages } from '@/lib/courses';
 import { type CanvasPageSummary } from '@/lib/canvas-api';
-import { familyCode } from '@/lib/families';
+import { familyCode, getCourseFamily, courseTitle } from '@/lib/families';
 import { prepareCanvasHtml } from '@/lib/canvas-html';
 import { getPublishedFiles, getPublishedSyllabus } from '@/lib/published-files';
 
@@ -45,6 +45,8 @@ export default async function CoursePage({ params }: PageProps) {
   }
 
   const { lookup } = await getPublishedFiles();
+  const family = await getCourseFamily(familyCode(course.code));
+  const title = courseTitle(course.name, family?.name ?? course.name);
 
   // The syllabus link was hidden whenever Canvas held no syllabus — which is
   // every recent course, since CLC publishes through Simple Syllabus. Show it
@@ -73,7 +75,7 @@ export default async function CoursePage({ params }: PageProps) {
           </p>
           <h1 className="font-serif font-semibold text-[clamp(1.9rem,4.5vw,2.75rem)]
                          leading-[1.08] tracking-[-0.02em] mt-3 text-foreground">
-            {course.name}
+            {title}
           </h1>
           <p className="text-sm text-muted-foreground mt-4 tabular-nums">
             {course.term?.name}
